@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private EditText etName, etEmail, etPhone, etPassword, etConfirmPassword;
-    private Button btnUser, btnHirer, btnRegister;
+    private Spinner spinnerUserType;
+    private Button btnRegister;
     private TextView tvLogin;
     private String userType = "User"; // Default
     private FirebaseFirestore db;
@@ -35,32 +39,12 @@ public class MainActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.etPhone);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        btnUser = findViewById(R.id.btnUser);
-        btnHirer = findViewById(R.id.btnHirer);
+        spinnerUserType = findViewById(R.id.spinnerUserType);
         btnRegister = findViewById(R.id.btnRegister);
         tvLogin = findViewById(R.id.tvLogin);
 
-        // Set default selection
-        btnUser.setEnabled(false); // Shows it's selected
-
-        // Toggle listeners
-        btnUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userType = "User";
-                btnUser.setEnabled(false);
-                btnHirer.setEnabled(true);
-            }
-        });
-
-        btnHirer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userType = "Hirer";
-                btnHirer.setEnabled(false);
-                btnUser.setEnabled(true);
-            }
-        });
+        // Setup spinner
+        setupUserTypeSpinner();
 
         // Register button
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +62,38 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish(); // Close registration activity
+            }
+        });
+    }
+
+    private void setupUserTypeSpinner() {
+        // Create array of options
+        String[] userTypes = {"User", "Hirer"};
+        
+        // Create adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+            this, 
+            R.layout.spinner_item, 
+            userTypes
+        );
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        
+        // Set adapter to spinner
+        spinnerUserType.setAdapter(adapter);
+        
+        // Set default selection
+        spinnerUserType.setSelection(0); // User is default
+        
+        // Set listener
+        spinnerUserType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                userType = userTypes[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                userType = "User"; // Default
             }
         });
     }

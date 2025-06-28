@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private EditText etLoginEmail, etLoginPassword;
+    private EditText etEmail, etPassword;
     private Button btnLogin;
+    private LinearLayout btnFacebookLogin, btnGoogleLogin;
     private TextView tvRegister;
     private FirebaseFirestore db;
 
@@ -30,9 +32,11 @@ public class LoginActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Initialize views
-        etLoginEmail = findViewById(R.id.etLoginEmail);
-        etLoginPassword = findViewById(R.id.etLoginPassword);
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        btnFacebookLogin = findViewById(R.id.btnFacebookLogin);
+        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         tvRegister = findViewById(R.id.tvRegister);
 
         // Login button click
@@ -40,6 +44,22 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loginUser();
+            }
+        });
+
+        // Facebook login button (placeholder)
+        btnFacebookLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(LoginActivity.this, "Facebook login not implemented yet", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Google login button (placeholder)
+        btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(LoginActivity.this, "Google login not implemented yet", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -55,8 +75,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String emailOrName = etLoginEmail.getText().toString().trim();
-        String password = etLoginPassword.getText().toString().trim();
+        String emailOrName = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         // Validation
         if (emailOrName.isEmpty() || password.isEmpty()) {
@@ -204,6 +224,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setText("Login");
         
         // Clear password field for security
-        etLoginPassword.setText("");
+        etPassword.setText("");
     }
 } 

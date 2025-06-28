@@ -2,4 +2,32 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Purple Theme Colors -->
+    <color name="primary_purple">#8B7CF6</color>
+    <color name="primary_purple_dark">#7C3AED</color>
+    <color name="light_purple">#A78BFA</color>
+    <color name="purple_background">#8B7CF6</color>
+    
+    <!-- Background and Surface Colors -->
+    <color name="background_light">#FFFFFF</color>
+    <color name="background_gray">#F8FAFC</color>
+    
+    <!-- Text Colors -->
+    <color name="text_dark">#1F2937</color>
+    <color name="text_gray">#6B7280</color>
+    <color name="text_light">#9CA3AF</color>
+    
+    <!-- Border and Input Colors -->
+    <color name="border_gray">#E5E7EB</color>
+    <color name="input_background">#F9FAFB</color>
+    <color name="light_gray">#F3F4F6</color>
+    
+    <!-- Social Login Colors -->
+    <color name="facebook_blue">#1877F2</color>
+    <color name="google_gray">#F5F5F5</color>
+    
+    <!-- Status Colors -->
+    <color name="success_green">#10B981</color>
+    <color name="error_red">#EF4444</color>
 </resources>
