@@ -4,7 +4,7 @@ public class User {
     private String name;
     private String email;
     private String phone;
-    private String password;
+    private String passwordHash;
     private String userType;
     private long timestamp;
 
@@ -16,7 +16,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.password = password;
+        this.passwordHash = PasswordUtils.hashPassword(password);
         this.userType = userType;
         this.timestamp = System.currentTimeMillis();
     }
@@ -46,12 +46,17 @@ public class User {
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    // Method to verify password
+    public boolean verifyPassword(String password) {
+        return PasswordUtils.verifyPassword(password, this.passwordHash);
     }
 
     public String getUserType() {
