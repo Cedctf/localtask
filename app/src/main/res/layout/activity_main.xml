@@ -91,6 +91,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_marginBottom="15dp" />
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account? Login here"
+        android:textColor="#2196F3"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true" />
 
 </LinearLayout>

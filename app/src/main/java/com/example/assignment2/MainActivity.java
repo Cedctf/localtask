@@ -1,10 +1,12 @@
 package com.example.assignment2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private EditText etName, etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnUser, btnHirer, btnRegister;
+    private TextView tvLogin;
     private String userType = "User"; // Default
     private FirebaseFirestore db;
 
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnUser = findViewById(R.id.btnUser);
         btnHirer = findViewById(R.id.btnHirer);
         btnRegister = findViewById(R.id.btnRegister);
+        tvLogin = findViewById(R.id.tvLogin);
 
         // Set default selection
         btnUser.setEnabled(false); // Shows it's selected
@@ -63,6 +67,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 registerUser();
+            }
+        });
+
+        // Login text click
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to LoginActivity
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Close registration activity
             }
         });
     }
@@ -104,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "User registered successfully!", 
                             Toast.LENGTH_LONG).show();
                     clearFields();
+                    
+                    // Navigate to login after successful registration
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error adding user", e);
@@ -122,6 +142,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Hirer registered successfully!", 
                             Toast.LENGTH_LONG).show();
                     clearFields();
+                    
+                    // Navigate to login after successful registration
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error adding hirer", e);
