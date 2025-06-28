@@ -1,22 +1,30 @@
 package com.example.assignment2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private EditText etName, etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnUser, btnHirer, btnRegister;
     private String userType = "User"; // Default
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Initialize views
         etName = findViewById(R.id.etName);
@@ -78,11 +86,55 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Registration successful
-        Toast.makeText(this, "Registered successfully as " + userType,
-                Toast.LENGTH_LONG).show();
+        // Save to Firebase based on user type
+        if (userType.equals("User")) {
+            saveUserToFirestore(name, email, phone, password);
+        } else {
+            saveHirerToFirestore(name, email, phone, password);
+        }
+    }
 
-        // Here you would save the data or send to server
-        // For now, just show success message
+    private void saveUserToFirestore(String name, String email, String phone, String password) {
+        User user = new User(name, email, phone, password, userType);
+        
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "User added with ID: " + documentReference.getId());
+                    Toast.makeText(MainActivity.this, "User registered successfully!", 
+                            Toast.LENGTH_LONG).show();
+                    clearFields();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error adding user", e);
+                    Toast.makeText(MainActivity.this, "Registration failed: " + e.getMessage(), 
+                            Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void saveHirerToFirestore(String name, String email, String phone, String password) {
+        Hirer hirer = new Hirer(name, email, phone, password, userType);
+        
+        db.collection("hirers")
+                .add(hirer)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Hirer added with ID: " + documentReference.getId());
+                    Toast.makeText(MainActivity.this, "Hirer registered successfully!", 
+                            Toast.LENGTH_LONG).show();
+                    clearFields();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error adding hirer", e);
+                    Toast.makeText(MainActivity.this, "Registration failed: " + e.getMessage(), 
+                            Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void clearFields() {
+        etName.setText("");
+        etEmail.setText("");
+        etPhone.setText("");
+        etPassword.setText("");
+        etConfirmPassword.setText("");
     }
 }
