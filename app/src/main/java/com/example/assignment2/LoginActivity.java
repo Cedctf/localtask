@@ -22,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout btnFacebookLogin, btnGoogleLogin;
     private TextView tvRegister;
     private FirebaseFirestore db;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,18 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
+        sessionManager = new SessionManager(this);
+
+        // Check if user is already logged in
+        if (sessionManager.isLoggedIn()) {
+            navigateToTaskActivity(
+                sessionManager.getUserName(),
+                sessionManager.getUserType(),
+                sessionManager.getUserEmail()
+            );
+            finish();
+            return;
+        }
 
         // Initialize views
         etEmail = findViewById(R.id.etEmail);
@@ -199,18 +212,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginSuccessful(String name, String userType, String email) {
-        Toast.makeText(this, "Welcome back, " + name + " (" + userType + ")!", 
-                Toast.LENGTH_LONG).show();
-        
-        Log.d(TAG, "Login successful - Name: " + name + ", Type: " + userType + ", Email: " + email);
+        // Create session
+        sessionManager.createLoginSession(name, userType, email);
         
         // Navigate to TaskActivity
+        navigateToTaskActivity(name, userType, email);
+        finish();
+    }
+
+    private void navigateToTaskActivity(String name, String userType, String email) {
         Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
         intent.putExtra("USER_NAME", name);
         intent.putExtra("USER_TYPE", userType);
         intent.putExtra("USER_EMAIL", email);
         startActivity(intent);
-        finish();
     }
 
     private void loginFailed(String message) {
