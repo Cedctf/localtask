@@ -32,6 +32,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        
+        <!-- TaskActivity -->
+        <activity
+            android:name=".TaskActivity"
+            android:exported="false" />
             
     </application>
 

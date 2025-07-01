@@ -204,16 +204,13 @@ public class LoginActivity extends AppCompatActivity {
         
         Log.d(TAG, "Login successful - Name: " + name + ", Type: " + userType + ", Email: " + email);
         
-        // Here you can navigate to the appropriate dashboard based on userType
-        // For now, just finish the login activity
+        // Navigate to TaskActivity
+        Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
+        intent.putExtra("USER_NAME", name);
+        intent.putExtra("USER_TYPE", userType);
+        intent.putExtra("USER_EMAIL", email);
+        startActivity(intent);
         finish();
-        
-        // TODO: Navigate to dashboard activity
-        // Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        // intent.putExtra("USER_NAME", name);
-        // intent.putExtra("USER_TYPE", userType);
-        // intent.putExtra("USER_EMAIL", email);
-        // startActivity(intent);
     }
 
     private void loginFailed(String message) {

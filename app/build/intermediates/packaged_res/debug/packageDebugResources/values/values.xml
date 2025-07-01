@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_gray">#F8FAFC</color>
+    <color name="background_light">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="border_gray">#E5E7EB</color>
+    <color name="error_red">#EF4444</color>
+    <color name="facebook_blue">#1877F2</color>
+    <color name="google_gray">#F5F5F5</color>
+    <color name="input_background">#F9FAFB</color>
+    <color name="light_gray">#F3F4F6</color>
+    <color name="light_purple">#A78BFA</color>
+    <color name="primary_purple">#8B7CF6</color>
+    <color name="primary_purple_dark">#7C3AED</color>
+    <color name="purple_background">#8B7CF6</color>
+    <color name="success_green">#10B981</color>
+    <color name="text_dark">#1F2937</color>
+    <color name="text_gray">#6B7280</color>
+    <color name="text_light">#9CA3AF</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Assignment2</string>
+    <string name="gcm_defaultSenderId" translatable="false">668219806710</string>
+    <string name="google_api_key" translatable="false">AIzaSyAZXmS4lNqDbXbbHdNDmncQDnpxWShNGlQ</string>
+    <string name="google_app_id" translatable="false">1:668219806710:android:9b79d90f5918bd012dedd7</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAZXmS4lNqDbXbbHdNDmncQDnpxWShNGlQ</string>
+    <string name="google_storage_bucket" translatable="false">local-task-a8836.firebasestorage.app</string>
+    <string name="project_id" translatable="false">local-task-a8836</string>
+    <style name="Base.Theme.Assignment2" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+    </style>
+    <style name="Theme.Assignment2" parent="Base.Theme.Assignment2"/>
+</resources>
