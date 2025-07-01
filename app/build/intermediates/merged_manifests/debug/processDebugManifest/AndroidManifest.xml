@@ -49,14 +49,14 @@
             android:name="com.example.assignment2.LoginActivity"
             android:exported="false" />
 
-        <!-- MainActivity for registration -->
+        <!-- TasksActivity (Main Activity after login) -->
         <activity
-            android:name="com.example.assignment2.MainActivity"
+            android:name="com.example.assignment2.TasksActivity"
             android:exported="false" />
 
-        <!-- TaskActivity -->
+        <!-- TaskDetailsActivity -->
         <activity
-            android:name="com.example.assignment2.TaskActivity"
+            android:name="com.example.assignment2.TaskDetailsActivity"
             android:exported="false" />
 
         <service

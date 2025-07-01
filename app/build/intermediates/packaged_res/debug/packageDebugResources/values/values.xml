@@ -43,7 +43,7 @@
         
         
     </style>
-    <style name="CircleImageView">
+    <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
@@ -55,6 +55,10 @@
     <style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">@color/design_default_color_primary</item>
         <item name="strokeColor">@color/design_default_color_primary</item>
+    </style>
+    <style name="ShapeAppearance.App.CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
     <style name="Theme.Assignment2" parent="Base.Theme.Assignment2"/>
 </resources>

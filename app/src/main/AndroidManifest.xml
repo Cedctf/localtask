@@ -28,14 +28,14 @@
             android:name=".LoginActivity"
             android:exported="false" />
         
-        <!-- MainActivity for registration -->
+        <!-- TasksActivity (Main Activity after login) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".TasksActivity"
             android:exported="false" />
         
-        <!-- TaskActivity -->
+        <!-- TaskDetailsActivity -->
         <activity
-            android:name=".TaskActivity"
+            android:name=".TaskDetailsActivity"
             android:exported="false" />
             
     </application>

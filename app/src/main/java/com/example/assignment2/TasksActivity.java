@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class TaskActivity extends AppCompatActivity {
+public class TasksActivity extends AppCompatActivity {
 
     private String userName;
     private String userType;
@@ -14,7 +14,7 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
+        setContentView(R.layout.activity_tasks);
 
         // Get user data from intent
         userName = getIntent().getStringExtra("USER_NAME");
@@ -27,7 +27,7 @@ public class TaskActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.navigation_home) {
-                selectedFragment = HomeFragment.newInstance(userName, userType);
+                selectedFragment = TasksFragment.newInstance();
             } else if (itemId == R.id.navigation_leaderboard) {
                 selectedFragment = LeaderboardFragment.newInstance();
             } else if (itemId == R.id.navigation_badges) {
@@ -44,10 +44,10 @@ public class TaskActivity extends AppCompatActivity {
             return true;
         });
 
-        // Set default fragment
+        // Set default fragment to TasksFragment (Home)
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, HomeFragment.newInstance(userName, userType))
+                .replace(R.id.fragment_container, TasksFragment.newInstance())
                 .commit();
         }
     }

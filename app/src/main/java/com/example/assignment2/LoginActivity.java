@@ -221,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToTaskActivity(String name, String userType, String email) {
-        Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
+        Intent intent = new Intent(LoginActivity.this, TasksActivity.class);
         intent.putExtra("USER_NAME", name);
         intent.putExtra("USER_TYPE", userType);
         intent.putExtra("USER_EMAIL", email);
