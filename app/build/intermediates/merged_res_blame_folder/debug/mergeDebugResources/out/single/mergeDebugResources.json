@@ -24,10 +24,6 @@
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\mipmap-xhdpi\\ic_launcher.webp"
     },
     {
-        "merged": "com.example.assignment2.app-debug-36:/drawable_bg_avatar_border_silver.xml.flat",
-        "source": "com.example.assignment2.app-main-38:/drawable/bg_avatar_border_silver.xml"
-    },
-    {
         "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\layout_fragment_home.xml.flat",
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\layout\\fragment_home.xml"
     },
@@ -84,6 +80,10 @@
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\layout\\fragment_leaderboard.xml"
     },
     {
+        "merged": "com.example.assignment2.app-debug-36:/layout_fragment_badges.xml.flat",
+        "source": "com.example.assignment2.app-main-38:/layout/fragment_badges.xml"
+    },
+    {
         "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\drawable_ic_profile.xml.flat",
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\drawable\\ic_profile.xml"
     },
@@ -124,6 +124,10 @@
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\drawable\\spinner_background.xml"
     },
     {
+        "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\drawable_progress_yellow.xml.flat",
+        "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\drawable\\progress_yellow.xml"
+    },
+    {
         "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\drawable_ic_google_simple.xml.flat",
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\drawable\\ic_google_simple.xml"
     },
@@ -150,6 +154,10 @@
     {
         "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\drawable_bg_avatar_border_silver.xml.flat",
         "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\drawable\\bg_avatar_border_silver.xml"
+    },
+    {
+        "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\layout_fragment_badges.xml.flat",
+        "source": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-main-38:\\layout\\fragment_badges.xml"
     },
     {
         "merged": "C:\\Users\\Victus\\.gradle\\daemon\\8.11.1\\com.example.assignment2.app-debug-36:\\mipmap-mdpi_ic_launcher_round.webp.flat",
