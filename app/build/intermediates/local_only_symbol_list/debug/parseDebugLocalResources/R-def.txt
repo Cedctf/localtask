@@ -19,13 +19,19 @@ color text_gray
 color text_light
 color toggle_text_color
 color white
+drawable bg_avatar_border_bronze
+drawable bg_avatar_border_gold
+drawable bg_avatar_border_gray
+drawable bg_avatar_border_silver
 drawable button_facebook
 drawable button_google
 drawable button_outline
 drawable button_primary
 drawable button_toggle
 drawable edit_text_background
+drawable ic_arrow_drop_down
 drawable ic_badge
+drawable ic_crown
 drawable ic_facebook
 drawable ic_google
 drawable ic_google_simple
@@ -33,6 +39,7 @@ drawable ic_home
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_leaderboard
+drawable ic_medal
 drawable ic_menu
 drawable ic_profile
 drawable logo_background
@@ -69,6 +76,7 @@ layout activity_main
 layout activity_task
 layout activity_welcome
 layout fragment_home
+layout fragment_leaderboard
 layout fragment_profile
 layout item_task
 layout spinner_dropdown_item
