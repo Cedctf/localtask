@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class TaskDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
-    private TextView titleText, descriptionText, paymentText, statusText, hirerText;
+    private TextView titleText, descriptionText, paymentText, statusText, hirerText, dateText, locationText;
     private SessionManager sessionManager;
 
     @Override
@@ -30,14 +30,34 @@ public class TaskDetailsActivity extends AppCompatActivity {
         paymentText = findViewById(R.id.taskDetailPayment);
         statusText = findViewById(R.id.taskDetailStatus);
         hirerText = findViewById(R.id.taskDetailHirer);
+        dateText = findViewById(R.id.taskDetailDate);
+        locationText = findViewById(R.id.taskDetailLocation);
 
         // Setup bottom navigation
         setupBottomNavigation();
 
         // Get task ID from intent
-        String taskId = getIntent().getStringExtra("taskId");
+        String taskId = getIntent().getStringExtra("task_id");
         if (taskId != null) {
             loadTaskDetails(taskId);
+        } else {
+            // Fallback: try to get data from intent extras directly
+            String title = getIntent().getStringExtra("task_title");
+            String description = getIntent().getStringExtra("task_description");
+            String payment = getIntent().getStringExtra("task_payment");
+            String hirer = getIntent().getStringExtra("task_hirer");
+            String dueDate = getIntent().getStringExtra("task_date");
+            String location = getIntent().getStringExtra("task_location");
+            
+            if (title != null) {
+                titleText.setText(title);
+                descriptionText.setText(description);
+                paymentText.setText(payment);
+                hirerText.setText("Posted by: " + hirer);
+                dateText.setText(dueDate != null ? dueDate : "No date specified");
+                locationText.setText(location != null ? location : "No location specified");
+                statusText.setText("Status: open");
+            }
         }
     }
 
@@ -104,6 +124,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
                         
                         statusText.setText("Status: " + task.getStatus());
                         hirerText.setText("Posted by: " + task.getHirerName());
+                        dateText.setText(task.getDueDate() != null ? task.getDueDate() : "No date specified");
+                        locationText.setText(task.getLocation() != null ? task.getLocation() : "No location specified");
                     }
                 })
                 .addOnFailureListener(e -> 

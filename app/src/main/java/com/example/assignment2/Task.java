@@ -9,11 +9,13 @@ public class Task {
     private double payment;
     private String status;
     private long timestamp;
+    private String dueDate;
+    private String location;
 
     // Empty constructor for Firestore
     public Task() {}
 
-    public Task(String title, String description, String hirerId, String hirerName, double payment) {
+    public Task(String title, String description, String hirerId, String hirerName, double payment, String dueDate, String location) {
         this.title = title;
         this.description = description;
         this.hirerId = hirerId;
@@ -21,6 +23,8 @@ public class Task {
         this.payment = payment;
         this.status = "open";
         this.timestamp = System.currentTimeMillis();
+        this.dueDate = dueDate;
+        this.location = location;
     }
 
     // Getters and setters
@@ -47,4 +51,10 @@ public class Task {
     
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    
+    public String getDueDate() { return dueDate; }
+    public void setDueDate(String dueDate) { this.dueDate = dueDate; }
+    
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 } 

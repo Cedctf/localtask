@@ -93,6 +93,32 @@ public class TasksFragment extends Fragment {
         TextInputEditText titleInput = dialogView.findViewById(R.id.taskTitleInput);
         TextInputEditText descriptionInput = dialogView.findViewById(R.id.taskDescriptionInput);
         TextInputEditText paymentInput = dialogView.findViewById(R.id.taskPaymentInput);
+        TextInputEditText dateInput = dialogView.findViewById(R.id.taskDateInput);
+        TextInputEditText locationInput = dialogView.findViewById(R.id.taskLocationInput);
+
+        // Setup date picker
+        dateInput.setOnClickListener(v -> {
+            // Get current date
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            int year = calendar.get(java.util.Calendar.YEAR);
+            int month = calendar.get(java.util.Calendar.MONTH);
+            int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
+
+            // Create and show date picker
+            android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
+                requireContext(),
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Format the selected date
+                    String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                    dateInput.setText(selectedDate);
+                },
+                year, month, day
+            );
+            
+            // Set minimum date to today
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Add New Task")
@@ -101,8 +127,11 @@ public class TasksFragment extends Fragment {
                     String title = titleInput.getText().toString().trim();
                     String description = descriptionInput.getText().toString().trim();
                     String paymentStr = paymentInput.getText().toString().trim();
+                    String dueDate = dateInput.getText().toString().trim();
+                    String location = locationInput.getText().toString().trim();
 
-                    if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty()) {
+                    if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
+                        dueDate.isEmpty() || location.isEmpty()) {
                         Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -120,7 +149,9 @@ public class TasksFragment extends Fragment {
                             description,
                             sessionManager.getUserName(),
                             sessionManager.getUserName(),
-                            payment
+                            payment,
+                            dueDate,
+                            location
                     );
 
                     db.collection("tasks")
@@ -164,10 +195,20 @@ public class TasksFragment extends Fragment {
             NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
             holder.taskPayment.setText(format.format(task.getPayment()));
 
+            // Set date and location
+            holder.taskDate.setText(task.getDueDate() != null ? task.getDueDate() : "No date");
+            holder.taskLocation.setText(task.getLocation() != null ? task.getLocation() : "No location");
+
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), TaskDetailsActivity.class);
-                intent.putExtra("taskId", task.getId());
-                startActivity(intent);
+                intent.putExtra("task_id", task.getId());
+                intent.putExtra("task_title", task.getTitle());
+                intent.putExtra("task_description", task.getDescription());
+                intent.putExtra("task_payment", task.getPayment());
+                intent.putExtra("task_hirer", task.getHirerName());
+                intent.putExtra("task_date", task.getDueDate());
+                intent.putExtra("task_location", task.getLocation());
+                requireContext().startActivity(intent);
             });
         }
 
@@ -177,7 +218,7 @@ public class TasksFragment extends Fragment {
         }
 
         class TaskViewHolder extends RecyclerView.ViewHolder {
-            TextView taskTitle, taskDescription, taskStatus, taskPayment, taskHirer;
+            TextView taskTitle, taskDescription, taskStatus, taskPayment, taskHirer, taskDate, taskLocation;
 
             TaskViewHolder(View itemView) {
                 super(itemView);
@@ -186,6 +227,8 @@ public class TasksFragment extends Fragment {
                 taskStatus = itemView.findViewById(R.id.taskStatus);
                 taskPayment = itemView.findViewById(R.id.taskPayment);
                 taskHirer = itemView.findViewById(R.id.taskHirer);
+                taskDate = itemView.findViewById(R.id.taskDate);
+                taskLocation = itemView.findViewById(R.id.taskLocation);
             }
         }
     }
