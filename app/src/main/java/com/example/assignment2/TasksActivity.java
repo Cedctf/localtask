@@ -44,10 +44,41 @@ public class TasksActivity extends AppCompatActivity {
             return true;
         });
 
-        // Set default fragment to TasksFragment (Home)
+        // Check if we need to show a specific fragment (from TaskDetailsActivity navigation)
+        String showFragment = getIntent().getStringExtra("SHOW_FRAGMENT");
+        Fragment initialFragment;
+        int selectedNavItem;
+
+        if (showFragment != null) {
+            switch (showFragment) {
+                case "leaderboard":
+                    initialFragment = LeaderboardFragment.newInstance();
+                    selectedNavItem = R.id.navigation_leaderboard;
+                    break;
+                case "badges":
+                    initialFragment = BadgesFragment.newInstance();
+                    selectedNavItem = R.id.navigation_badges;
+                    break;
+                case "profile":
+                    initialFragment = ProfileFragment.newInstance(userName, userType, userEmail);
+                    selectedNavItem = R.id.navigation_profile;
+                    break;
+                default:
+                    initialFragment = TasksFragment.newInstance();
+                    selectedNavItem = R.id.navigation_home;
+                    break;
+            }
+        } else {
+            // Default to TasksFragment (Home)
+            initialFragment = TasksFragment.newInstance();
+            selectedNavItem = R.id.navigation_home;
+        }
+
+        // Set the correct navigation item and fragment
         if (savedInstanceState == null) {
+            bottomNav.setSelectedItemId(selectedNavItem);
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, TasksFragment.newInstance())
+                .replace(R.id.fragment_container, initialFragment)
                 .commit();
         }
     }
