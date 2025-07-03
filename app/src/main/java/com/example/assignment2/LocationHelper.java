@@ -1,0 +1,221 @@
+package com.example.assignment2;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Looper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class LocationHelper {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private Context context;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Geocoder geocoder;
+
+    public interface LocationCallback {
+        void onLocationReceived(LatLng location, String address);
+        void onLocationError(String error);
+    }
+
+    public interface GeocodeCallback {
+        void onGeocodeResult(LatLng location);
+        void onGeocodeError(String error);
+    }
+
+    public interface AddressCallback {
+        void onAddressResult(String address);
+        void onAddressError(String error);
+    }
+
+    public LocationHelper(Context context) {
+        this.context = context;
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        this.geocoder = new Geocoder(context, Locale.getDefault());
+    }
+
+    public boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED ||
+               ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestLocationPermission(Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                },
+                LOCATION_PERMISSION_REQUEST_CODE);
+    }
+
+    public void getCurrentLocation(LocationCallback callback) {
+        android.util.Log.d("LocationHelper", "getCurrentLocation called");
+        
+        if (!hasLocationPermission()) {
+            android.util.Log.e("LocationHelper", "Location permission not granted");
+            callback.onLocationError("Location permission not granted");
+            return;
+        }
+
+        android.util.Log.d("LocationHelper", "Location permission granted, requesting location...");
+
+        try {
+            // First try to get the last known location
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            android.util.Log.d("LocationHelper", "Last known location found: " + location.getLatitude() + ", " + location.getLongitude());
+                            // We have a recent location, use it
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            getAddressFromLocation(latLng, new AddressCallback() {
+                                @Override
+                                public void onAddressResult(String address) {
+                                    android.util.Log.d("LocationHelper", "Address for last location: " + address);
+                                    callback.onLocationReceived(latLng, address);
+                                }
+
+                                @Override
+                                public void onAddressError(String error) {
+                                    android.util.Log.d("LocationHelper", "Address lookup failed for last location: " + error);
+                                    callback.onLocationReceived(latLng, "Current Location");
+                                }
+                            });
+                        } else {
+                            android.util.Log.d("LocationHelper", "No last known location, requesting fresh location");
+                            // No last known location, request a fresh location
+                            requestFreshLocation(callback);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        android.util.Log.e("LocationHelper", "Failed to get last location: " + e.getMessage());
+                        // Failed to get last location, try fresh location
+                        requestFreshLocation(callback);
+                    });
+        } catch (SecurityException e) {
+            android.util.Log.e("LocationHelper", "Security exception in getCurrentLocation: " + e.getMessage());
+            callback.onLocationError("Location permission denied");
+        }
+    }
+
+    private void requestFreshLocation(LocationCallback callback) {
+        try {
+            LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+                    .setMinUpdateIntervalMillis(5000)
+                    .setMaxUpdates(1)
+                    .build();
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, new com.google.android.gms.location.LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (locationResult != null && locationResult.getLocations() != null && !locationResult.getLocations().isEmpty()) {
+                        Location location = locationResult.getLastLocation();
+                        if (location != null) {
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            
+                            // Stop location updates after getting the result
+                            fusedLocationClient.removeLocationUpdates(this);
+                            
+                            // Debug: Log the location received
+                            android.util.Log.d("LocationHelper", "Fresh location received: " + latLng.latitude + ", " + latLng.longitude);
+                            
+                            getAddressFromLocation(latLng, new AddressCallback() {
+                                @Override
+                                public void onAddressResult(String address) {
+                                    android.util.Log.d("LocationHelper", "Address found: " + address);
+                                    callback.onLocationReceived(latLng, address);
+                                }
+
+                                @Override
+                                public void onAddressError(String error) {
+                                    android.util.Log.d("LocationHelper", "Address lookup failed: " + error);
+                                    callback.onLocationReceived(latLng, "Current Location");
+                                }
+                            });
+                        } else {
+                            android.util.Log.e("LocationHelper", "Location is null even though locationResult was not null");
+                            callback.onLocationError("Unable to get current location. Please check if location services are enabled.");
+                        }
+                    } else {
+                        android.util.Log.e("LocationHelper", "LocationResult is null or empty");
+                        callback.onLocationError("Unable to get current location. Please check if location services are enabled.");
+                    }
+                }
+            }, Looper.getMainLooper());
+        } catch (SecurityException e) {
+            android.util.Log.e("LocationHelper", "Security exception: " + e.getMessage());
+            callback.onLocationError("Location permission denied");
+        }
+    }
+
+    public void getLocationFromAddress(String address, GeocodeCallback callback) {
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address addr = addresses.get(0);
+                LatLng location = new LatLng(addr.getLatitude(), addr.getLongitude());
+                callback.onGeocodeResult(location);
+            } else {
+                callback.onGeocodeError("Address not found");
+            }
+        } catch (IOException e) {
+            callback.onGeocodeError("Geocoding error: " + e.getMessage());
+        }
+    }
+
+    public void getAddressFromLocation(LatLng location, AddressCallback callback) {
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    location.latitude, location.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address addr = addresses.get(0);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i <= addr.getMaxAddressLineIndex(); i++) {
+                    sb.append(addr.getAddressLine(i));
+                    if (i < addr.getMaxAddressLineIndex()) sb.append(", ");
+                }
+                String address = sb.toString();
+                callback.onAddressResult(address);
+            } else {
+                callback.onAddressError("Address not found");
+            }
+        } catch (IOException e) {
+            callback.onAddressError("Reverse geocoding error: " + e.getMessage());
+        }
+    }
+
+    public void getAddressFromLocation(LatLng location, GeocodeCallback callback) {
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    location.latitude, location.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                callback.onGeocodeResult(location);
+            } else {
+                callback.onGeocodeError("Address not found");
+            }
+        } catch (IOException e) {
+            callback.onGeocodeError("Reverse geocoding error: " + e.getMessage());
+        }
+    }
+
+    public static int getLocationPermissionRequestCode() {
+        return LOCATION_PERMISSION_REQUEST_CODE;
+    }
+} 

@@ -5,6 +5,12 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.NumberFormat;
@@ -14,6 +20,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView titleText, descriptionText, paymentText, statusText, hirerText, dateText, locationText;
     private SessionManager sessionManager;
+    private LocationHelper locationHelper;
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private String taskLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +33,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         // Initialize Firestore and SessionManager
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(this);
+        locationHelper = new LocationHelper(this);
 
         // Initialize views
         titleText = findViewById(R.id.taskDetailTitle);
@@ -32,6 +43,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
         hirerText = findViewById(R.id.taskDetailHirer);
         dateText = findViewById(R.id.taskDetailDate);
         locationText = findViewById(R.id.taskDetailLocation);
+        mapView = findViewById(R.id.taskLocationMapView);
+
+        // Initialize map
+        mapView.onCreate(savedInstanceState);
+        mapView.onResume();
 
         // Setup bottom navigation
         setupBottomNavigation();
@@ -57,6 +73,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 dateText.setText(dueDate != null ? dueDate : "No date specified");
                 locationText.setText(location != null ? location : "No location specified");
                 statusText.setText("Status: open");
+                taskLocation = location;
+                setupMap();
             }
         }
     }
@@ -126,10 +144,81 @@ public class TaskDetailsActivity extends AppCompatActivity {
                         hirerText.setText("Posted by: " + task.getHirerName());
                         dateText.setText(task.getDueDate() != null ? task.getDueDate() : "No date specified");
                         locationText.setText(task.getLocation() != null ? task.getLocation() : "No location specified");
+                        taskLocation = task.getLocation();
+                        setupMap();
                     }
                 })
                 .addOnFailureListener(e -> 
                     Toast.makeText(this, "Error loading task details: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show());
+    }
+
+    private void setupMap() {
+        if (taskLocation != null && !taskLocation.isEmpty()) {
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    googleMap = map;
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    
+                    // Use geocoding to get coordinates from address
+                    locationHelper.getLocationFromAddress(taskLocation, new LocationHelper.GeocodeCallback() {
+                        @Override
+                        public void onGeocodeResult(LatLng location) {
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(location)
+                                    .title("Task Location")
+                                    .snippet(taskLocation));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+                        }
+                        
+                        @Override
+                        public void onGeocodeError(String error) {
+                            // If geocoding fails, try to show Taylor's University as fallback
+                            LatLng fallbackLocation = new LatLng(3.065, 101.6036);
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(fallbackLocation)
+                                    .title("Task Location")
+                                    .snippet(taskLocation + " (Approximate)"));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fallbackLocation, 15));
+                            Toast.makeText(TaskDetailsActivity.this, "Unable to find exact location on map", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 } 
