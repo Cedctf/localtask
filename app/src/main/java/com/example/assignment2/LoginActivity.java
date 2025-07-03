@@ -33,17 +33,6 @@ public class LoginActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(this);
 
-        // Check if user is already logged in
-        if (sessionManager.isLoggedIn()) {
-            navigateToTaskActivity(
-                sessionManager.getUserName(),
-                sessionManager.getUserType(),
-                sessionManager.getUserEmail()
-            );
-            finish();
-            return;
-        }
-
         // Initialize views
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
