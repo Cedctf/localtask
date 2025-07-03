@@ -82,7 +82,7 @@ public class OpenAIService {
     
     private JSONObject createRequestBody(String userMessage) throws JSONException {
         JSONObject requestBody = new JSONObject();
-        requestBody.put("model", "gpt-3.5-turbo");
+        requestBody.put("model", "gpt-4o-mini");
         requestBody.put("max_tokens", 150);
         requestBody.put("temperature", 0.7);
         
