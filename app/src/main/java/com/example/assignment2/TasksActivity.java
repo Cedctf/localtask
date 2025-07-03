@@ -10,11 +10,16 @@ public class TasksActivity extends AppCompatActivity {
     private String userName;
     private String userType;
     private String userEmail;
+    private ChatbotManager chatbotManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
+
+        // Initialize chatbot
+        chatbotManager = new ChatbotManager(this);
+        chatbotManager.addChatbotButton(this);
 
         // Get user data from intent
         userName = getIntent().getStringExtra("USER_NAME");

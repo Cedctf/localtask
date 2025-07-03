@@ -24,6 +24,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private MapView mapView;
     private GoogleMap googleMap;
     private String taskLocation;
+    private ChatbotManager chatbotManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(this);
         locationHelper = new LocationHelper(this);
+
+        // Initialize chatbot
+        chatbotManager = new ChatbotManager(this);
+        chatbotManager.addChatbotButton(this);
 
         // Initialize views
         titleText = findViewById(R.id.taskDetailTitle);

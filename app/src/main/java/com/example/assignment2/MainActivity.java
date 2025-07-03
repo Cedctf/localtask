@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvLogin;
     private String userType = "User"; // Default
     private FirebaseFirestore db;
+    private ChatbotManager chatbotManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
+
+        // Initialize chatbot
+        chatbotManager = new ChatbotManager(this);
+        chatbotManager.addChatbotButton(this);
 
         // Initialize views
         etName = findViewById(R.id.etName);

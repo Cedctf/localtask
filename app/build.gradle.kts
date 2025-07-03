@@ -3,6 +3,13 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+// Read API key from local.properties
+val localProperties = java.util.Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(java.io.FileInputStream(localPropertiesFile))
+}
+
 android {
     namespace = "com.example.assignment2"
     compileSdk = 35
@@ -15,6 +22,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Inject API keys as string resources
+        resValue("string", "google_maps_key", localProperties.getProperty("GOOGLE_MAPS_API_KEY", ""))
+        resValue("string", "openai_api_key", localProperties.getProperty("OPENAI_API_KEY", ""))
     }
 
     buildTypes {
@@ -46,6 +57,11 @@ dependencies {
     // Google Maps dependency
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    
+    // HTTP client for API calls
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("org.json:json:20231013")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

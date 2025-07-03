@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvRegister;
     private FirebaseFirestore db;
     private SessionManager sessionManager;
+    private ChatbotManager chatbotManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,10 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(this);
+
+        // Initialize chatbot
+        chatbotManager = new ChatbotManager(this);
+        chatbotManager.addChatbotButton(this);
 
         // Initialize views
         etEmail = findViewById(R.id.etEmail);
