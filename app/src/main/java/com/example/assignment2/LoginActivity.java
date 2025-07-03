@@ -69,9 +69,16 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to MainActivity for registration
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                try {
+                    Log.d(TAG, "Register text clicked, navigating to MainActivity");
+                    // Navigate to MainActivity for registration
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    // Don't finish() here to allow users to go back if needed
+                } catch (Exception e) {
+                    Log.e(TAG, "Error navigating to MainActivity: " + e.getMessage(), e);
+                    Toast.makeText(LoginActivity.this, "Error opening registration page: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

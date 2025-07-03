@@ -38,6 +38,11 @@
             android:name=".LoginActivity"
             android:exported="false" />
         
+        <!-- MainActivity (Registration Activity) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        
         <!-- TasksActivity (Main Activity after login) -->
         <activity
             android:name=".TasksActivity"
