@@ -10,9 +10,7 @@ public class PasswordUtils {
     private static final String ALGORITHM = "SHA-256";
     private static final int SALT_LENGTH = 16;
 
-    /**
-     * Generates a random salt
-     */
+    // Generates a random salt
     private static String generateSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH];
@@ -20,9 +18,7 @@ public class PasswordUtils {
         return Base64.encodeToString(salt, Base64.DEFAULT);
     }
 
-    /**
-     * Hashes a password with the given salt
-     */
+    // Hashes the password with the given salt
     private static String hashPassword(String password, String salt) {
         try {
             MessageDigest md = MessageDigest.getInstance(ALGORITHM);
@@ -34,19 +30,15 @@ public class PasswordUtils {
         }
     }
 
-    /**
-     * Hashes a password with a new random salt
-     * Returns a string in format: salt:hashedPassword
-     */
+    // Hashes a password with a new random salt
+    // Returns a string in format: salt:hashedPassword
     public static String hashPassword(String password) {
         String salt = generateSalt();
         String hashedPassword = hashPassword(password, salt);
         return salt + ":" + hashedPassword;
     }
 
-    /**
-     * Verifies a password against a stored hash
-     */
+    //Verifies a password against a stored hash
     public static boolean verifyPassword(String password, String storedHash) {
         try {
             String[] parts = storedHash.split(":");
