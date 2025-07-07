@@ -73,6 +73,12 @@ public class TasksFragment extends Fragment {
         if ("Hirer".equals(sessionManager.getUserType())) {
             fabAddTask.setVisibility(View.VISIBLE);
             fabAddTask.setOnClickListener(v -> showAddTaskDialog());
+            
+            // Add a long click listener to toggle between all tasks and my tasks
+            fabAddTask.setOnLongClickListener(v -> {
+                showTaskFilterDialog();
+                return true;
+            });
         } else {
             fabAddTask.setVisibility(View.GONE);
         }
@@ -103,6 +109,33 @@ public class TasksFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> 
                     Toast.makeText(requireContext(), "Error loading tasks: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show());
+    }
+
+    // Method to load only tasks uploaded by the current hirer
+    private void loadMyTasks() {
+        String currentUserId = sessionManager.getUserId();
+        if (currentUserId == null) {
+            Toast.makeText(requireContext(), "Unable to load your tasks. Please login again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("tasks")
+                .whereEqualTo("hirerId", currentUserId)
+                .orderBy("timestamp")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    taskList.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Task task = document.toObject(Task.class);
+                        task.setId(document.getId());
+                        taskList.add(task);
+                    }
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(requireContext(), "Showing " + taskList.size() + " of your tasks", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> 
+                    Toast.makeText(requireContext(), "Error loading your tasks: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show());
     }
 
@@ -294,7 +327,7 @@ public class TasksFragment extends Fragment {
                     Task newTask = new Task(
                             title,
                             description,
-                            sessionManager.getUserName(),
+                            sessionManager.getUserId(),
                             sessionManager.getUserName(),
                             payment,
                             dueDate,
@@ -320,6 +353,21 @@ public class TasksFragment extends Fragment {
                     // Clean up map
                     if (mapView != null) {
                         mapView.onDestroy();
+                    }
+                })
+                .show();
+    }
+
+    private void showTaskFilterDialog() {
+        String[] options = {"Show All Tasks", "Show My Tasks Only"};
+        
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Filter Tasks")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        loadTasks(); // Show all tasks
+                    } else {
+                        loadMyTasks(); // Show only my tasks
                     }
                 })
                 .show();

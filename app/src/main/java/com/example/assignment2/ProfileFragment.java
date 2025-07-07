@@ -79,6 +79,54 @@ public class ProfileFragment extends Fragment {
         TextView totalPointsText = view.findViewById(R.id.totalPoints);
         TextView badgesEarnedText = view.findViewById(R.id.badgesEarned);
 
+        if ("Hirer".equals(userType)) {
+            // For hirers, show tasks uploaded instead of tasks completed
+            loadHirerStatistics(view, tasksCompletedText, totalPointsText, badgesEarnedText);
+        } else {
+            // For users, show original statistics
+            loadRegularUserStatistics(tasksCompletedText, totalPointsText, badgesEarnedText);
+        }
+    }
+
+    private void loadHirerStatistics(View view, TextView tasksUploadedText, TextView totalPointsText, TextView badgesEarnedText) {
+        String userId = sessionManager.getUserId();
+        if (userId != null) {
+            // Load tasks uploaded by this hirer
+            TaskManager.getTaskCountByHirer(userId, new TaskManager.TaskCountCallback() {
+                @Override
+                public void onSuccess(int count) {
+                    tasksUploadedText.setText(String.valueOf(count));
+                }
+
+                @Override
+                public void onError(String error) {
+                    tasksUploadedText.setText("0");
+                }
+            });
+        }
+
+        // Load total points for hirer
+        db.collection("hirers")
+            .whereEqualTo("name", userName)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    int points = queryDocumentSnapshots.getDocuments().get(0).getLong("points") != null ?
+                            queryDocumentSnapshots.getDocuments().get(0).getLong("points").intValue() : 0;
+                    totalPointsText.setText(String.valueOf(points));
+                }
+            });
+
+        // Load badges earned by hirer
+        db.collection("hirer_badges")
+            .whereEqualTo("userName", userName)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                badgesEarnedText.setText(String.valueOf(queryDocumentSnapshots.size()));
+            });
+    }
+
+    private void loadRegularUserStatistics(TextView tasksCompletedText, TextView totalPointsText, TextView badgesEarnedText) {
         // Load tasks completed
         db.collection("tasks")
             .whereEqualTo("assignedTo", userName)

@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
                             if (user.verifyPassword(password)) {
-                                loginSuccessful(user.getName(), "User", user.getEmail());
+                                loginSuccessful(user.getName(), "User", user.getEmail(), document.getId());
                                 return;
                             }
                         }
@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
                             if (user.verifyPassword(password)) {
-                                loginSuccessful(user.getName(), "User", user.getEmail());
+                                loginSuccessful(user.getName(), "User", user.getEmail(), document.getId());
                                 return;
                             }
                         }
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Hirer hirer = document.toObject(Hirer.class);
                             if (hirer.verifyPassword(password)) {
-                                loginSuccessful(hirer.getName(), "Hirer", hirer.getEmail());
+                                loginSuccessful(hirer.getName(), "Hirer", hirer.getEmail(), document.getId());
                                 return;
                             }
                         }
@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Hirer hirer = document.toObject(Hirer.class);
                             if (hirer.verifyPassword(password)) {
-                                loginSuccessful(hirer.getName(), "Hirer", hirer.getEmail());
+                                loginSuccessful(hirer.getName(), "Hirer", hirer.getEmail(), document.getId());
                                 return;
                             }
                         }
@@ -212,13 +212,18 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void loginSuccessful(String name, String userType, String email) {
-        // Create session
-        sessionManager.createLoginSession(name, userType, email);
+    private void loginSuccessful(String name, String userType, String email, String userId) {
+        // Create session with user document ID
+        sessionManager.createLoginSession(name, userType, email, userId);
         
         // Navigate to TaskActivity
         navigateToTaskActivity(name, userType, email);
         finish();
+    }
+
+    // Keep the old method for backward compatibility (for regular users)
+    private void loginSuccessful(String name, String userType, String email) {
+        loginSuccessful(name, userType, email, null);
     }
 
     private void navigateToTaskActivity(String name, String userType, String email) {
