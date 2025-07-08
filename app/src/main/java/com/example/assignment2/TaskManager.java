@@ -31,7 +31,6 @@ public class TaskManager {
                     List<Task> tasks = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        task.setId(document.getId());
                         tasks.add(task);
                     }
                     callback.onSuccess(tasks);
@@ -64,7 +63,6 @@ public class TaskManager {
                     List<Task> tasks = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        task.setId(document.getId());
                         tasks.add(task);
                     }
                     callback.onSuccess(tasks);

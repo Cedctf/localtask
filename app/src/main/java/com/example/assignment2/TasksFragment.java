@@ -39,6 +39,7 @@ public class TasksFragment extends Fragment {
     private SessionManager sessionManager;
     private FloatingActionButton fabAddTask;
     private List<Task> taskList;
+    private List<String> taskIdList; // Store document IDs separately
     private LocationHelper locationHelper;
 
     // Map variables for dialog
@@ -54,7 +55,16 @@ public class TasksFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tasks, container, false);
+        View view = inflater.inflate(R.layout.fragment_tasks, container, false);
+        
+        // Initialize
+        db = FirebaseFirestore.getInstance();
+        taskList = new ArrayList<>();
+        taskIdList = new ArrayList<>();
+        sessionManager = new SessionManager(requireContext());
+        locationHelper = new LocationHelper(requireContext());
+        
+        return view;
     }
 
     @Override
@@ -68,6 +78,7 @@ public class TasksFragment extends Fragment {
         recyclerView = view.findViewById(R.id.tasksRecyclerView);
         fabAddTask = view.findViewById(R.id.fabAddTask);
         taskList = new ArrayList<>();
+        taskIdList = new ArrayList<>();
 
         // Show/hide FAB based on user type
         if ("Hirer".equals(sessionManager.getUserType())) {
@@ -89,7 +100,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new TasksFragmentAdapter(taskList);
+        adapter = new TasksFragmentAdapter(taskList, taskIdList);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
     }
@@ -100,10 +111,11 @@ public class TasksFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList.clear();
+                    taskIdList.clear(); // Clear IDs as well
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        task.setId(document.getId());
                         taskList.add(task);
+                        taskIdList.add(document.getId()); // Store document ID
                     }
                     adapter.notifyDataSetChanged();
                 })
@@ -126,10 +138,11 @@ public class TasksFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList.clear();
+                    taskIdList.clear(); // Clear IDs as well
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        task.setId(document.getId());
                         taskList.add(task);
+                        taskIdList.add(document.getId()); // Store document ID
                     }
                     adapter.notifyDataSetChanged();
                     Toast.makeText(requireContext(), "Showing " + taskList.size() + " of your tasks", Toast.LENGTH_SHORT).show();
@@ -337,6 +350,8 @@ public class TasksFragment extends Fragment {
                     db.collection("tasks")
                             .add(newTask)
                             .addOnSuccessListener(documentReference -> {
+                                String newTaskId = documentReference.getId();
+                                taskIdList.add(newTaskId); // Add the new ID to the list
                                 Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
                                 loadTasks();
                             })
@@ -394,9 +409,11 @@ public class TasksFragment extends Fragment {
     // Custom RecyclerView Adapter for Fragment
     private class TasksFragmentAdapter extends RecyclerView.Adapter<TasksFragmentAdapter.TaskViewHolder> {
         private List<Task> tasks;
+        private List<String> taskIds;
 
-        TasksFragmentAdapter(List<Task> tasks) {
+        TasksFragmentAdapter(List<Task> tasks, List<String> taskIds) {
             this.tasks = tasks;
+            this.taskIds = taskIds;
         }
 
         @NonNull
@@ -410,21 +427,21 @@ public class TasksFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
             Task task = tasks.get(position);
+            
             holder.taskTitle.setText(task.getTitle());
             holder.taskDescription.setText(task.getDescription());
-            holder.taskStatus.setText(task.getStatus());
-            holder.taskHirer.setText("By: " + task.getHirerName());
+            holder.taskStatus.setText("Status: " + task.getStatus());
             
             NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
             holder.taskPayment.setText(format.format(task.getPayment()));
-
-            // Set date and location
+            
+            holder.taskHirer.setText("By: " + task.getHirerName());
             holder.taskDate.setText(task.getDueDate() != null ? task.getDueDate() : "No date");
             holder.taskLocation.setText(task.getLocation() != null ? task.getLocation() : "No location");
 
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), TaskDetailsActivity.class);
-                intent.putExtra("task_id", task.getId());
+                intent.putExtra("task_id", taskIds.get(position)); // Pass document ID
                 intent.putExtra("task_title", task.getTitle());
                 intent.putExtra("task_description", task.getDescription());
                 intent.putExtra("task_payment", task.getPayment());
