@@ -162,6 +162,25 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp"/>
 
+                    <TextView
+                        android:id="@+id/routeInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Calculating route..."
+                        android:textSize="14sp"
+                        android:textColor="@color/design_default_color_secondary"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnShowRoute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Show Route"
+                        android:textSize="12sp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_marginBottom="8dp"/>
+
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="200dp"

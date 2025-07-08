@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,20 +12,28 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
+import android.view.View;
 
 public class TaskDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
-    private TextView titleText, descriptionText, paymentText, statusText, hirerText, dateText, locationText;
+    private TextView titleText, descriptionText, paymentText, statusText, hirerText, dateText, locationText, routeInfoText;
+    private Button btnShowRoute;
     private SessionManager sessionManager;
     private LocationHelper locationHelper;
+    private RouteHelper routeHelper;
     private MapView mapView;
     private GoogleMap googleMap;
     private String taskLocation;
     private ChatbotManager chatbotManager;
+    private LatLng currentLocation;
+    private LatLng taskLocationCoords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(this);
         locationHelper = new LocationHelper(this);
+        routeHelper = new RouteHelper(this);
 
         // Initialize chatbot
         chatbotManager = new ChatbotManager(this);
@@ -48,7 +58,18 @@ public class TaskDetailsActivity extends AppCompatActivity {
         hirerText = findViewById(R.id.taskDetailHirer);
         dateText = findViewById(R.id.taskDetailDate);
         locationText = findViewById(R.id.taskDetailLocation);
+        routeInfoText = findViewById(R.id.routeInfo);
+        btnShowRoute = findViewById(R.id.btnShowRoute);
         mapView = findViewById(R.id.taskLocationMapView);
+
+        // Setup Show Route button
+        btnShowRoute.setOnClickListener(v -> {
+            if (taskLocationCoords != null) {
+                getCurrentLocationAndShowRoute();
+            } else {
+                Toast.makeText(this, "Task location not available", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Initialize map
         mapView.onCreate(savedInstanceState);
@@ -165,33 +186,194 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 public void onMapReady(GoogleMap map) {
                     googleMap = map;
                     googleMap.getUiSettings().setZoomControlsEnabled(true);
-                    googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    
+                    try {
+                        googleMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
+                        // Permission not granted
+                    }
                     
                     // Use geocoding to get coordinates from address
                     locationHelper.getLocationFromAddress(taskLocation, new LocationHelper.GeocodeCallback() {
                         @Override
                         public void onGeocodeResult(LatLng location) {
+                            taskLocationCoords = location;
+                            // Add marker for task location
                             googleMap.addMarker(new MarkerOptions()
                                     .position(location)
                                     .title("Task Location")
-                                    .snippet(taskLocation));
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+                                    .snippet(taskLocation)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                            
+                            // Get current location and show route
+                            getCurrentLocationAndShowRoute();
                         }
                         
                         @Override
                         public void onGeocodeError(String error) {
                             // If geocoding fails, try to show Taylor's University as fallback
                             LatLng fallbackLocation = new LatLng(3.065, 101.6036);
+                            taskLocationCoords = fallbackLocation;
                             googleMap.addMarker(new MarkerOptions()
                                     .position(fallbackLocation)
                                     .title("Task Location")
-                                    .snippet(taskLocation + " (Approximate)"));
+                                    .snippet(taskLocation + " (Approximate)")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fallbackLocation, 15));
                             Toast.makeText(TaskDetailsActivity.this, "Unable to find exact location on map", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             });
+        }
+    }
+
+    private void getCurrentLocationAndShowRoute() {
+        if (locationHelper.hasLocationPermission()) {
+            locationHelper.getCurrentLocation(new LocationHelper.LocationCallback() {
+                @Override
+                public void onLocationReceived(LatLng location, String address) {
+                    currentLocation = location;
+                    // Add marker for current location
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(location)
+                            .title("Your Location")
+                            .snippet("Current Location")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    
+                    // Calculate and display route
+                    calculateRoute();
+                    
+                    // Adjust camera to show both locations
+                    adjustCameraToShowBothLocations();
+                }
+                
+                @Override
+                public void onLocationError(String error) {
+                    // If can't get current location, just center on task location
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taskLocationCoords, 15));
+                    Toast.makeText(TaskDetailsActivity.this, "Unable to get current location for route", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Request permission or just show task location
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taskLocationCoords, 15));
+            locationHelper.requestLocationPermission(this);
+        }
+    }
+
+    private void calculateRoute() {
+        if (currentLocation != null && taskLocationCoords != null) {
+            // Check if API key is configured
+            if (!routeHelper.isApiKeyConfigured()) {
+                android.util.Log.e("TaskDetailsActivity", "Google Maps API key not configured properly");
+                Toast.makeText(this, "Route feature requires Google Maps API key configuration", Toast.LENGTH_LONG).show();
+                if (routeInfoText != null) {
+                    routeInfoText.setVisibility(View.VISIBLE);
+                    routeInfoText.setText("❌ API key not configured");
+                }
+                return;
+            }
+            
+            // Show route info TextView and set loading text
+            if (routeInfoText != null) {
+                routeInfoText.setVisibility(View.VISIBLE);
+                routeInfoText.setText("Calculating route...");
+            }
+            
+            android.util.Log.d("TaskDetailsActivity", "Calculating route from " + 
+                currentLocation.latitude + "," + currentLocation.longitude + 
+                " to " + taskLocationCoords.latitude + "," + taskLocationCoords.longitude);
+            
+            routeHelper.calculateRoute(currentLocation, taskLocationCoords, new RouteHelper.RouteCallback() {
+                @Override
+                public void onRouteCalculated(List<LatLng> routePoints, String distance, String duration) {
+                    android.util.Log.d("TaskDetailsActivity", "Route calculated successfully. Points: " + 
+                        routePoints.size() + ", Distance: " + distance + ", Duration: " + duration);
+                        
+                    runOnUiThread(() -> {
+                        // Draw route on map (this clears existing markers)
+                        routeHelper.drawRouteOnMap(googleMap, routePoints);
+                        
+                        // Re-add markers after route is drawn
+                        addMarkersToMap();
+                        
+                        // Update route info text
+                        String routeInfo = "🚗 Distance: " + distance + " • ⏱️ Duration: " + duration;
+                        if (routeInfoText != null) {
+                            routeInfoText.setVisibility(View.VISIBLE);
+                            routeInfoText.setText(routeInfo);
+                        } else {
+                            Toast.makeText(TaskDetailsActivity.this, routeInfo, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                
+                @Override
+                public void onRouteError(String error) {
+                    android.util.Log.e("TaskDetailsActivity", "Route calculation failed: " + error);
+                    
+                    runOnUiThread(() -> {
+                        String errorMessage = "Route calculation failed";
+                        if (error.contains("API key")) {
+                            errorMessage += ": API key issue";
+                        } else if (error.contains("ZERO_RESULTS")) {
+                            errorMessage += ": No route found";
+                        } else if (error.contains("OVER_QUERY_LIMIT")) {
+                            errorMessage += ": API quota exceeded";
+                        } else if (error.contains("REQUEST_DENIED")) {
+                            errorMessage += ": API access denied";
+                        } else {
+                            errorMessage += ": " + error;
+                        }
+                        
+                        Toast.makeText(TaskDetailsActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        if (routeInfoText != null) {
+                            routeInfoText.setVisibility(View.VISIBLE);
+                            routeInfoText.setText("❌ Route unavailable");
+                        }
+                    });
+                }
+            });
+        } else {
+            android.util.Log.e("TaskDetailsActivity", "Cannot calculate route - missing locations. " +
+                "Current: " + currentLocation + ", Task: " + taskLocationCoords);
+            Toast.makeText(this, "Cannot calculate route - location data missing", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addMarkersToMap() {
+        if (googleMap == null) return;
+        
+        // Add task location marker
+        if (taskLocationCoords != null) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(taskLocationCoords)
+                    .title("Task Location")
+                    .snippet(taskLocation)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        }
+        
+        // Add current location marker
+        if (currentLocation != null) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(currentLocation)
+                    .title("Your Location")
+                    .snippet("Current Location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        }
+    }
+
+    private void adjustCameraToShowBothLocations() {
+        if (currentLocation != null && taskLocationCoords != null) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(currentLocation);
+            builder.include(taskLocationCoords);
+            LatLngBounds bounds = builder.build();
+            
+            int padding = 100; // Padding in pixels
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
         }
     }
 
@@ -224,6 +406,24 @@ public class TaskDetailsActivity extends AppCompatActivity {
         super.onLowMemory();
         if (mapView != null) {
             mapView.onLowMemory();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LocationHelper.getLocationPermissionRequestCode()) {
+            if (grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Location permission granted! Calculating route...", Toast.LENGTH_SHORT).show();
+                if (taskLocationCoords != null) {
+                    getCurrentLocationAndShowRoute();
+                }
+            } else {
+                Toast.makeText(this, "Location permission denied. Route unavailable.", Toast.LENGTH_SHORT).show();
+                if (routeInfoText != null) {
+                    routeInfoText.setVisibility(View.GONE);
+                }
+            }
         }
     }
 } 
