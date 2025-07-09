@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -32,6 +31,14 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.app.AlertDialog;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.SearchView;
+import androidx.core.content.ContextCompat;
 
 public class TasksFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -41,7 +48,17 @@ public class TasksFragment extends Fragment {
     private FloatingActionButton fabAddTask;
     private List<Task> taskList;
     private List<String> taskIdList; // Store document IDs separately
+    private List<Task> originalTaskList; // Store original unfiltered list
+    private List<String> originalTaskIdList; // Store original IDs
     private LocationHelper locationHelper;
+    private FilterManager filterManager;
+    private SearchView searchView;
+    private ImageButton btnFilter;
+    private TextView filterBadge;
+    
+    // Search state
+    private String currentSearchQuery = "";
+    private FilterManager.FilterCriteria currentFilterCriteria = null;
 
     // Map variables for dialog
     private MapView mapView;
@@ -78,8 +95,13 @@ public class TasksFragment extends Fragment {
         locationHelper = new LocationHelper(requireContext());
         recyclerView = view.findViewById(R.id.tasksRecyclerView);
         fabAddTask = view.findViewById(R.id.fabAddTask);
+        searchView = view.findViewById(R.id.searchView);
+        btnFilter = view.findViewById(R.id.btnFilter);
+        filterBadge = view.findViewById(R.id.filterBadge);
         taskList = new ArrayList<>();
         taskIdList = new ArrayList<>();
+        originalTaskList = new ArrayList<>();
+        originalTaskIdList = new ArrayList<>();
 
         // Show/hide FAB based on user type
         if ("Hirer".equals(sessionManager.getUserType())) {
@@ -97,6 +119,10 @@ public class TasksFragment extends Fragment {
 
         // Setup RecyclerView
         setupRecyclerView();
+        
+        // Setup search and filter
+        setupSearchAndFilter();
+        
         loadTasks();
     }
 
@@ -104,6 +130,42 @@ public class TasksFragment extends Fragment {
         adapter = new TasksFragmentAdapter(taskList, taskIdList);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
+    }
+    
+    private void setupSearchAndFilter() {
+        // Initialize FilterManager
+        filterManager = new FilterManager(requireContext(), new FilterManager.FilterCallback() {
+            @Override
+            public void onFiltersApplied(FilterManager.FilterCriteria criteria) {
+                currentFilterCriteria = criteria;
+                applySearchAndFilters();
+            }
+
+            @Override
+            public void onFilterCountChanged(int activeFilterCount) {
+                updateFilterBadge(activeFilterCount);
+            }
+        });
+        
+        // Setup filter button click
+        btnFilter.setOnClickListener(v -> filterManager.showFilterDialog());
+        
+        // Setup enhanced search functionality
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                currentSearchQuery = query.trim();
+                applySearchAndFilters();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                currentSearchQuery = newText.trim();
+                applySearchAndFilters();
+                return true;
+            }
+        });
     }
 
     private void loadTasks() {
@@ -143,7 +205,14 @@ public class TasksFragment extends Fragment {
                     taskList.addAll(tempTasks);
                     taskIdList.addAll(tempIds);
                     
-                    adapter.notifyDataSetChanged();
+                    // Store original data for filtering
+                    originalTaskList.clear();
+                    originalTaskIdList.clear();
+                    originalTaskList.addAll(tempTasks);
+                    originalTaskIdList.addAll(tempIds);
+                    
+                    // Apply current search and filters to new data
+                    applySearchAndFilters();
                 })
                 .addOnFailureListener(e -> 
                     Toast.makeText(requireContext(), "Error loading tasks: " + e.getMessage(), 
@@ -195,7 +264,14 @@ public class TasksFragment extends Fragment {
                     taskList.addAll(tempTasks);
                     taskIdList.addAll(tempIds);
                     
-                    adapter.notifyDataSetChanged();
+                    // Store original data for filtering
+                    originalTaskList.clear();
+                    originalTaskIdList.clear();
+                    originalTaskList.addAll(tempTasks);
+                    originalTaskIdList.addAll(tempIds);
+                    
+                    // Apply current search and filters to new data
+                    applySearchAndFilters();
                     Toast.makeText(requireContext(), "Showing " + taskList.size() + " of your open tasks", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> 
@@ -203,119 +279,541 @@ public class TasksFragment extends Fragment {
                             Toast.LENGTH_SHORT).show());
     }
 
-    private void showAddTaskDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_task, null);
+    /**
+     * Enhanced search and filter system that combines both search and filters
+     */
+    private void applySearchAndFilters() {
+        if (originalTaskList.isEmpty()) {
+            return;
+        }
         
-        // Get all input fields with correct IDs
+        taskList.clear();
+        taskIdList.clear();
+        
+        for (int i = 0; i < originalTaskList.size(); i++) {
+            Task task = originalTaskList.get(i);
+            boolean matches = true;
+            
+            // Apply search filter first
+            if (!currentSearchQuery.isEmpty()) {
+                if (!taskMatchesSearchQuery(task, currentSearchQuery)) {
+                    matches = false;
+                }
+            }
+            
+            // Apply filters if search passes (or no search)
+            if (matches && currentFilterCriteria != null) {
+                matches = taskMatchesAllFilters(task, currentFilterCriteria);
+            }
+            
+            if (matches) {
+                taskList.add(task);
+                taskIdList.add(originalTaskIdList.get(i));
+            }
+        }
+        
+        // Apply sorting if filters are active
+        if (currentFilterCriteria != null && !currentFilterCriteria.sortBy.isEmpty()) {
+            applySorting(currentFilterCriteria.sortBy);
+        }
+        
+        adapter.notifyDataSetChanged();
+        
+        // Show search/filter results feedback
+        showSearchFilterFeedback();
+    }
+    
+    /**
+     * Enhanced search algorithm with fuzzy matching and multiple field support
+     */
+    private boolean taskMatchesSearchQuery(Task task, String query) {
+        if (query.isEmpty()) return true;
+        
+        String[] searchTerms = query.toLowerCase().split("\\s+");
+        
+        // Searchable fields
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        String location = task.getLocation().toLowerCase();
+        String hirerName = task.getHirerName().toLowerCase();
+        String paymentStr = "rm" + task.getPayment();
+        
+        // Check if all search terms are found in any combination of fields
+        for (String term : searchTerms) {
+            boolean termFound = false;
+            
+            // Direct text matching
+            if (title.contains(term) || 
+                description.contains(term) || 
+                location.contains(term) || 
+                hirerName.contains(term) ||
+                paymentStr.contains(term)) {
+                termFound = true;
+            }
+            
+            // Category keyword matching
+            if (!termFound) {
+                termFound = matchesCategoryKeywords(term, title, description);
+            }
+            
+            // Payment range matching
+            if (!termFound) {
+                termFound = matchesPaymentKeywords(term, task.getPayment());
+            }
+            
+            // Location area matching
+            if (!termFound) {
+                termFound = matchesLocationKeywords(term, location);
+            }
+            
+            if (!termFound) {
+                return false; // All terms must be found
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Enhanced category keyword matching for search
+     */
+    private boolean matchesCategoryKeywords(String term, String title, String description) {
+        // Cleaning keywords
+        if (term.equals("clean") || term.equals("cleaning") || term.equals("sweep") || 
+            term.equals("mop") || term.equals("vacuum") || term.equals("tidy")) {
+            return title.contains("clean") || description.contains("clean") ||
+                   title.contains("sweep") || description.contains("sweep") ||
+                   title.contains("mop") || description.contains("mop");
+        }
+        
+        // Tutoring keywords
+        if (term.equals("tutor") || term.equals("teach") || term.equals("lesson") || 
+            term.equals("study") || term.equals("homework") || term.equals("education")) {
+            return title.contains("tutor") || description.contains("tutor") ||
+                   title.contains("teach") || description.contains("teach") ||
+                   title.contains("lesson") || description.contains("lesson");
+        }
+        
+        // Delivery keywords
+        if (term.equals("deliver") || term.equals("delivery") || term.equals("pickup") || 
+            term.equals("transport") || term.equals("send") || term.equals("courier")) {
+            return title.contains("deliver") || description.contains("deliver") ||
+                   title.contains("pickup") || description.contains("pickup") ||
+                   title.contains("transport") || description.contains("transport");
+        }
+        
+        // Small tasks keywords
+        if (term.equals("repair") || term.equals("fix") || term.equals("assembly") || 
+            term.equals("help") || term.equals("assistance") || term.equals("quick")) {
+            return title.contains("repair") || description.contains("repair") ||
+                   title.contains("assembly") || description.contains("assembly") ||
+                   title.contains("help") || description.contains("help");
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Payment keyword matching for search
+     */
+    private boolean matchesPaymentKeywords(String term, double payment) {
+        try {
+            // Check if user is searching for specific payment amounts
+            if (term.startsWith("rm")) {
+                double searchAmount = Double.parseDouble(term.substring(2));
+                return Math.abs(payment - searchAmount) < 10; // Within RM10 range
+            }
+            
+            // Payment range keywords
+            if (term.equals("cheap") || term.equals("low")) {
+                return payment <= 50;
+            }
+            if (term.equals("expensive") || term.equals("high")) {
+                return payment >= 200;
+            }
+            if (term.equals("medium") || term.equals("average")) {
+                return payment >= 50 && payment <= 200;
+            }
+        } catch (NumberFormatException e) {
+            // Ignore invalid number formats
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Location keyword matching for search
+     */
+    private boolean matchesLocationKeywords(String term, String location) {
+        // Area shortcuts
+        if (term.equals("pj")) {
+            return location.contains("petaling jaya");
+        }
+        if (term.equals("subang")) {
+            return location.contains("subang");
+        }
+        if (term.equals("shah alam")) {
+            return location.contains("shah alam");
+        }
+        if (term.equals("kl") || term.equals("kuala lumpur")) {
+            return location.contains("kuala lumpur") || location.contains("kl");
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Show feedback about search and filter results
+     */
+    private void showSearchFilterFeedback() {
+        String message = "";
+        
+        if (!currentSearchQuery.isEmpty() && currentFilterCriteria != null && 
+            (!currentFilterCriteria.categories.isEmpty() || !currentFilterCriteria.paymentRange.isEmpty())) {
+            message = "Found " + taskList.size() + " tasks matching \"" + currentSearchQuery + "\" with filters";
+        } else if (!currentSearchQuery.isEmpty()) {
+            message = "Found " + taskList.size() + " tasks matching \"" + currentSearchQuery + "\"";
+        } else if (currentFilterCriteria != null && 
+                  (!currentFilterCriteria.categories.isEmpty() || !currentFilterCriteria.paymentRange.isEmpty())) {
+            message = "Found " + taskList.size() + " tasks with current filters";
+        }
+        
+        if (!message.isEmpty() && getContext() != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    /**
+     * Update the filter badge UI based on active filter count
+     */
+    private void updateFilterBadge(int activeFilterCount) {
+        if (filterBadge == null) return;
+        
+        if (activeFilterCount > 0) {
+            filterBadge.setText(String.valueOf(activeFilterCount));
+            filterBadge.setVisibility(View.VISIBLE);
+            
+            // Update button appearance for active state
+            btnFilter.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.button_primary_background));
+            btnFilter.setImageResource(R.drawable.ic_filter_list_active);
+            
+            // Show filter summary in a long press
+            btnFilter.setOnLongClickListener(v -> {
+                String summary = filterManager.getActiveFiltersSummary();
+                new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("🎛️ Active Filters (" + activeFilterCount + ")")
+                    .setMessage(summary)
+                    .setPositiveButton("Clear All", (dialog, which) -> {
+                        filterManager.clearAllFilters();
+                        currentFilterCriteria = null;
+                        applySearchAndFilters();
+                    })
+                    .setNegativeButton("Close", null)
+                    .show();
+                return true;
+            });
+        } else {
+            filterBadge.setVisibility(View.GONE);
+            
+            // Reset button appearance for inactive state
+            btnFilter.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.button_primary_background));
+            btnFilter.setImageResource(R.drawable.ic_filter_list);
+            
+            // Remove long press listener
+            btnFilter.setOnLongClickListener(null);
+        }
+    }
+    
+    /**
+     * Check if a task matches all current filter criteria
+     */
+    private boolean taskMatchesAllFilters(Task task, FilterManager.FilterCriteria criteria) {
+        // Filter by categories (multiple selection)
+        if (!criteria.categories.isEmpty()) {
+            if (!taskMatchesAnyCategory(task, criteria.categories)) {
+                return false;
+            }
+        }
+        
+        // Filter by payment range (single selection)
+        if (!criteria.paymentRange.isEmpty()) {
+            if (!taskMatchesPaymentRange(task, criteria.paymentRange)) {
+                return false;
+            }
+        }
+        
+        // Filter by duration
+        if (!criteria.durations.isEmpty()) {
+            if (!taskMatchesDuration(task, criteria.durations)) {
+                return false;
+            }
+        }
+        
+        // Filter by complexity
+        if (!criteria.complexities.isEmpty()) {
+            if (!taskMatchesComplexity(task, criteria.complexities)) {
+                return false;
+            }
+        }
+        
+        // Filter by distance (in km)
+        if (criteria.distance > 0) {
+            if (!taskMatchesDistance(task, criteria.distance)) {
+                return false;
+            }
+        }
+        
+        // Filter by area
+        if (!criteria.areas.isEmpty()) {
+            if (!taskMatchesArea(task, criteria.areas)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean taskMatchesAnyCategory(Task task, List<String> categories) {
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String category : categories) {
+            switch (category.toLowerCase()) {
+                case "cleaning":
+                    if (title.contains("clean") || description.contains("clean") ||
+                        title.contains("sweep") || description.contains("sweep") ||
+                        title.contains("mop") || description.contains("mop")) {
+                        return true;
+                    }
+                    break;
+                case "tutoring":
+                    if (title.contains("tutor") || description.contains("tutor") ||
+                        title.contains("teach") || description.contains("teach") ||
+                        title.contains("lesson") || description.contains("lesson")) {
+                        return true;
+                    }
+                    break;
+                case "delivery":
+                    if (title.contains("deliver") || description.contains("deliver") ||
+                        title.contains("pickup") || description.contains("pickup") ||
+                        title.contains("transport") || description.contains("transport")) {
+                        return true;
+                    }
+                    break;
+                case "small tasks":
+                    if (title.contains("repair") || description.contains("repair") ||
+                        title.contains("assembly") || description.contains("assembly") ||
+                        title.contains("help") || description.contains("help")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesPaymentRange(Task task, String paymentRange) {
+        double payment = task.getPayment();
+        
+        switch (paymentRange) {
+            case "10-50":
+                return payment >= 10 && payment <= 50;
+            case "50-100":
+                return payment >= 50 && payment <= 100;
+            case "100-200":
+                return payment >= 100 && payment <= 200;
+            case "200+":
+                return payment >= 200;
+            default:
+                return true;
+        }
+    }
+    
+    private boolean taskMatchesDuration(Task task, List<String> durations) {
+        // Since Task doesn't have duration field, we'll match based on title/description keywords
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String duration : durations) {
+            switch (duration.toLowerCase()) {
+                case "quick":
+                    if (title.contains("quick") || description.contains("quick") ||
+                        title.contains("short") || description.contains("short") ||
+                        title.contains("fast") || description.contains("fast")) {
+                        return true;
+                    }
+                    break;
+                case "half day":
+                    if (title.contains("half day") || description.contains("half day") ||
+                        title.contains("morning") || description.contains("morning") ||
+                        title.contains("afternoon") || description.contains("afternoon")) {
+                        return true;
+                    }
+                    break;
+                case "full day":
+                    if (title.contains("full day") || description.contains("full day") ||
+                        title.contains("all day") || description.contains("all day")) {
+                        return true;
+                    }
+                    break;
+                case "multi-day":
+                    if (title.contains("multi") || description.contains("multi") ||
+                        title.contains("several days") || description.contains("several days") ||
+                        title.contains("week") || description.contains("week")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesComplexity(Task task, List<String> complexities) {
+        // Match based on title/description keywords
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String complexity : complexities) {
+            switch (complexity.toLowerCase()) {
+                case "beginner":
+                    if (title.contains("easy") || description.contains("easy") ||
+                        title.contains("simple") || description.contains("simple") ||
+                        title.contains("basic") || description.contains("basic") ||
+                        title.contains("beginner") || description.contains("beginner")) {
+                        return true;
+                    }
+                    break;
+                case "experience":
+                    if (title.contains("experience") || description.contains("experience") ||
+                        title.contains("intermediate") || description.contains("intermediate") ||
+                        title.contains("skilled") || description.contains("skilled")) {
+                        return true;
+                    }
+                    break;
+                case "professional":
+                    if (title.contains("professional") || description.contains("professional") ||
+                        title.contains("expert") || description.contains("expert") ||
+                        title.contains("advanced") || description.contains("advanced") ||
+                        title.contains("certified") || description.contains("certified")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesDistance(Task task, int maxDistance) {
+        // Since we don't have actual distance calculation, we'll just return true for now
+        // In a real implementation, you would calculate distance from user's location to task location
+        return true;
+    }
+    
+    private boolean taskMatchesArea(Task task, List<String> areas) {
+        String location = task.getLocation().toLowerCase();
+        
+        for (String area : areas) {
+            if (location.contains(area.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void applySorting(String sortBy) {
+        switch (sortBy) {
+            case "payment":
+                // Sort by highest payment first
+                for (int i = 0; i < taskList.size() - 1; i++) {
+                    for (int j = i + 1; j < taskList.size(); j++) {
+                        if (taskList.get(i).getPayment() < taskList.get(j).getPayment()) {
+                            // Swap tasks and IDs
+                            Task tempTask = taskList.get(i);
+                            String tempId = taskIdList.get(i);
+                            taskList.set(i, taskList.get(j));
+                            taskIdList.set(i, taskIdList.get(j));
+                            taskList.set(j, tempTask);
+                            taskIdList.set(j, tempId);
+                        }
+                    }
+                }
+                break;
+            case "newest":
+                // Sort by newest first
+                for (int i = 0; i < taskList.size() - 1; i++) {
+                    for (int j = i + 1; j < taskList.size(); j++) {
+                        if (taskList.get(i).getTimestamp() < taskList.get(j).getTimestamp()) {
+                            // Swap tasks and IDs
+                            Task tempTask = taskList.get(i);
+                            String tempId = taskIdList.get(i);
+                            taskList.set(i, taskList.get(j));
+                            taskIdList.set(i, taskIdList.get(j));
+                            taskList.set(j, tempTask);
+                            taskIdList.set(j, tempId);
+                        }
+                    }
+                }
+                break;
+                // Note: Distance and Rating sorting would require additional data/implementation
+        }
+    }
+
+    private void showAddTaskDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_task_new, null);
+        
+        // Get all input fields with correct IDs (same as before for backend compatibility)
         TextInputEditText titleInput = dialogView.findViewById(R.id.editTextTitle);
         TextInputEditText descriptionInput = dialogView.findViewById(R.id.editTextDescription);
         TextInputEditText paymentInput = dialogView.findViewById(R.id.editTextPayment);
-        TextInputEditText dateInput = dialogView.findViewById(R.id.editTextDate);
+        TextView dateInput = dialogView.findViewById(R.id.editTextDate);
         TextInputEditText locationInput = dialogView.findViewById(R.id.editTextLocation);
         mapView = dialogView.findViewById(R.id.mapView);
+        
+        // UI elements from the design
+        RelativeLayout datePickerLayout = dialogView.findViewById(R.id.datePickerLayout);
+        Button createTaskButton = dialogView.findViewById(R.id.createTaskButton);
+        ImageView closeButton = dialogView.findViewById(R.id.closeButton);
 
-        // Initialize map
-        mapView.onCreate(null);
-        mapView.onResume();
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap map) {
-                googleMap = map;
-                googleMap.getUiSettings().setZoomControlsEnabled(true);
-                googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                
-                // Enable my location layer if permission is available
-                try {
-                    googleMap.setMyLocationEnabled(true);
-                } catch (SecurityException e) {
-                    // Permission not granted, that's okay - button will still be visible
+        // Initialize map (kept hidden for new design)
+        if (mapView != null) {
+            mapView.onCreate(null);
+            mapView.onResume();
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    googleMap = map;
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    
+                    // Enable my location layer if permission is available
+                    try {
+                        googleMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
+                        // Permission not granted, that's okay
+                    }
+                    
+                    // Set default location to Taylor's University
+                    LatLng taylorsLocation = new LatLng(3.065, 101.6036);
+                    selectedLocation = taylorsLocation;
+                    selectedAddress = "1, Jln Taylors, 47500 Subang Jaya, Selangor";
+                    
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taylorsLocation, 15));
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(taylorsLocation)
+                            .title("Taylor's University")
+                            .snippet("Default Location"));
+                    locationInput.setText(selectedAddress);
                 }
-                
-                // Set up My Location button click listener
-                googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        // Get current location and update our fields
-                        if (locationHelper.hasLocationPermission()) {
-                            locationHelper.getCurrentLocation(new LocationHelper.LocationCallback() {
-                                @Override
-                                public void onLocationReceived(LatLng location, String address) {
-                                    selectedLocation = location;
-                                    selectedAddress = address;
-                                    locationInput.setText(address);
-                                    
-                                    // Update marker
-                                    googleMap.clear();
-                                    googleMap.addMarker(new MarkerOptions()
-                                            .position(location)
-                                            .title("Your Current Location")
-                                            .snippet(address));
-                                }
-                                
-                                @Override
-                                public void onLocationError(String error) {
-                                    Toast.makeText(requireContext(), "Unable to get current location: " + error, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            // Request permission if not granted
-                            locationHelper.requestLocationPermission(getActivity());
-                        }
-                        return false; // Return false to allow default behavior (centering map)
-                    }
-                });
-                
-                // Set default location to Taylor's University
-                LatLng taylorsLocation = new LatLng(3.065, 101.6036); // Taylor's University coordinates
-                selectedLocation = taylorsLocation;
-                selectedAddress = "1, Jln Taylors, 47500 Subang Jaya, Selangor";
-                
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taylorsLocation, 15));
-                googleMap.addMarker(new MarkerOptions()
-                        .position(taylorsLocation)
-                        .title("Taylor's University")
-                        .snippet("Default Location"));
-                locationInput.setText(selectedAddress);
+            });
+        }
 
-                // Allow user to select location by tapping on map
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        selectedLocation = latLng;
-                        googleMap.clear();
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title("Selected Location"));
-                        
-                        // Reverse geocode to get address
-                        locationHelper.getAddressFromLocation(latLng, new LocationHelper.AddressCallback() {
-                            @Override
-                            public void onAddressResult(String address) {
-                                selectedAddress = address;
-                                locationInput.setText(address);
-                            }
-
-                            @Override
-                            public void onAddressError(String error) {
-                                selectedAddress = "Lat: " + String.format("%.4f", latLng.latitude) + 
-                                               ", Lng: " + String.format("%.4f", latLng.longitude);
-                                locationInput.setText(selectedAddress);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-        // Setup date picker
-        dateInput.setOnClickListener(v -> {
-            // Get current date
+        // Setup date picker (enhanced for new design)
+        datePickerLayout.setOnClickListener(v -> {
             java.util.Calendar calendar = java.util.Calendar.getInstance();
             int year = calendar.get(java.util.Calendar.YEAR);
             int month = calendar.get(java.util.Calendar.MONTH);
             int day = calendar.get(java.util.Calendar.DAY_OF_MONTH);
 
-            // Create and show date picker
             android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
                 requireContext(),
                 (view, selectedYear, selectedMonth, selectedDay) -> {
@@ -326,12 +824,13 @@ public class TasksFragment extends Fragment {
                 year, month, day
             );
             
-            // Set minimum date to today
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
             datePickerDialog.show();
         });
+        
 
-        // Handle location input changes
+
+        // Handle location input changes (simplified for new design)
         locationInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -364,64 +863,70 @@ public class TasksFragment extends Fragment {
             }
         });
 
-        // Create dialog with custom styling
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+        // Create dialog using the new design
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogView)
+                .setCancelable(false)
                 .create();
-                
-        // Find the create task button in the dialog layout and set its click listener
-        Button createTaskButton = dialogView.findViewById(R.id.createTaskButton);
-        if (createTaskButton != null) {
-            createTaskButton.setOnClickListener(v -> {
-                String title = titleInput.getText().toString().trim();
-                String description = descriptionInput.getText().toString().trim();
-                String paymentStr = paymentInput.getText().toString().trim();
-                String dueDate = dateInput.getText().toString().trim();
-                String location = locationInput.getText().toString().trim();
+        
+        // Close button listener
+        closeButton.setOnClickListener(v -> {
+            if (mapView != null) {
+                mapView.onDestroy();
+            }
+            dialog.dismiss();
+        });
+        
+        // Create task button listener (preserving existing backend logic)
+        createTaskButton.setOnClickListener(v -> {
+            String title = titleInput.getText().toString().trim();
+            String description = descriptionInput.getText().toString().trim();
+            String paymentStr = paymentInput.getText().toString().trim();
+            String dueDate = dateInput.getText().toString().trim();
+            String location = locationInput.getText().toString().trim();
 
-                if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
-                    dueDate.isEmpty() || location.isEmpty()) {
-                    Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
+                dueDate.isEmpty() || location.isEmpty()) {
+                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                double payment;
-                try {
-                    payment = Double.parseDouble(paymentStr);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            double payment;
+            try {
+                payment = Double.parseDouble(paymentStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                Task newTask = new Task(
-                        title,
-                        description,
-                        sessionManager.getUserId(),
-                        sessionManager.getUserName(),
-                        payment,
-                        dueDate,
-                        location
-                );
+            Task newTask = new Task(
+                    title,
+                    description,
+                    sessionManager.getUserId(),
+                    sessionManager.getUserName(),
+                    payment,
+                    dueDate, // Use only date without time
+                    location
+            );
 
-                db.collection("tasks")
-                        .add(newTask)
-                        .addOnSuccessListener(documentReference -> {
-                            String newTaskId = documentReference.getId();
-                            taskIdList.add(newTaskId); // Add the new ID to the list
-                            Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
-                            loadTasks();
-                            dialog.dismiss();
-                        })
-                        .addOnFailureListener(e -> 
-                            Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
-                                    Toast.LENGTH_SHORT).show());
-                
-                // Clean up map
-                if (mapView != null) {
-                    mapView.onDestroy();
-                }
-            });
-        }
+            db.collection("tasks")
+                    .add(newTask)
+                    .addOnSuccessListener(documentReference -> {
+                        String newTaskId = documentReference.getId();
+                        taskIdList.add(newTaskId);
+                        Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
+                        loadTasks();
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> 
+                        Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show());
+            
+            // Clean up map
+            if (mapView != null) {
+                mapView.onDestroy();
+            }
+        });
         
         dialog.show();
     }

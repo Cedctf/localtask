@@ -41,6 +41,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/content_section_guideline"
         android:layout_marginTop="?attr/actionBarSize">
+        
+        <!-- Task Checklist Icon in the center -->
+        <ImageView
+            android:id="@+id/center_task_icon"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center"
+            android:src="@drawable/task_checklist_icon"
+            android:contentDescription="LocalTask app icon"
+            android:scaleType="fitCenter" />
+            
         <!-- Custom animated views will go here in future iterations -->
     </FrameLayout>
 

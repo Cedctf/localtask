@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -144,14 +145,14 @@ public class ChatbotManager {
             return;
         }
         
-        // Create dialog
+        // Create dialog using the same approach as Task dialog
         chatDialog = new Dialog(context);
         chatDialog.setContentView(R.layout.dialog_chatbot);
         
-        // Make dialog fullscreen on smaller screens, or 80% on larger screens
+        // Match Task dialog window sizing - fullscreen approach
         WindowManager.LayoutParams layoutParams = chatDialog.getWindow().getAttributes();
-        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.9);
-        layoutParams.height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.8);
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         chatDialog.getWindow().setAttributes(layoutParams);
         
         // Initialize views
@@ -160,7 +161,7 @@ public class ChatbotManager {
         chatInput = chatDialog.findViewById(R.id.chatInput);
         sendButton = chatDialog.findViewById(R.id.btnSendMessage);
         loadingIndicator = chatDialog.findViewById(R.id.loadingIndicator);
-        ImageButton closeButton = chatDialog.findViewById(R.id.btnCloseChat);
+        ImageView closeButton = chatDialog.findViewById(R.id.btnCloseChat);
         
         // Set up listeners
         sendButton.setOnClickListener(v -> sendMessage());
@@ -217,6 +218,9 @@ public class ChatbotManager {
         messageView.setText(message);
         messageView.setTextSize(14);
         messageView.setPadding(24, 16, 24, 16);
+        
+        // Apply background color as text color to match chatbot page background
+        messageView.setTextColor(context.getResources().getColor(R.color.purple_dark_bg));
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Background rounded rectangle -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M20,10 L100,10 Q110,10 110,20 L110,100 Q110,110 100,110 L20,110 Q10,110 10,100 L10,20 Q10,10 20,10 Z" />
+    
+    <!-- Inner background -->
+    <path
+        android:fillColor="#F5F5F5"
+        android:pathData="M25,15 L95,15 Q105,15 105,25 L105,95 Q105,105 95,105 L25,105 Q15,105 15,95 L15,25 Q15,15 25,15 Z" />
+    
+    <!-- Checkmark box -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M25,25 L55,25 Q60,25 60,30 L60,50 Q60,55 55,55 L25,55 Q20,55 20,50 L20,30 Q20,25 25,25 Z" />
+    
+    <!-- Checkmark -->
+    <path
+        android:fillColor="#F5F5F5"
+        android:strokeWidth="3"
+        android:strokeColor="#F5F5F5"
+        android:pathData="M28,38 L35,45 L52,28" />
+    
+    <!-- Task line 1 -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M25,70 L50,70 Q52,70 52,72 L52,76 Q52,78 50,78 L25,78 Q23,78 23,76 L23,72 Q23,70 25,70 Z" />
+    
+    <!-- Task line 1 extended -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M55,70 L95,70 Q97,70 97,72 L97,76 Q97,78 95,78 L55,78 Q53,78 53,76 L53,72 Q53,70 55,70 Z" />
+    
+    <!-- Task line 2 -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M25,85 L50,85 Q52,85 52,87 L52,91 Q52,93 50,93 L25,93 Q23,93 23,91 L23,87 Q23,85 25,85 Z" />
+    
+    <!-- Task line 2 extended -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M55,85 L95,85 Q97,85 97,87 L97,91 Q97,93 95,93 L55,93 Q53,93 53,91 L53,87 Q53,85 55,85 Z" />
+    
+    <!-- Task line 3 -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M25,100 L50,100 Q52,100 52,102 L52,106 Q52,108 50,108 L25,108 Q23,108 23,106 L23,102 Q23,100 25,100 Z" />
+    
+    <!-- Task line 3 extended -->
+    <path
+        android:fillColor="#2F3B35"
+        android:pathData="M55,100 L95,100 Q97,100 97,102 L97,106 Q97,108 95,108 L55,108 Q53,108 53,106 L53,102 Q53,100 55,100 Z" />
+    
+</vector> 

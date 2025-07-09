@@ -8,7 +8,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,6 +31,14 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.app.AlertDialog;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.SearchView;
+import androidx.core.content.ContextCompat;
 
 public class MyTasksFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -45,6 +51,16 @@ public class MyTasksFragment extends Fragment {
     private TextView subtitleText;
     private FloatingActionButton fabAddTask;
     private LocationHelper locationHelper;
+    private SearchView searchViewMyTasks;
+    private ImageButton btnFilterMyTasks;
+    private FilterManager filterManager;
+    private TextView filterBadgeMyTasks;
+    
+    // Search and filter state
+    private String currentSearchQuery = "";
+    private FilterManager.FilterCriteria currentFilterCriteria = null;
+    private List<Task> originalTaskList = new ArrayList<>();
+    private List<String> originalTaskIdList = new ArrayList<>();
 
     // Map variables for dialog
     private MapView mapView;
@@ -80,9 +96,15 @@ public class MyTasksFragment extends Fragment {
         emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
         subtitleText = view.findViewById(R.id.myTasksSubtitle);
         fabAddTask = view.findViewById(R.id.fabAddTask);
+        searchViewMyTasks = view.findViewById(R.id.searchViewMyTasks);
+        btnFilterMyTasks = view.findViewById(R.id.btnFilterMyTasks);
+        filterBadgeMyTasks = view.findViewById(R.id.filterBadgeMyTasks);
 
         // Setup RecyclerView
         setupRecyclerView();
+        
+        // Setup search functionality
+        setupSearch();
         
         // Setup FAB for hirers
         setupAddTaskButton();
@@ -95,6 +117,42 @@ public class MyTasksFragment extends Fragment {
         adapter = new MyTasksAdapter(taskList, taskIdList);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
+    }
+    
+    private void setupSearch() {
+        // Initialize FilterManager for My Tasks
+        filterManager = new FilterManager(requireContext(), new FilterManager.FilterCallback() {
+            @Override
+            public void onFiltersApplied(FilterManager.FilterCriteria criteria) {
+                currentFilterCriteria = criteria;
+                applyMyTasksSearchAndFilters();
+            }
+
+            @Override
+            public void onFilterCountChanged(int activeFilterCount) {
+                updateFilterBadge(activeFilterCount);
+            }
+        });
+        
+        // Setup filter button click
+        btnFilterMyTasks.setOnClickListener(v -> filterManager.showFilterDialog());
+        
+        // Enhanced search functionality for My Tasks
+        searchViewMyTasks.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                currentSearchQuery = query.trim();
+                applyMyTasksSearchAndFilters();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                currentSearchQuery = newText.trim();
+                applyMyTasksSearchAndFilters();
+                return true;
+            }
+        });
     }
 
     private void loadMyAssignedTasks() {
@@ -152,19 +210,14 @@ public class MyTasksFragment extends Fragment {
                         }
                     }
                     
-                    // Add sorted results to main lists
-                    taskList.addAll(tempTasks);
-                    taskIdList.addAll(tempIds);
+                    // Store original data for filtering
+                    originalTaskList.clear();
+                    originalTaskIdList.clear();
+                    originalTaskList.addAll(tempTasks);
+                    originalTaskIdList.addAll(tempIds);
                     
-                    adapter.notifyDataSetChanged();
-                    
-                    // Update UI based on results
-                    if (taskList.isEmpty()) {
-                        showEmptyState();
-                    } else {
-                        showTasksList();
-                        updateSubtitle();
-                    }
+                    // Apply current search and filters to new data
+                    applyMyTasksSearchAndFilters();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error loading your tasks: " + e.getMessage(), 
@@ -209,25 +262,341 @@ public class MyTasksFragment extends Fragment {
                         }
                     }
                     
-                    // Add sorted results to main lists
-                    taskList.addAll(tempTasks);
-                    taskIdList.addAll(tempIds);
+                    // Store original data for filtering
+                    originalTaskList.clear();
+                    originalTaskIdList.clear();
+                    originalTaskList.addAll(tempTasks);
+                    originalTaskIdList.addAll(tempIds);
                     
-                    adapter.notifyDataSetChanged();
-                    
-                    // Update UI based on results
-                    if (taskList.isEmpty()) {
-                        showEmptyState();
-                    } else {
-                        showTasksList();
-                        updateSubtitle();
-                    }
+                    // Apply current search and filters to new data
+                    applyMyTasksSearchAndFilters();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error loading your tasks: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
                     showEmptyState();
                 });
+    }
+
+    /**
+     * Enhanced search and filter system for My Tasks
+     */
+    private void applyMyTasksSearchAndFilters() {
+        if (originalTaskList.isEmpty()) {
+            // Update UI based on empty results
+            taskList.clear();
+            taskIdList.clear();
+            adapter.notifyDataSetChanged();
+            showEmptyState();
+            return;
+        }
+        
+        taskList.clear();
+        taskIdList.clear();
+        
+        for (int i = 0; i < originalTaskList.size(); i++) {
+            Task task = originalTaskList.get(i);
+            boolean matches = true;
+            
+            // Apply search filter first
+            if (!currentSearchQuery.isEmpty()) {
+                if (!taskMatchesSearchQuery(task, currentSearchQuery)) {
+                    matches = false;
+                }
+            }
+            
+            // Apply filters if search passes (or no search)
+            if (matches && currentFilterCriteria != null) {
+                matches = taskMatchesAllFilters(task, currentFilterCriteria);
+            }
+            
+            if (matches) {
+                taskList.add(task);
+                taskIdList.add(originalTaskIdList.get(i));
+            }
+        }
+        
+        adapter.notifyDataSetChanged();
+        
+        // Update UI based on results
+        if (taskList.isEmpty()) {
+            showEmptyState();
+        } else {
+            showTasksList();
+            updateSubtitle();
+        }
+    }
+    
+    /**
+     * Enhanced search algorithm for My Tasks (same as TasksFragment)
+     */
+    private boolean taskMatchesSearchQuery(Task task, String query) {
+        if (query.isEmpty()) return true;
+        
+        String[] searchTerms = query.toLowerCase().split("\\s+");
+        
+        // Searchable fields
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        String location = task.getLocation().toLowerCase();
+        String hirerName = task.getHirerName().toLowerCase();
+        String paymentStr = "rm" + task.getPayment();
+        String status = task.getStatus().toLowerCase();
+        
+        // Check if all search terms are found in any combination of fields
+        for (String term : searchTerms) {
+            boolean termFound = false;
+            
+            // Direct text matching (including status for My Tasks)
+            if (title.contains(term) || 
+                description.contains(term) || 
+                location.contains(term) || 
+                hirerName.contains(term) ||
+                paymentStr.contains(term) ||
+                status.contains(term)) {
+                termFound = true;
+            }
+            
+            // Status keywords
+            if (!termFound) {
+                if ((term.equals("progress") || term.equals("active")) && status.equals("in_progress")) {
+                    termFound = true;
+                } else if ((term.equals("complete") || term.equals("done") || term.equals("finished")) && status.equals("completed")) {
+                    termFound = true;
+                } else if ((term.equals("open") || term.equals("available")) && status.equals("open")) {
+                    termFound = true;
+                }
+            }
+            
+            if (!termFound) {
+                return false; // All terms must be found
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Check if a task matches all current filter criteria (same logic as TasksFragment)
+     */
+    private boolean taskMatchesAllFilters(Task task, FilterManager.FilterCriteria criteria) {
+        // Filter by categories (multiple selection)
+        if (!criteria.categories.isEmpty()) {
+            if (!taskMatchesAnyCategory(task, criteria.categories)) {
+                return false;
+            }
+        }
+        
+        // Filter by payment range (single selection)
+        if (!criteria.paymentRange.isEmpty()) {
+            if (!taskMatchesPaymentRange(task, criteria.paymentRange)) {
+                return false;
+            }
+        }
+        
+        // Filter by duration
+        if (!criteria.durations.isEmpty()) {
+            if (!taskMatchesDuration(task, criteria.durations)) {
+                return false;
+            }
+        }
+        
+        // Filter by complexity
+        if (!criteria.complexities.isEmpty()) {
+            if (!taskMatchesComplexity(task, criteria.complexities)) {
+                return false;
+            }
+        }
+        
+        // Filter by area
+        if (!criteria.areas.isEmpty()) {
+            if (!taskMatchesArea(task, criteria.areas)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    // Include the same filter helper methods from TasksFragment
+    private boolean taskMatchesAnyCategory(Task task, List<String> categories) {
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String category : categories) {
+            switch (category.toLowerCase()) {
+                case "cleaning":
+                    if (title.contains("clean") || description.contains("clean") ||
+                        title.contains("sweep") || description.contains("sweep") ||
+                        title.contains("mop") || description.contains("mop")) {
+                        return true;
+                    }
+                    break;
+                case "tutoring":
+                    if (title.contains("tutor") || description.contains("tutor") ||
+                        title.contains("teach") || description.contains("teach") ||
+                        title.contains("lesson") || description.contains("lesson")) {
+                        return true;
+                    }
+                    break;
+                case "delivery":
+                    if (title.contains("deliver") || description.contains("deliver") ||
+                        title.contains("pickup") || description.contains("pickup") ||
+                        title.contains("transport") || description.contains("transport")) {
+                        return true;
+                    }
+                    break;
+                case "small tasks":
+                    if (title.contains("repair") || description.contains("repair") ||
+                        title.contains("assembly") || description.contains("assembly") ||
+                        title.contains("help") || description.contains("help")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesPaymentRange(Task task, String paymentRange) {
+        double payment = task.getPayment();
+        
+        switch (paymentRange) {
+            case "10-50":
+                return payment >= 10 && payment <= 50;
+            case "50-100":
+                return payment >= 50 && payment <= 100;
+            case "100-200":
+                return payment >= 100 && payment <= 200;
+            case "200+":
+                return payment >= 200;
+            default:
+                return true;
+        }
+    }
+    
+    private boolean taskMatchesDuration(Task task, List<String> durations) {
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String duration : durations) {
+            switch (duration.toLowerCase()) {
+                case "quick":
+                    if (title.contains("quick") || description.contains("quick") ||
+                        title.contains("short") || description.contains("short") ||
+                        title.contains("fast") || description.contains("fast")) {
+                        return true;
+                    }
+                    break;
+                case "half day":
+                    if (title.contains("half day") || description.contains("half day") ||
+                        title.contains("morning") || description.contains("morning") ||
+                        title.contains("afternoon") || description.contains("afternoon")) {
+                        return true;
+                    }
+                    break;
+                case "full day":
+                    if (title.contains("full day") || description.contains("full day") ||
+                        title.contains("all day") || description.contains("all day")) {
+                        return true;
+                    }
+                    break;
+                case "multi-day":
+                    if (title.contains("multi") || description.contains("multi") ||
+                        title.contains("several days") || description.contains("several days") ||
+                        title.contains("week") || description.contains("week")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesComplexity(Task task, List<String> complexities) {
+        String title = task.getTitle().toLowerCase();
+        String description = task.getDescription().toLowerCase();
+        
+        for (String complexity : complexities) {
+            switch (complexity.toLowerCase()) {
+                case "beginner":
+                    if (title.contains("easy") || description.contains("easy") ||
+                        title.contains("simple") || description.contains("simple") ||
+                        title.contains("basic") || description.contains("basic") ||
+                        title.contains("beginner") || description.contains("beginner")) {
+                        return true;
+                    }
+                    break;
+                case "experience":
+                    if (title.contains("experience") || description.contains("experience") ||
+                        title.contains("intermediate") || description.contains("intermediate") ||
+                        title.contains("skilled") || description.contains("skilled")) {
+                        return true;
+                    }
+                    break;
+                case "professional":
+                    if (title.contains("professional") || description.contains("professional") ||
+                        title.contains("expert") || description.contains("expert") ||
+                        title.contains("advanced") || description.contains("advanced") ||
+                        title.contains("certified") || description.contains("certified")) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean taskMatchesArea(Task task, List<String> areas) {
+        String location = task.getLocation().toLowerCase();
+        
+        for (String area : areas) {
+            if (location.contains(area.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Update the filter badge UI based on active filter count
+     */
+    private void updateFilterBadge(int activeFilterCount) {
+        if (filterBadgeMyTasks == null) return;
+        
+        if (activeFilterCount > 0) {
+            filterBadgeMyTasks.setText(String.valueOf(activeFilterCount));
+            filterBadgeMyTasks.setVisibility(View.VISIBLE);
+            
+            // Update button appearance for active state
+            btnFilterMyTasks.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.button_primary_background));
+            btnFilterMyTasks.setImageResource(R.drawable.ic_filter_list_active);
+            
+            // Show filter summary in a long press
+            btnFilterMyTasks.setOnLongClickListener(v -> {
+                String summary = filterManager.getActiveFiltersSummary();
+                new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("🎛️ Active Filters (" + activeFilterCount + ")")
+                    .setMessage(summary)
+                    .setPositiveButton("Clear All", (dialog, which) -> {
+                        filterManager.clearAllFilters();
+                        currentFilterCriteria = null;
+                        applyMyTasksSearchAndFilters();
+                    })
+                    .setNegativeButton("Close", null)
+                    .show();
+                return true;
+            });
+        } else {
+            filterBadgeMyTasks.setVisibility(View.GONE);
+            
+            // Reset button appearance for inactive state
+            btnFilterMyTasks.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.button_primary_background));
+            btnFilterMyTasks.setImageResource(R.drawable.ic_filter_list);
+            
+            // Remove long press listener
+            btnFilterMyTasks.setOnLongClickListener(null);
+        }
     }
 
     private void showEmptyState() {
@@ -268,108 +637,56 @@ public class MyTasksFragment extends Fragment {
     }
 
     private void showAddTaskDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_task, null);
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_task_new, null);
         
-        // Get all input fields with correct IDs
+        // Get all input fields with correct IDs (same as before for backend compatibility)
         TextInputEditText titleInput = dialogView.findViewById(R.id.editTextTitle);
         TextInputEditText descriptionInput = dialogView.findViewById(R.id.editTextDescription);
         TextInputEditText paymentInput = dialogView.findViewById(R.id.editTextPayment);
-        TextInputEditText dateInput = dialogView.findViewById(R.id.editTextDate);
+        TextView dateInput = dialogView.findViewById(R.id.editTextDate);
         TextInputEditText locationInput = dialogView.findViewById(R.id.editTextLocation);
         mapView = dialogView.findViewById(R.id.mapView);
+        
+        // UI elements from the design
+        RelativeLayout datePickerLayout = dialogView.findViewById(R.id.datePickerLayout);
+        Button createTaskButton = dialogView.findViewById(R.id.createTaskButton);
+        ImageView closeButton = dialogView.findViewById(R.id.closeButton);
 
-        // Initialize map
-        mapView.onCreate(null);
-        mapView.onResume();
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap map) {
-                googleMap = map;
-                googleMap.getUiSettings().setZoomControlsEnabled(true);
-                googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                
-                // Enable my location layer if permission is available
-                try {
-                    googleMap.setMyLocationEnabled(true);
-                } catch (SecurityException e) {
-                    // Permission not granted, that's okay - button will still be visible
-                }
-                
-                // Set up My Location button click listener
-                googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        // Get current location and update our fields
-                        if (locationHelper.hasLocationPermission()) {
-                            locationHelper.getCurrentLocation(new LocationHelper.LocationCallback() {
-                                @Override
-                                public void onLocationReceived(LatLng location, String address) {
-                                    selectedLocation = location;
-                                    selectedAddress = address;
-                                    locationInput.setText(address);
-                                    
-                                    // Update marker
-                                    googleMap.clear();
-                                    googleMap.addMarker(new MarkerOptions()
-                                            .position(location)
-                                            .title("Your Current Location")
-                                            .snippet(address));
-                                }
-                                
-                                @Override
-                                public void onLocationError(String error) {
-                                    Toast.makeText(requireContext(), "Unable to get current location: " + error, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            // Request permission if not granted
-                            locationHelper.requestLocationPermission(getActivity());
-                        }
-                        return false; // Return false to allow default behavior (centering map)
-                    }
-                });
-                
-                // Set default location to Taylor's University
-                LatLng taylorsLocation = new LatLng(3.065, 101.6036); // Taylor's University coordinates
-                selectedLocation = taylorsLocation;
-                selectedAddress = "1, Jln Taylors, 47500 Subang Jaya, Selangor";
-                
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taylorsLocation, 15));
-                googleMap.addMarker(new MarkerOptions()
-                        .position(taylorsLocation)
-                        .title("Taylor's University")
-                        .snippet("Default Location"));
-                locationInput.setText(selectedAddress);
-
-                // Allow user to select location by tapping on map
-                googleMap.setOnMapClickListener(latLng -> {
-                    selectedLocation = latLng;
-                    googleMap.clear();
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .title("Selected Location"));
+        // Initialize map (kept hidden for new design)
+        if (mapView != null) {
+            mapView.onCreate(null);
+            mapView.onResume();
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    googleMap = map;
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
                     
-                    // Reverse geocode to get address
-                    locationHelper.getAddressFromLocation(latLng, new LocationHelper.AddressCallback() {
-                        @Override
-                        public void onAddressResult(String address) {
-                            selectedAddress = address;
-                            locationInput.setText(address);
-                        }
+                    // Enable my location layer if permission is available
+                    try {
+                        googleMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
+                        // Permission not granted, that's okay
+                    }
+                    
+                    // Set default location to Taylor's University
+                    LatLng taylorsLocation = new LatLng(3.065, 101.6036);
+                    selectedLocation = taylorsLocation;
+                    selectedAddress = "1, Jln Taylors, 47500 Subang Jaya, Selangor";
+                    
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(taylorsLocation, 15));
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(taylorsLocation)
+                            .title("Taylor's University")
+                            .snippet("Default Location"));
+                    locationInput.setText(selectedAddress);
+                }
+            });
+        }
 
-                        @Override
-                        public void onAddressError(String error) {
-                            selectedAddress = "Lat: " + String.format("%.4f", latLng.latitude) + 
-                                           ", Lng: " + String.format("%.4f", latLng.longitude);
-                            locationInput.setText(selectedAddress);
-                        }
-                    });
-                });
-            }
-        });
-
-        // Setup date picker
-        dateInput.setOnClickListener(v -> {
+        // Setup date picker (enhanced for new design)
+        datePickerLayout.setOnClickListener(v -> {
             // Get current date
             java.util.Calendar calendar = java.util.Calendar.getInstance();
             int year = calendar.get(java.util.Calendar.YEAR);
@@ -391,8 +708,10 @@ public class MyTasksFragment extends Fragment {
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
             datePickerDialog.show();
         });
+        
 
-        // Handle location input changes
+
+        // Handle location input changes (simplified for new design)
         locationInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -425,64 +744,70 @@ public class MyTasksFragment extends Fragment {
             }
         });
 
-        // Create dialog with custom styling
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+        // Create dialog using the new design
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogView)
+                .setCancelable(false)
                 .create();
-                
-        // Find the create task button in the dialog layout and set its click listener
-        Button createTaskButton = dialogView.findViewById(R.id.createTaskButton);
-        if (createTaskButton != null) {
-            createTaskButton.setOnClickListener(v -> {
-                    String title = titleInput.getText().toString().trim();
-                    String description = descriptionInput.getText().toString().trim();
-                    String paymentStr = paymentInput.getText().toString().trim();
-                    String dueDate = dateInput.getText().toString().trim();
-                    String location = locationInput.getText().toString().trim();
+        
+        // Close button listener
+        closeButton.setOnClickListener(v -> {
+            if (mapView != null) {
+                mapView.onDestroy();
+            }
+            dialog.dismiss();
+        });
+        
+        // Create task button listener (preserving existing backend logic)
+        createTaskButton.setOnClickListener(v -> {
+            String title = titleInput.getText().toString().trim();
+            String description = descriptionInput.getText().toString().trim();
+            String paymentStr = paymentInput.getText().toString().trim();
+            String dueDate = dateInput.getText().toString().trim();
+            String location = locationInput.getText().toString().trim();
 
-                    if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
-                        dueDate.isEmpty() || location.isEmpty()) {
-                        Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
+                dueDate.isEmpty() || location.isEmpty()) {
+                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                    double payment;
-                    try {
-                        payment = Double.parseDouble(paymentStr);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            double payment;
+            try {
+                payment = Double.parseDouble(paymentStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                    Task newTask = new Task(
-                            title,
-                            description,
-                            sessionManager.getUserId(),
-                            sessionManager.getUserName(),
-                            payment,
-                            dueDate,
-                            location
-                    );
+            Task newTask = new Task(
+                    title,
+                    description,
+                    sessionManager.getUserId(),
+                    sessionManager.getUserName(),
+                    payment,
+                    dueDate, // Use only date without time
+                    location
+            );
 
-                    db.collection("tasks")
-                            .add(newTask)
-                            .addOnSuccessListener(documentReference -> {
-                                String newTaskId = documentReference.getId();
-                                taskIdList.add(newTaskId); // Add the new ID to the list
-                                Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
-                                loadMyAssignedTasks(); // Refresh the list
-                                dialog.dismiss();
-                            })
-                            .addOnFailureListener(e -> 
-                                Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
-                                        Toast.LENGTH_SHORT).show());
-                    
-                    // Clean up map
-                    if (mapView != null) {
-                        mapView.onDestroy();
-                    }
-            });
-        }
+            db.collection("tasks")
+                    .add(newTask)
+                    .addOnSuccessListener(documentReference -> {
+                        String newTaskId = documentReference.getId();
+                        taskIdList.add(newTaskId);
+                        Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
+                        loadMyAssignedTasks(); // Refresh the list
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> 
+                        Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
+                                Toast.LENGTH_SHORT).show());
+            
+            // Clean up map
+            if (mapView != null) {
+                mapView.onDestroy();
+            }
+        });
         
         dialog.show();
     }

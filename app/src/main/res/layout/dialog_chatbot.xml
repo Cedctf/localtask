@@ -1,78 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/purple_dark_bg">
 
-    <!-- Header -->
-    <LinearLayout
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purple_dark_bg">
 
         <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_dialog_email"
-            android:layout_marginEnd="12dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="AI Assistant"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/design_default_color_primary" />
-
-        <ImageButton
             android:id="@+id/btnCloseChat"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:padding="16dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:contentDescription="Close chat" />
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI Assistant"
+            android:textColor="@color/text_white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
 
-    <!-- Chat messages area -->
-    <ScrollView
-        android:id="@+id/chatScrollView"
+    </RelativeLayout>
+
+    <!-- Main Content Card -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#F5F5F5"
-        android:padding="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/purple_card_bg">
 
-        <LinearLayout
-            android:id="@+id/chatMessagesContainer"
+        <ScrollView
+            android:id="@+id/chatScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
-            <!-- Welcome message -->
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/chatMessagesContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="👋 Hi! I'm your AI assistant. How can I help you with the task management app today?"
-                android:background="@drawable/chat_bubble_ai"
-                android:padding="12dp"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp"
-                android:maxWidth="280dp" />
+                android:orientation="vertical">
 
-        </LinearLayout>
-    </ScrollView>
+                <!-- Welcome message -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="👋 Hi! I'm your AI assistant. How can I help you with the task management app today?"
+                    android:background="@drawable/chat_bubble_ai"
+                    android:padding="12dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/purple_dark_bg"
+                    android:layout_marginBottom="8dp"
+                    android:maxWidth="280dp" />
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.cardview.widget.CardView>
 
     <!-- Input area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_margin="16dp"
         android:gravity="center_vertical">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -81,7 +86,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Type your question here..."
-            android:background="@drawable/edit_text_background"
+            android:textColorHint="@color/text_hint_gray"
+            android:textColor="@color/text_white"
+            android:textSize="16sp"
+            android:background="@drawable/edittext_background"
             android:padding="12dp"
             android:maxLines="3"
             android:layout_marginEnd="8dp" />
@@ -91,9 +99,10 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:text="➤"
+            android:textColor="@color/text_white"
             android:textSize="18sp"
             android:textStyle="bold"
-            style="@style/Widget.Material3.Button.Icon" />
+            android:background="@drawable/button_primary_background" />
 
     </LinearLayout>
 

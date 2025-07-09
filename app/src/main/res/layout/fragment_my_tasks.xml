@@ -35,12 +35,67 @@
 
     </LinearLayout>
 
+    <!-- Search Bar + Filter Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="120dp"
+        android:padding="8dp"
+        android:background="@color/purple_dark_bg">
+
+        <SearchView
+            android:id="@+id/searchViewMyTasks"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:queryHint="Search my tasks..."
+            android:background="@drawable/edittext_background"
+            android:layout_marginEnd="8dp"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent" />
+
+                    <!-- Filter Button with Badge -->
+            <RelativeLayout
+                android:id="@+id/filterButtonContainerMyTasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnFilterMyTasks"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_filter_list"
+                    android:background="@drawable/button_primary_background"
+                    android:contentDescription="Filter my tasks" />
+
+                <TextView
+                    android:id="@+id/filterBadgeMyTasks"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignTop="@id/btnFilterMyTasks"
+                    android:layout_alignEnd="@id/btnFilterMyTasks"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/filter_badge_background"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+    </LinearLayout>
+
     <!-- Tasks List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myTasksRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="180dp"
         android:padding="8dp"
         android:clipToPadding="false"/>
 
@@ -49,7 +104,7 @@
         android:id="@+id/emptyStateLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="180dp"
         android:orientation="vertical"
         android:gravity="center"
         android:padding="32dp"
