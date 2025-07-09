@@ -56,6 +56,7 @@ dependencies {
     // Firebase dependencies
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
     
     // Google Maps dependency
     implementation("com.google.android.gms:play-services-maps:18.2.0")
