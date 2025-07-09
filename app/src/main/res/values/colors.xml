@@ -30,4 +30,18 @@
     <!-- Status Colors -->
     <color name="success_green">#10B981</color>
     <color name="error_red">#EF4444</color>
+    
+    <!-- New Purple Theme for Task Creation -->
+    <color name="purple_dark_bg">#120A2E</color>
+    <color name="purple_card_bg">#1F1735</color>
+    <color name="purple_accent">#673AB7</color>
+    <color name="text_hint_gray">#9E9E9E</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="button_low_priority_selected">#673AB7</color>
+    <color name="button_priority_unselected">#2D234A</color>
+    <color name="button_create_task">#673AB7</color>
+    <color name="switch_track_on">#673AB7</color>
+    <color name="switch_track_off">#9E9E9E</color>
+    <color name="switch_thumb_on">#FFFFFF</color>
+    <color name="switch_thumb_off">#EEEEEE</color>
 </resources>

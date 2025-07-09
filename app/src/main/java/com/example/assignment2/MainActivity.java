@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Configure status bar
+        StatusBarHelper.configureStatusBar(this);
+
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
 

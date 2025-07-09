@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -107,16 +108,41 @@ public class TasksFragment extends Fragment {
 
     private void loadTasks() {
         db.collection("tasks")
-                .orderBy("timestamp")
+                .whereEqualTo("status", "open")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList.clear();
                     taskIdList.clear(); // Clear IDs as well
+                    
+                    // Create temporary lists to sort by timestamp
+                    List<Task> tempTasks = new ArrayList<>();
+                    List<String> tempIds = new ArrayList<>();
+                    
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        taskList.add(task);
-                        taskIdList.add(document.getId()); // Store document ID
+                        tempTasks.add(task);
+                        tempIds.add(document.getId());
                     }
+                    
+                    // Sort by timestamp (oldest first)
+                    for (int i = 0; i < tempTasks.size() - 1; i++) {
+                        for (int j = i + 1; j < tempTasks.size(); j++) {
+                            if (tempTasks.get(i).getTimestamp() > tempTasks.get(j).getTimestamp()) {
+                                // Swap tasks
+                                Task tempTask = tempTasks.get(i);
+                                String tempId = tempIds.get(i);
+                                tempTasks.set(i, tempTasks.get(j));
+                                tempIds.set(i, tempIds.get(j));
+                                tempTasks.set(j, tempTask);
+                                tempIds.set(j, tempId);
+                            }
+                        }
+                    }
+                    
+                    // Add sorted results to main lists
+                    taskList.addAll(tempTasks);
+                    taskIdList.addAll(tempIds);
+                    
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> 
@@ -134,18 +160,43 @@ public class TasksFragment extends Fragment {
 
         db.collection("tasks")
                 .whereEqualTo("hirerId", currentUserId)
-                .orderBy("timestamp")
+                .whereEqualTo("status", "open")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList.clear();
                     taskIdList.clear(); // Clear IDs as well
+                    
+                    // Create temporary lists to sort by timestamp
+                    List<Task> tempTasks = new ArrayList<>();
+                    List<String> tempIds = new ArrayList<>();
+                    
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
-                        taskList.add(task);
-                        taskIdList.add(document.getId()); // Store document ID
+                        tempTasks.add(task);
+                        tempIds.add(document.getId());
                     }
+                    
+                    // Sort by timestamp (oldest first)
+                    for (int i = 0; i < tempTasks.size() - 1; i++) {
+                        for (int j = i + 1; j < tempTasks.size(); j++) {
+                            if (tempTasks.get(i).getTimestamp() > tempTasks.get(j).getTimestamp()) {
+                                // Swap tasks
+                                Task tempTask = tempTasks.get(i);
+                                String tempId = tempIds.get(i);
+                                tempTasks.set(i, tempTasks.get(j));
+                                tempIds.set(i, tempIds.get(j));
+                                tempTasks.set(j, tempTask);
+                                tempIds.set(j, tempId);
+                            }
+                        }
+                    }
+                    
+                    // Add sorted results to main lists
+                    taskList.addAll(tempTasks);
+                    taskIdList.addAll(tempIds);
+                    
                     adapter.notifyDataSetChanged();
-                    Toast.makeText(requireContext(), "Showing " + taskList.size() + " of your tasks", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Showing " + taskList.size() + " of your open tasks", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> 
                     Toast.makeText(requireContext(), "Error loading your tasks: " + e.getMessage(), 
@@ -313,64 +364,66 @@ public class TasksFragment extends Fragment {
             }
         });
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add New Task")
+        // Create dialog with custom styling
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setView(dialogView)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String title = titleInput.getText().toString().trim();
-                    String description = descriptionInput.getText().toString().trim();
-                    String paymentStr = paymentInput.getText().toString().trim();
-                    String dueDate = dateInput.getText().toString().trim();
-                    String location = locationInput.getText().toString().trim();
+                .create();
+                
+        // Find the create task button in the dialog layout and set its click listener
+        Button createTaskButton = dialogView.findViewById(R.id.createTaskButton);
+        if (createTaskButton != null) {
+            createTaskButton.setOnClickListener(v -> {
+                String title = titleInput.getText().toString().trim();
+                String description = descriptionInput.getText().toString().trim();
+                String paymentStr = paymentInput.getText().toString().trim();
+                String dueDate = dateInput.getText().toString().trim();
+                String location = locationInput.getText().toString().trim();
 
-                    if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
-                        dueDate.isEmpty() || location.isEmpty()) {
-                        Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
+                    dueDate.isEmpty() || location.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    double payment;
-                    try {
-                        payment = Double.parseDouble(paymentStr);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                double payment;
+                try {
+                    payment = Double.parseDouble(paymentStr);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(requireContext(), "Invalid payment amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    Task newTask = new Task(
-                            title,
-                            description,
-                            sessionManager.getUserId(),
-                            sessionManager.getUserName(),
-                            payment,
-                            dueDate,
-                            location
-                    );
+                Task newTask = new Task(
+                        title,
+                        description,
+                        sessionManager.getUserId(),
+                        sessionManager.getUserName(),
+                        payment,
+                        dueDate,
+                        location
+                );
 
-                    db.collection("tasks")
-                            .add(newTask)
-                            .addOnSuccessListener(documentReference -> {
-                                String newTaskId = documentReference.getId();
-                                taskIdList.add(newTaskId); // Add the new ID to the list
-                                Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
-                                loadTasks();
-                            })
-                            .addOnFailureListener(e -> 
-                                Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
-                                        Toast.LENGTH_SHORT).show());
-                    
-                    // Clean up map
-                    if (mapView != null) {
-                        mapView.onDestroy();
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    // Clean up map
-                    if (mapView != null) {
-                        mapView.onDestroy();
-                    }
-                })
-                .show();
+                db.collection("tasks")
+                        .add(newTask)
+                        .addOnSuccessListener(documentReference -> {
+                            String newTaskId = documentReference.getId();
+                            taskIdList.add(newTaskId); // Add the new ID to the list
+                            Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
+                            loadTasks();
+                            dialog.dismiss();
+                        })
+                        .addOnFailureListener(e -> 
+                            Toast.makeText(requireContext(), "Error adding task: " + e.getMessage(), 
+                                    Toast.LENGTH_SHORT).show());
+                
+                // Clean up map
+                if (mapView != null) {
+                    mapView.onDestroy();
+                }
+            });
+        }
+        
+        dialog.show();
     }
 
     private void showTaskFilterDialog() {

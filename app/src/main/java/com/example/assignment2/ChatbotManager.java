@@ -40,37 +40,103 @@ public class ChatbotManager {
     }
     
     public void addChatbotButton(Activity activity) {
-        // Find the root layout
-        ViewGroup rootLayout = activity.findViewById(android.R.id.content);
+        // Find the bottom navigation view
+        final View bottomNavigation = activity.findViewById(R.id.bottom_navigation);
+        
+        // Find the main activity layout
+        ViewGroup activityLayout = null;
+        ViewGroup fragmentContainer = activity.findViewById(R.id.fragment_container);
+        if (fragmentContainer != null && fragmentContainer.getParent() instanceof ViewGroup) {
+            activityLayout = (ViewGroup) fragmentContainer.getParent();
+        } else {
+            activityLayout = activity.findViewById(android.R.id.content);
+        }
+        
+        final ViewGroup finalActivityLayout = activityLayout;
         
         // Create floating action button
-        FloatingActionButton fabChatbot = new FloatingActionButton(context);
+        final FloatingActionButton fabChatbot = new FloatingActionButton(context);
         fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
         fabChatbot.setContentDescription("AI Assistant");
         
-        // Set position to bottom right
-        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 0, 32, 100); // right and bottom margins
-        
-        // Add to root layout
-        if (rootLayout instanceof ViewGroup) {
-            ((ViewGroup) rootLayout).addView(fabChatbot, params);
-            
-            // Position at bottom right
-            fabChatbot.post(() -> {
-                int[] location = new int[2];
-                rootLayout.getLocationOnScreen(location);
-                
-                fabChatbot.setX(rootLayout.getWidth() - fabChatbot.getWidth() - 32);
-                fabChatbot.setY(rootLayout.getHeight() - fabChatbot.getHeight() - 100);
-            });
+        // Add button using a simple overlay approach
+        if (finalActivityLayout != null) {
+            addChatbotWithOverlay(fabChatbot, bottomNavigation, finalActivityLayout);
         }
         
         // Set click listener
         fabChatbot.setOnClickListener(v -> showChatDialog());
+    }
+    
+    private void addChatbotWithOverlay(FloatingActionButton fabChatbot, View bottomNavigation, ViewGroup parentLayout) {
+        // Convert dp to pixels
+        float density = context.getResources().getDisplayMetrics().density;
+        int marginDp = 16;
+        int marginPx = (int) (marginDp * density);
+        
+        // Create a wrapper FrameLayout to hold the chatbot button
+        android.widget.FrameLayout wrapper = new android.widget.FrameLayout(context);
+        
+        // Add the FAB to the wrapper
+        android.widget.FrameLayout.LayoutParams fabParams = new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+        );
+        fabParams.gravity = android.view.Gravity.END | android.view.Gravity.BOTTOM;
+        fabParams.setMargins(0, 0, marginPx, marginPx);
+        wrapper.addView(fabChatbot, fabParams);
+        
+        // Add wrapper to parent layout
+        ViewGroup.LayoutParams wrapperParams;
+        
+        if (parentLayout instanceof android.widget.LinearLayout) {
+            // For LinearLayout, add as last child but position above bottom nav
+            wrapperParams = new android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    0 // We'll adjust this
+            );
+            ((android.widget.LinearLayout.LayoutParams) wrapperParams).weight = 0;
+            
+            // Position the wrapper just before the bottom navigation
+            int bottomNavIndex = -1;
+            if (bottomNavigation != null) {
+                for (int i = 0; i < parentLayout.getChildCount(); i++) {
+                    if (parentLayout.getChildAt(i) == bottomNavigation) {
+                        bottomNavIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // Set wrapper height to accommodate the FAB
+            int fabSize = (int) (56 * density); // Standard FAB size
+            ((android.widget.LinearLayout.LayoutParams) wrapperParams).height = fabSize + marginPx;
+            
+            if (bottomNavIndex != -1) {
+                parentLayout.addView(wrapper, bottomNavIndex, wrapperParams);
+            } else {
+                parentLayout.addView(wrapper, wrapperParams);
+            }
+            
+        } else {
+            // For other layouts, use standard approach
+            wrapperParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+            parentLayout.addView(wrapper, wrapperParams);
+            
+            // Adjust position if there's bottom navigation
+            if (bottomNavigation != null) {
+                bottomNavigation.post(() -> {
+                    int bottomNavHeight = bottomNavigation.getHeight();
+                    if (bottomNavHeight > 0) {
+                        fabParams.setMargins(0, 0, marginPx, marginPx + bottomNavHeight);
+                        fabChatbot.setLayoutParams(fabParams);
+                    }
+                });
+            }
+        }
     }
     
     private void showChatDialog() {

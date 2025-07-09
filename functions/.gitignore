@@ -1,0 +1,41 @@
+# Compiled JavaScript files
+**/*.js
+**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.build
+
+# Firebase cache
+.firebase/
+
+# Firebase debug log
+firebase-debug*.log
+
+# Local Firebase config
+.firebaserc.local
+
+# Temporary files
+*.tmp
+*.log 

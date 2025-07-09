@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -202,6 +203,24 @@
                 android:layout_height="wrap_content"
                 android:text="Apply for Task"
                 android:layout_marginTop="16dp"/>
+
+            <!-- Only show for users working on this task -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCompleteTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Complete Task"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/design_default_color_secondary"/>
+
+            <!-- Only show for hirers on pending payment tasks -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMarkAsPaid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mark as Paid"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@android:color/holo_green_dark"/>
         </LinearLayout>
     </ScrollView>
 

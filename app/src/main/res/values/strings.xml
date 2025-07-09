@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Assignment2</string>
+    
+    <!-- Task Creation Strings -->
+    <string name="create_new_task_title">Create new task</string>
+    <string name="close_button_description">Close screen</string>
+    <string name="details_tab">Details</string>
+    <string name="attachments_tab">Attachments</string>
+    <string name="task_name_label">Task name</string>
+    <string name="task_name_hint">Enter task title</string>
+    <string name="description_label">Description</string>
+    <string name="description_hint">Describe what needs to be done</string>
+    <string name="payment_amount_label">Payment amount</string>
+    <string name="payment_amount_hint">Enter payment amount</string>
+    <string name="choose_date_label">Choose date</string>
+    <string name="default_date">Select date</string>
+    <string name="calendar_icon_description">Calendar icon</string>
+    <string name="choose_time_label">Choose time</string>
+    <string name="default_time">02:20 PM</string>
+    <string name="time_icon_description">Time icon</string>
+    <string name="priority_label">Priority</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="reminder_schedule_label">Reminder schedule</string>
+    <string name="create_task_button_text">Create Task</string>
+    <string name="location_label">Location</string>
+    <string name="location_hint">Enter task location</string>
+    <string name="location_on_map_label">Location on Map</string>
 </resources>

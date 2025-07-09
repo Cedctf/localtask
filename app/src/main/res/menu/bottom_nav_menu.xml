@@ -6,9 +6,14 @@
         android:title="Home" />
 
     <item
-        android:id="@+id/navigation_leaderboard"
-        android:icon="@drawable/ic_leaderboard"
-        android:title="Leaderboard" />
+        android:id="@+id/navigation_my_tasks"
+        android:icon="@drawable/ic_my_tasks"
+        android:title="My Tasks" />
+
+    <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search" />
 
     <item
         android:id="@+id/navigation_badges"

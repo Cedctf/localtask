@@ -4,6 +4,9 @@
     <color name="background_light">#FFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="border_gray">#E5E7EB</color>
+    <color name="button_create_task">#673AB7</color>
+    <color name="button_low_priority_selected">#673AB7</color>
+    <color name="button_priority_unselected">#2D234A</color>
     <color name="error_red">#EF4444</color>
     <color name="facebook_blue">#1877F2</color>
     <color name="google_gray">#F5F5F5</color>
@@ -12,19 +15,55 @@
     <color name="light_purple">#A78BFA</color>
     <color name="primary_purple">#8B7CF6</color>
     <color name="primary_purple_dark">#7C3AED</color>
+    <color name="purple_accent">#673AB7</color>
     <color name="purple_background">#8B7CF6</color>
+    <color name="purple_card_bg">#1F1735</color>
+    <color name="purple_dark_bg">#120A2E</color>
     <color name="success_green">#10B981</color>
+    <color name="switch_thumb_off">#EEEEEE</color>
+    <color name="switch_thumb_on">#FFFFFF</color>
+    <color name="switch_track_off">#9E9E9E</color>
+    <color name="switch_track_on">#673AB7</color>
     <color name="text_dark">#1F2937</color>
     <color name="text_gray">#6B7280</color>
+    <color name="text_hint_gray">#9E9E9E</color>
     <color name="text_light">#9CA3AF</color>
+    <color name="text_white">#FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <string name="app_name">Assignment2</string>
+    <string name="attachments_tab">Attachments</string>
+    <string name="calendar_icon_description">Calendar icon</string>
+    <string name="choose_date_label">Choose date</string>
+    <string name="choose_time_label">Choose time</string>
+    <string name="close_button_description">Close screen</string>
+    <string name="create_new_task_title">Create new task</string>
+    <string name="create_task_button_text">Create Task</string>
+    <string name="default_date">Select date</string>
+    <string name="default_time">02:20 PM</string>
+    <string name="description_hint">Describe what needs to be done</string>
+    <string name="description_label">Description</string>
+    <string name="details_tab">Details</string>
     <string name="gcm_defaultSenderId" translatable="false">668219806710</string>
     <string name="google_api_key" translatable="false">AIzaSyAZXmS4lNqDbXbbHdNDmncQDnpxWShNGlQ</string>
     <string name="google_app_id" translatable="false">1:668219806710:android:9b79d90f5918bd012dedd7</string>
     <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAZXmS4lNqDbXbbHdNDmncQDnpxWShNGlQ</string>
+    <string name="google_maps_key" translatable="false"/>
     <string name="google_storage_bucket" translatable="false">local-task-a8836.firebasestorage.app</string>
+    <string name="location_hint">Enter task location</string>
+    <string name="location_label">Location</string>
+    <string name="location_on_map_label">Location on Map</string>
+    <string name="openai_api_key" translatable="false"/>
+    <string name="payment_amount_hint">Enter payment amount</string>
+    <string name="payment_amount_label">Payment amount</string>
+    <string name="priority_high">High</string>
+    <string name="priority_label">Priority</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
     <string name="project_id" translatable="false">local-task-a8836</string>
+    <string name="reminder_schedule_label">Reminder schedule</string>
+    <string name="task_name_hint">Enter task title</string>
+    <string name="task_name_label">Task name</string>
+    <string name="time_icon_description">Time icon</string>
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
         <item name="cardCornerRadius">8dp</item>
         <item name="cardElevation">4dp</item>
@@ -42,6 +81,12 @@
     <style name="Base.Theme.Assignment2" parent="Theme.Material3.DayNight.NoActionBar">
         
         
+        
+        
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
     <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>

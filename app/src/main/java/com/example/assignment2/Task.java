@@ -10,6 +10,10 @@ public class Task {
     private long timestamp;
     private String dueDate;
     private String location;
+    private String assignedTo;
+    private Object startTime;
+    private Object completionTime;
+    private Object paymentTime;
 
     // Empty constructor for Firestore
     public Task() {}
@@ -53,4 +57,16 @@ public class Task {
     
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+    
+    public String getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    
+    public Object getStartTime() { return startTime; }
+    public void setStartTime(Object startTime) { this.startTime = startTime; }
+    
+    public Object getCompletionTime() { return completionTime; }
+    public void setCompletionTime(Object completionTime) { this.completionTime = completionTime; }
+    
+    public Object getPaymentTime() { return paymentTime; }
+    public void setPaymentTime(Object paymentTime) { this.paymentTime = paymentTime; }
 } 

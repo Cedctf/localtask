@@ -1,52 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/purple_dark_bg">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Task Title"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/purple_dark_bg">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/taskTitleInput"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLines="1"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="@string/create_new_task_title"
+            android:textColor="@color/text_white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    </LinearLayout>
+
+    <!-- Main Content -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description"
         android:layout_marginTop="8dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:background="@drawable/card_background"
+        android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/taskDescriptionInput"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="3"
-            android:gravity="top"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:maxHeight="600dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Payment Amount"
-        android:layout_marginTop="8dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/taskPaymentInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"/>
-    </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/task_name_label"
+                    android:textColor="@color/text_hint_gray"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/editTextTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/task_name_hint"
+                    android:textColorHint="@color/text_hint_gray"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:inputType="textCapSentences"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_label"
+                    android:textColor="@color/text_hint_gray"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp" />
+
+                <EditText
+                    android:id="@+id/editTextDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:gravity="top|start"
+                    android:hint="@string/description_hint"
+                    android:textColorHint="@color/text_hint_gray"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:inputType="textMultiLine"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_amount_label"
+                    android:textColor="@color/text_hint_gray"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp" />
+
+                <EditText
+                    android:id="@+id/editTextPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/payment_amount_hint"
+                    android:textColorHint="@color/text_hint_gray"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:inputType="numberDecimal"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/choose_date_label"
+                    android:textColor="@color/text_hint_gray"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp" />
+
+                <RelativeLayout
+                    android:id="@+id/datePickerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/editTextDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/default_date"
+                        android:textColor="@color/text_white"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:padding="0dp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_email"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/calendar_icon_description" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location_label"
+                    android:textColor="@color/text_hint_gray"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp" />
+
+                <EditText
+                    android:id="@+id/editTextLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/location_hint"
+                    android:textColorHint="@color/text_hint_gray"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:inputType="text"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Map Container -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/location_on_map_label"
+                        android:textColor="@color/text_hint_gray"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <FrameLayout
+                        android:id="@+id/mapContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:background="@color/purple_card_bg"
+                        android:layout_marginBottom="16dp">
+
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/mapView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/createTaskButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_task_button_text"
+                    android:textColor="@color/text_white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_primary_background"
+                    android:paddingVertical="14dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </LinearLayout> 

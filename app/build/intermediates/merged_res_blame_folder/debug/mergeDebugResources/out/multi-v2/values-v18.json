@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.assignment2.app-mergeDebugResources-34:/values-v18/values-v18.xml",
+            "outputFile": "com.example.assignment2.app-mergeDebugResources-36:/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/Users/Cedricctf/.gradle/caches/8.11.1/transforms/1d616019f8d0d3d179c306058c4d88bf/transformed/appcompat-1.7.1/res/values-v18/values-v18.xml",
+                    "source": "C:\\Users\\user\\.gradle\\caches\\8.11.1\\transforms\\5cb2fc65d7c2f6a238384931ca73d6a5\\transformed\\appcompat-1.7.1\\res\\values-v18\\values-v18.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

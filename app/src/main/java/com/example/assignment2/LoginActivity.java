@@ -216,6 +216,10 @@ public class LoginActivity extends AppCompatActivity {
         // Create session with user document ID
         sessionManager.createLoginSession(name, userType, email, userId);
         
+        // Get and save FCM token to Firestore
+        FCMTokenManager fcmTokenManager = new FCMTokenManager(this);
+        fcmTokenManager.getAndSaveToken();
+        
         // Navigate to TaskActivity
         navigateToTaskActivity(name, userType, email);
         finish();

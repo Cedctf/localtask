@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.assignment2.app-mergeDebugResources-34:/values-h480dp-land-v13/values-h480dp-land-v13.xml",
+            "outputFile": "com.example.assignment2.app-mergeDebugResources-36:/values-h480dp-land-v13/values-h480dp-land-v13.xml",
             "map": [
                 {
-                    "source": "/Users/Cedricctf/.gradle/caches/8.11.1/transforms/c1f1cf47908d484a6568374684df0d6f/transformed/material-1.12.0/res/values-h480dp-land-v13/values-h480dp-land-v13.xml",
+                    "source": "C:\\Users\\user\\.gradle\\caches\\8.11.1\\transforms\\7ac8c004a83b4f22136e2b447769a016\\transformed\\material-1.12.0\\res\\values-h480dp-land-v13\\values-h480dp-land-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",
