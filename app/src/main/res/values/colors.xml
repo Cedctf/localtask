@@ -68,4 +68,10 @@
     <!-- Bottom Navigation Colors -->
     <color name="bottom_nav_selected">#6200EE</color>
     <color name="bottom_nav_unselected">#666666</color>
+    
+    <!-- Badge Fragment Colors -->
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="primary_color">#8B7CF6</color>
+    <color name="success_color">#10B981</color>
 </resources>

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import android.widget.AutoCompleteTextView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.NumberFormat;
@@ -53,6 +55,7 @@ public class TasksFragment extends Fragment {
     private List<Task> originalTaskList; // Store original unfiltered list
     private List<String> originalTaskIdList; // Store original IDs
     private LocationHelper locationHelper;
+    private PlacesHelper placesHelper;
     private FilterManager filterManager;
     private SearchView searchView;
     private ImageButton btnFilter;
@@ -67,6 +70,10 @@ public class TasksFragment extends Fragment {
     private GoogleMap googleMap;
     private LatLng selectedLocation;
     private String selectedAddress;
+    private String currentSelectedLocationText = "";
+    
+    // Store dialog views for location updates
+    private TextView currentLocationInput;
 
     public static TasksFragment newInstance() {
         return new TasksFragment();
@@ -95,6 +102,7 @@ public class TasksFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         sessionManager = new SessionManager(requireContext());
         locationHelper = new LocationHelper(requireContext());
+        placesHelper = new PlacesHelper(requireContext());
         recyclerView = view.findViewById(R.id.tasksRecyclerView);
         fabAddTask = view.findViewById(R.id.fabAddTask);
         searchView = view.findViewById(R.id.searchView);
@@ -108,7 +116,7 @@ public class TasksFragment extends Fragment {
         // Show/hide FAB based on user type
         if ("Hirer".equals(sessionManager.getUserType())) {
             fabAddTask.setVisibility(View.VISIBLE);
-            fabAddTask.setOnClickListener(v -> showAddTaskDialog());
+            fabAddTask.setOnClickListener(v -> openCreateTaskActivity());
             
             // Add a long click listener to toggle between all tasks and my tasks
             fabAddTask.setOnLongClickListener(v -> {
@@ -173,6 +181,11 @@ public class TasksFragment extends Fragment {
         });
     }
 
+    private void openCreateTaskActivity() {
+        Intent intent = new Intent(requireContext(), CreateTaskActivity.class);
+        startActivityForResult(intent, 300); // Request code 300 for create task
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -199,6 +212,49 @@ public class TasksFragment extends Fragment {
                     
                     Toast.makeText(requireContext(), "Filters applied successfully", Toast.LENGTH_SHORT).show();
                 }
+            }
+        } else if (requestCode == 300 && resultCode == android.app.Activity.RESULT_OK) {
+            // Handle create task activity result
+            Toast.makeText(requireContext(), "Task created successfully!", Toast.LENGTH_SHORT).show();
+            
+            // Reload tasks to show the newly created task
+            loadTasks();
+        } else if (requestCode == 200 && resultCode == android.app.Activity.RESULT_OK) {
+            // Handle location picker result (legacy - kept for compatibility)
+            if (data != null) {
+                double latitude = data.getDoubleExtra("latitude", 0);
+                double longitude = data.getDoubleExtra("longitude", 0);
+                String locationName = data.getStringExtra("locationName");
+                String locationAddress = data.getStringExtra("locationAddress");
+                
+                // Update selected location data
+                selectedLocation = new LatLng(latitude, longitude);
+                selectedAddress = locationAddress != null ? locationAddress : "";
+                
+                // Update the location input field in the dialog
+                currentSelectedLocationText = locationName != null ? locationName : selectedAddress;
+                
+                // Update the UI immediately if the dialog is still open
+                if (currentLocationInput != null) {
+                    currentLocationInput.setText(currentSelectedLocationText);
+                    currentLocationInput.setTextColor(getResources().getColor(R.color.text_dark));
+                }
+                
+                android.util.Log.d("TasksFragment", "Location selected: " + locationName + 
+                    " at " + latitude + ", " + longitude);
+                
+                // Update the map if available
+                if (googleMap != null) {
+                    googleMap.clear();
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(selectedLocation)
+                            .title(locationName)
+                            .snippet(locationAddress));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 15));
+                }
+                
+                Toast.makeText(requireContext(), "Location selected: " + 
+                    (locationName != null ? locationName : "Selected location"), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -811,7 +867,8 @@ public class TasksFragment extends Fragment {
         TextInputEditText descriptionInput = dialogView.findViewById(R.id.editTextDescription);
         TextInputEditText paymentInput = dialogView.findViewById(R.id.editTextPayment);
         TextView dateInput = dialogView.findViewById(R.id.editTextDate);
-        TextInputEditText locationInput = dialogView.findViewById(R.id.editTextLocation);
+        TextView locationInput = dialogView.findViewById(R.id.editTextLocation);
+        LinearLayout locationClickArea = dialogView.findViewById(R.id.locationClickArea);
         mapView = dialogView.findViewById(R.id.mapView);
         
         // UI elements from the design
@@ -875,37 +932,14 @@ public class TasksFragment extends Fragment {
         
 
 
-        // Handle location input changes (simplified for new design)
-        locationInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String address = s.toString().trim();
-                if (!address.isEmpty() && googleMap != null) {
-                    locationHelper.getLocationFromAddress(address, new LocationHelper.GeocodeCallback() {
-                        @Override
-                        public void onGeocodeResult(LatLng location) {
-                            selectedLocation = location;
-                            selectedAddress = address;
-                            googleMap.clear();
-                            googleMap.addMarker(new MarkerOptions()
-                                    .position(location)
-                                    .title(address));
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
-                        }
-
-                        @Override
-                        public void onGeocodeError(String error) {
-                            // Address not found, keep current location
-                        }
-                    });
-                }
-            }
+        // Store reference to location input for updates
+        currentLocationInput = locationInput;
+        
+        // Setup location picker click handler
+        locationClickArea.setOnClickListener(v -> {
+            // Open map location picker
+            Intent mapPickerIntent = new Intent(requireContext(), MapLocationPickerActivity.class);
+            startActivityForResult(mapPickerIntent, 200); // Request code 200 for location picker
         });
 
         // Create dialog using the new design
@@ -928,11 +962,12 @@ public class TasksFragment extends Fragment {
             String description = descriptionInput.getText().toString().trim();
             String paymentStr = paymentInput.getText().toString().trim();
             String dueDate = dateInput.getText().toString().trim();
-            String location = locationInput.getText().toString().trim();
+            String location = selectedAddress != null && !selectedAddress.isEmpty() ? 
+                selectedAddress : locationInput.getText().toString().trim();
 
             if (title.isEmpty() || description.isEmpty() || paymentStr.isEmpty() || 
                 dueDate.isEmpty() || location.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Please select/enter all required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 

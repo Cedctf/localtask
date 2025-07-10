@@ -170,7 +170,7 @@
                         android:contentDescription="@string/calendar_icon_description" />
                 </RelativeLayout>
 
-                <!-- Location -->
+                <!-- Location Selection -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -179,18 +179,37 @@
                     android:textSize="14sp"
                     android:layout_marginTop="16dp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextLocation"
+                <LinearLayout
+                    android:id="@+id/locationClickArea"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/location_hint"
-                    android:textColorHint="@color/text_light_grey"
-                    android:textColor="@color/text_dark"
-                    android:textSize="16sp"
+                    android:orientation="horizontal"
                     android:background="@drawable/edittext_background"
                     android:padding="16dp"
-                    android:inputType="text"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/editTextLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tap to select location"
+                        android:textColor="@color/text_light_grey"
+                        android:textSize="16sp"
+                        android:minHeight="24dp"
+                        android:gravity="center_vertical" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_search"
+                        android:layout_marginStart="8dp"
+                        android:alpha="0.6" />
+
+                </LinearLayout>
 
                 <!-- Map Container (hidden for new design but kept for backend compatibility) -->
                 <LinearLayout

@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
+import android.os.Handler;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -166,53 +167,139 @@ public class LocationHelper {
     }
 
     public void getLocationFromAddress(String address, GeocodeCallback callback) {
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address addr = addresses.get(0);
-                LatLng location = new LatLng(addr.getLatitude(), addr.getLongitude());
-                callback.onGeocodeResult(location);
-            } else {
-                callback.onGeocodeError("Address not found");
+        // Perform geocoding in background thread to avoid blocking UI and handle timeouts
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        
+        new Thread(() -> {
+            try {
+                android.util.Log.d("LocationHelper", "Starting geocoding for: " + address);
+                
+                // Check if geocoder is available
+                if (!Geocoder.isPresent()) {
+                    android.util.Log.e("LocationHelper", "Geocoder not available on this device");
+                    // Run callback on main thread
+                    mainHandler.post(() -> 
+                        callback.onGeocodeError("Geocoding service not available on this device"));
+                    return;
+                }
+                
+                List<Address> addresses = geocoder.getFromLocationName(address, 1);
+                
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address addr = addresses.get(0);
+                    LatLng location = new LatLng(addr.getLatitude(), addr.getLongitude());
+                    android.util.Log.d("LocationHelper", "Geocoding successful: " + 
+                        location.latitude + ", " + location.longitude);
+                    
+                    // Run callback on main thread
+                    mainHandler.post(() -> callback.onGeocodeResult(location));
+                } else {
+                    android.util.Log.w("LocationHelper", "No geocoding results found for: " + address);
+                    // Run callback on main thread
+                    mainHandler.post(() -> 
+                        callback.onGeocodeError("Address not found"));
+                }
+            } catch (IOException e) {
+                android.util.Log.e("LocationHelper", "Geocoding failed for: " + address + 
+                    ". Error: " + e.getMessage());
+                
+                // Run callback on main thread
+                mainHandler.post(() -> 
+                    callback.onGeocodeError("Geocoding error: " + e.getMessage()));
+            } catch (Exception e) {
+                android.util.Log.e("LocationHelper", "Unexpected error during geocoding: " + e.getMessage());
+                
+                // Run callback on main thread
+                mainHandler.post(() -> 
+                    callback.onGeocodeError("Geocoding failed: " + e.getMessage()));
             }
-        } catch (IOException e) {
-            callback.onGeocodeError("Geocoding error: " + e.getMessage());
-        }
+        }).start();
     }
 
     public void getAddressFromLocation(LatLng location, AddressCallback callback) {
-        try {
-            List<Address> addresses = geocoder.getFromLocation(
-                    location.latitude, location.longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address addr = addresses.get(0);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i <= addr.getMaxAddressLineIndex(); i++) {
-                    sb.append(addr.getAddressLine(i));
-                    if (i < addr.getMaxAddressLineIndex()) sb.append(", ");
+        // Perform reverse geocoding in background thread to avoid blocking UI and handle timeouts
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        
+        new Thread(() -> {
+            try {
+                android.util.Log.d("LocationHelper", "Starting reverse geocoding for: " + 
+                    location.latitude + ", " + location.longitude);
+                
+                // Check if geocoder is available
+                if (!Geocoder.isPresent()) {
+                    android.util.Log.e("LocationHelper", "Geocoder not available on this device");
+                    mainHandler.post(() -> 
+                        callback.onAddressError("Geocoding service not available on this device"));
+                    return;
                 }
-                String address = sb.toString();
-                callback.onAddressResult(address);
-            } else {
-                callback.onAddressError("Address not found");
+                
+                List<Address> addresses = geocoder.getFromLocation(
+                        location.latitude, location.longitude, 1);
+                        
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address addr = addresses.get(0);
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i <= addr.getMaxAddressLineIndex(); i++) {
+                        sb.append(addr.getAddressLine(i));
+                        if (i < addr.getMaxAddressLineIndex()) sb.append(", ");
+                    }
+                    String address = sb.toString();
+                    android.util.Log.d("LocationHelper", "Reverse geocoding successful: " + address);
+                    
+                    mainHandler.post(() -> callback.onAddressResult(address));
+                } else {
+                    android.util.Log.w("LocationHelper", "No reverse geocoding results found");
+                    mainHandler.post(() -> callback.onAddressError("Address not found"));
+                }
+            } catch (IOException e) {
+                android.util.Log.e("LocationHelper", "Reverse geocoding failed: " + e.getMessage());
+                mainHandler.post(() -> 
+                    callback.onAddressError("Reverse geocoding error: " + e.getMessage()));
+            } catch (Exception e) {
+                android.util.Log.e("LocationHelper", "Unexpected error during reverse geocoding: " + e.getMessage());
+                mainHandler.post(() -> 
+                    callback.onAddressError("Reverse geocoding failed: " + e.getMessage()));
             }
-        } catch (IOException e) {
-            callback.onAddressError("Reverse geocoding error: " + e.getMessage());
-        }
+        }).start();
     }
 
     public void getAddressFromLocation(LatLng location, GeocodeCallback callback) {
-        try {
-            List<Address> addresses = geocoder.getFromLocation(
-                    location.latitude, location.longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                callback.onGeocodeResult(location);
-            } else {
-                callback.onGeocodeError("Address not found");
+        // Perform reverse geocoding in background thread to avoid blocking UI and handle timeouts
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        
+        new Thread(() -> {
+            try {
+                android.util.Log.d("LocationHelper", "Starting reverse geocoding validation for: " + 
+                    location.latitude + ", " + location.longitude);
+                
+                // Check if geocoder is available
+                if (!Geocoder.isPresent()) {
+                    android.util.Log.e("LocationHelper", "Geocoder not available on this device");
+                    mainHandler.post(() -> 
+                        callback.onGeocodeError("Geocoding service not available on this device"));
+                    return;
+                }
+                
+                List<Address> addresses = geocoder.getFromLocation(
+                        location.latitude, location.longitude, 1);
+                        
+                if (addresses != null && !addresses.isEmpty()) {
+                    android.util.Log.d("LocationHelper", "Reverse geocoding validation successful");
+                    mainHandler.post(() -> callback.onGeocodeResult(location));
+                } else {
+                    android.util.Log.w("LocationHelper", "No reverse geocoding validation results found");
+                    mainHandler.post(() -> callback.onGeocodeError("Address not found"));
+                }
+            } catch (IOException e) {
+                android.util.Log.e("LocationHelper", "Reverse geocoding validation failed: " + e.getMessage());
+                mainHandler.post(() -> 
+                    callback.onGeocodeError("Reverse geocoding error: " + e.getMessage()));
+            } catch (Exception e) {
+                android.util.Log.e("LocationHelper", "Unexpected error during reverse geocoding validation: " + e.getMessage());
+                mainHandler.post(() -> 
+                    callback.onGeocodeError("Reverse geocoding failed: " + e.getMessage()));
             }
-        } catch (IOException e) {
-            callback.onGeocodeError("Reverse geocoding error: " + e.getMessage());
-        }
+        }).start();
     }
 
     public static int getLocationPermissionRequestCode() {
