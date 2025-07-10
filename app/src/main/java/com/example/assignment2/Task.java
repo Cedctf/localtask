@@ -14,6 +14,10 @@ public class Task {
     private Object startTime;
     private Object completionTime;
     private Object paymentTime;
+    private double workerRating;
+    private double hirerRating;
+    private String workerReview;
+    private String hirerReview;
 
     // Empty constructor for Firestore
     public Task() {}
@@ -69,4 +73,16 @@ public class Task {
     
     public Object getPaymentTime() { return paymentTime; }
     public void setPaymentTime(Object paymentTime) { this.paymentTime = paymentTime; }
+    
+    public double getWorkerRating() { return workerRating; }
+    public void setWorkerRating(double workerRating) { this.workerRating = workerRating; }
+    
+    public double getHirerRating() { return hirerRating; }
+    public void setHirerRating(double hirerRating) { this.hirerRating = hirerRating; }
+    
+    public String getWorkerReview() { return workerReview; }
+    public void setWorkerReview(String workerReview) { this.workerReview = workerReview; }
+    
+    public String getHirerReview() { return hirerReview; }
+    public void setHirerReview(String hirerReview) { this.hirerReview = hirerReview; }
 } 

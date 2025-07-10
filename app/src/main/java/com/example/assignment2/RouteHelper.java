@@ -24,6 +24,13 @@ public class RouteHelper {
     private final OkHttpClient client;
     private final Gson gson;
 
+    // Constants for validation
+    private static final double MIN_LATITUDE = -90.0;
+    private static final double MAX_LATITUDE = 90.0;
+    private static final double MIN_LONGITUDE = -180.0;
+    private static final double MAX_LONGITUDE = 180.0;
+    private static final double MAX_ROUTE_DISTANCE_KM = 1000.0; // Max 1000km for reasonable routing
+
     public interface RouteCallback {
         void onRouteCalculated(List<LatLng> routePoints, String distance, String duration);
         void onRouteError(String error);
@@ -38,6 +45,32 @@ public class RouteHelper {
     public void calculateRoute(LatLng origin, LatLng destination, RouteCallback callback) {
         Log.d(TAG, "calculateRoute called with origin: " + origin + ", destination: " + destination);
         
+        // Validate coordinates first
+        String validationError = validateCoordinates(origin, destination);
+        if (validationError != null) {
+            Log.e(TAG, "Coordinate validation failed: " + validationError);
+            callback.onRouteError(validationError);
+            return;
+        }
+        
+        // Check if locations are too far apart
+        double distance = calculateDistance(origin, destination);
+        Log.d(TAG, "Distance between points: " + distance + " km");
+        
+        if (distance > MAX_ROUTE_DISTANCE_KM) {
+            String error = "Locations are too far apart for routing (" + Math.round(distance) + " km)";
+            Log.e(TAG, error);
+            callback.onRouteError(error);
+            return;
+        }
+        
+        if (distance < 0.01) { // Less than 10 meters
+            String error = "Origin and destination are too close (same location)";
+            Log.e(TAG, error);
+            callback.onRouteError(error);
+            return;
+        }
+        
         String apiKey = context.getString(R.string.google_maps_key);
         Log.d(TAG, "API Key length: " + (apiKey != null ? apiKey.length() : 0));
         
@@ -47,8 +80,9 @@ public class RouteHelper {
             return;
         }
 
+        // Add travel mode and other parameters for better routing
         String url = String.format(
-            "https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&key=%s",
+            "https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&mode=driving&alternatives=false&avoid=tolls&key=%s",
             origin.latitude, origin.longitude,
             destination.latitude, destination.longitude,
             apiKey
@@ -90,10 +124,7 @@ public class RouteHelper {
                     Log.d(TAG, "API response status: " + status);
                     
                     if (!status.equals("OK")) {
-                        String errorMessage = "Route not found: " + status;
-                        if (jsonResponse.has("error_message")) {
-                            errorMessage += " - " + jsonResponse.get("error_message").getAsString();
-                        }
+                        String errorMessage = getDetailedErrorMessage(status, jsonResponse);
                         Log.e(TAG, errorMessage);
                         callback.onRouteError(errorMessage);
                         return;
@@ -102,7 +133,7 @@ public class RouteHelper {
                     JsonArray routes = jsonResponse.getAsJsonArray("routes");
                     if (routes.size() == 0) {
                         Log.e(TAG, "No routes found in response");
-                        callback.onRouteError("No routes found");
+                        callback.onRouteError("No routes found between these locations");
                         return;
                     }
 
@@ -197,5 +228,92 @@ public class RouteHelper {
         }
 
         return poly;
+    }
+    
+    private String validateCoordinates(LatLng origin, LatLng destination) {
+        if (origin == null) {
+            return "Origin location is not available";
+        }
+        if (destination == null) {
+            return "Destination location is not available";
+        }
+        
+        // Check latitude bounds
+        if (origin.latitude < MIN_LATITUDE || origin.latitude > MAX_LATITUDE) {
+            return "Origin latitude is invalid: " + origin.latitude;
+        }
+        if (destination.latitude < MIN_LATITUDE || destination.latitude > MAX_LATITUDE) {
+            return "Destination latitude is invalid: " + destination.latitude;
+        }
+        
+        // Check longitude bounds
+        if (origin.longitude < MIN_LONGITUDE || origin.longitude > MAX_LONGITUDE) {
+            return "Origin longitude is invalid: " + origin.longitude;
+        }
+        if (destination.longitude < MIN_LONGITUDE || destination.longitude > MAX_LONGITUDE) {
+            return "Destination longitude is invalid: " + destination.longitude;
+        }
+        
+        // Check for NaN or infinite values
+        if (Double.isNaN(origin.latitude) || Double.isNaN(origin.longitude) ||
+            Double.isInfinite(origin.latitude) || Double.isInfinite(origin.longitude)) {
+            return "Origin coordinates contain invalid values";
+        }
+        if (Double.isNaN(destination.latitude) || Double.isNaN(destination.longitude) ||
+            Double.isInfinite(destination.latitude) || Double.isInfinite(destination.longitude)) {
+            return "Destination coordinates contain invalid values";
+        }
+        
+        return null; // All validations passed
+    }
+    
+    private double calculateDistance(LatLng origin, LatLng destination) {
+        // Haversine formula to calculate distance between two points
+        double lat1Rad = Math.toRadians(origin.latitude);
+        double lat2Rad = Math.toRadians(destination.latitude);
+        double deltaLatRad = Math.toRadians(destination.latitude - origin.latitude);
+        double deltaLngRad = Math.toRadians(destination.longitude - origin.longitude);
+        
+        double a = Math.sin(deltaLatRad / 2) * Math.sin(deltaLatRad / 2) +
+                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                Math.sin(deltaLngRad / 2) * Math.sin(deltaLngRad / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        
+        return 6371.0 * c; // Earth's radius in kilometers
+    }
+    
+    private String getDetailedErrorMessage(String status, JsonObject jsonResponse) {
+        String baseMessage = "Route calculation failed";
+        String details = "";
+        
+        switch (status) {
+            case "ZERO_RESULTS":
+                details = "No route found between these locations. This may happen if:\n" +
+                         "• Locations are on different continents\n" +
+                         "• One location is inaccessible by road\n" +
+                         "• Locations are in areas without road networks";
+                break;
+            case "OVER_QUERY_LIMIT":
+                details = "API quota exceeded. Please try again later.";
+                break;
+            case "REQUEST_DENIED":
+                details = "API access denied. Please check API key permissions.";
+                break;
+            case "INVALID_REQUEST":
+                details = "Invalid request parameters.";
+                break;
+            case "UNKNOWN_ERROR":
+                details = "Server error occurred. Please try again.";
+                break;
+            default:
+                details = status;
+                break;
+        }
+        
+        if (jsonResponse.has("error_message")) {
+            details += "\nAPI Message: " + jsonResponse.get("error_message").getAsString();
+        }
+        
+        return baseMessage + ": " + details;
     }
 } 

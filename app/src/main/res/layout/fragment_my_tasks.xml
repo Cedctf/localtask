@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/dashboard_gradient_background">
 
     <!-- Header Section -->
     <LinearLayout
+        android:id="@+id/headerSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/primary_purple">
+        android:padding="24dp"
+        android:background="@color/primary_purple"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="My Tasks"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:gravity="center"
+            android:textColor="@color/white"
+            android:gravity="start"
             android:layout_marginBottom="8dp"/>
 
         <TextView
@@ -29,33 +34,44 @@
             android:layout_height="wrap_content"
             android:text="Loading your tasks..."
             android:textSize="14sp"
-            android:textColor="@android:color/white"
-            android:gravity="center"
+            android:textColor="@color/white"
+            android:gravity="start"
             android:alpha="0.8"/>
 
     </LinearLayout>
 
-    <!-- Search Bar + Filter Button -->
-    <LinearLayout
+    <!-- Search and Filter Section -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchFilterCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="120dp"
-        android:padding="8dp"
-        android:background="@color/purple_dark_bg">
+        android:layout_margin="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card_white"
+        app:layout_constraintTop_toBottomOf="@id/headerSection"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <SearchView
-            android:id="@+id/searchViewMyTasks"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Search my tasks..."
-            android:background="@drawable/edittext_background"
-            android:layout_marginEnd="8dp"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@android:color/transparent" />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-                    <!-- Filter Button with Badge -->
+            <SearchView
+                android:id="@+id/searchViewMyTasks"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:queryHint="Search my tasks..."
+                android:background="@drawable/edittext_background"
+                android:layout_marginEnd="12dp"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent" />
+
+            <!-- Filter Button with Badge -->
             <RelativeLayout
                 android:id="@+id/filterButtonContainerMyTasks"
                 android:layout_width="wrap_content"
@@ -64,87 +80,127 @@
 
                 <ImageButton
                     android:id="@+id/btnFilterMyTasks"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
                     android:src="@drawable/ic_filter_list"
                     android:background="@drawable/button_primary_background"
-                    android:contentDescription="Filter my tasks" />
+                    android:contentDescription="Filter my tasks"
+                    android:elevation="4dp" />
 
                 <TextView
                     android:id="@+id/filterBadgeMyTasks"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_alignTop="@id/btnFilterMyTasks"
                     android:layout_alignEnd="@id/btnFilterMyTasks"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/filter_badge_background"
                     android:text=""
-                    android:textColor="@android:color/white"
-                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:visibility="gone" />
 
             </RelativeLayout>
 
-    </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-    <!-- Tasks List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/myTasksRecyclerView"
+    <!-- Tasks List Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tasksListCard"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="180dp"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card_white"
+        app:layout_constraintTop_toBottomOf="@id/searchFilterCard"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Empty State -->
-    <LinearLayout
-        android:id="@+id/emptyStateLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="180dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="32dp"
-        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📋"
-            android:textSize="48sp"
-            android:layout_marginBottom="16dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Tasks"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No Tasks Yet"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_gray"
-            android:layout_marginBottom="8dp"/>
+            <!-- Tasks RecyclerView with proper height -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myTasksRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Apply for tasks from the Tasks tab to see them here"
-            android:textSize="14sp"
-            android:textColor="@color/text_gray"
-            android:gravity="center"/>
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/emptyStateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="32dp"
+                android:visibility="gone">
 
-    </LinearLayout>
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_my_tasks"
+                    android:background="@drawable/circle_background_light_purple"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Tasks Yet"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_dark"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apply for tasks from the Tasks tab to see them here"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_grey"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- Add Task FAB (only for hirers) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         android:src="@android:drawable/ic_input_add"
-        app:tint="@android:color/white"
+        app:tint="@color/white"
+        app:backgroundTint="@color/primary_purple"
+        app:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout> 
+</androidx.constraintlayout.widget.ConstraintLayout> 

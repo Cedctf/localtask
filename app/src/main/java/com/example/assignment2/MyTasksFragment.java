@@ -114,9 +114,28 @@ public class MyTasksFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
+        if (recyclerView == null) {
+            Toast.makeText(requireContext(), "RecyclerView not found!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Initialize adapter with current lists
         adapter = new MyTasksAdapter(taskList, taskIdList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        // Setup LinearLayoutManager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        
+        // Set adapter
         recyclerView.setAdapter(adapter);
+        
+        // Ensure RecyclerView can scroll properly
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setNestedScrollingEnabled(true);
+        
+        // Add some debugging
+        Toast.makeText(requireContext(), "RecyclerView setup complete", Toast.LENGTH_SHORT).show();
     }
     
     private void setupSearch() {
@@ -135,7 +154,10 @@ public class MyTasksFragment extends Fragment {
         });
         
         // Setup filter button click
-        btnFilterMyTasks.setOnClickListener(v -> filterManager.showFilterDialog());
+        btnFilterMyTasks.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), FilterTasksActivity.class);
+            startActivityForResult(intent, 101);
+        });
         
         // Enhanced search functionality for My Tasks
         searchViewMyTasks.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -153,6 +175,36 @@ public class MyTasksFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == 101 && resultCode == android.app.Activity.RESULT_OK) {
+            if (data != null && data.getBooleanExtra("filters_applied", false)) {
+                // Get filter criteria from the activity result
+                FilterManager.FilterCriteria criteria = (FilterManager.FilterCriteria) data.getSerializableExtra("filter_criteria");
+                if (criteria != null) {
+                    currentFilterCriteria = criteria;
+                    applyMyTasksSearchAndFilters();
+                    
+                    // Update filter badge - count active filters
+                    int activeFilterCount = 0;
+                    if (criteria.categories != null && !criteria.categories.isEmpty()) activeFilterCount++;
+                    if (criteria.sortBy != null && !criteria.sortBy.isEmpty()) activeFilterCount++;
+                    if (criteria.distance > 0) activeFilterCount++;
+                    if (criteria.paymentRange != null && !criteria.paymentRange.isEmpty()) activeFilterCount++;
+                    if (criteria.areas != null && !criteria.areas.isEmpty()) activeFilterCount++;
+                    if (criteria.durations != null && !criteria.durations.isEmpty()) activeFilterCount++;
+                    if (criteria.complexities != null && !criteria.complexities.isEmpty()) activeFilterCount++;
+                    
+                    updateFilterBadge(activeFilterCount);
+                    
+                    Toast.makeText(requireContext(), "Filters applied successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void loadMyAssignedTasks() {
@@ -185,6 +237,10 @@ public class MyTasksFragment extends Fragment {
                     // Create temporary lists to sort by timestamp
                     List<Task> tempTasks = new ArrayList<>();
                     List<String> tempIds = new ArrayList<>();
+                    
+                    // Debug: Log the number of tasks found
+                    int taskCount = queryDocumentSnapshots.size();
+                    Toast.makeText(requireContext(), "Found " + taskCount + " assigned tasks", Toast.LENGTH_SHORT).show();
                     
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
@@ -238,6 +294,10 @@ public class MyTasksFragment extends Fragment {
                     List<Task> tempTasks = new ArrayList<>();
                     List<String> tempIds = new ArrayList<>();
                     
+                    // Debug: Log the number of tasks found
+                    int taskCount = queryDocumentSnapshots.size();
+                    Toast.makeText(requireContext(), "Found " + taskCount + " created tasks", Toast.LENGTH_SHORT).show();
+                    
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Task task = document.toObject(Task.class);
                         tempTasks.add(task);
@@ -286,7 +346,9 @@ public class MyTasksFragment extends Fragment {
             // Update UI based on empty results
             taskList.clear();
             taskIdList.clear();
-            adapter.notifyDataSetChanged();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
             showEmptyState();
             return;
         }
@@ -316,7 +378,23 @@ public class MyTasksFragment extends Fragment {
             }
         }
         
-        adapter.notifyDataSetChanged();
+        // Debug: Log filtered results
+        String filterInfo = "";
+        if (!currentSearchQuery.isEmpty()) {
+            filterInfo += "Search: '" + currentSearchQuery + "' ";
+        }
+        if (currentFilterCriteria != null) {
+            filterInfo += "Filters applied ";
+        }
+        
+        Toast.makeText(requireContext(), 
+            "Showing " + taskList.size() + " of " + originalTaskList.size() + " tasks " + filterInfo, 
+            Toast.LENGTH_SHORT).show();
+        
+        // Ensure adapter is notified
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
         
         // Update UI based on results
         if (taskList.isEmpty()) {
@@ -851,6 +929,11 @@ public class MyTasksFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyTaskViewHolder holder, int position) {
+            if (position >= tasks.size() || position >= taskIds.size()) {
+                // Safety check
+                return;
+            }
+            
             Task task = tasks.get(position);
             
             holder.taskTitle.setText(task.getTitle());
@@ -888,7 +971,12 @@ public class MyTasksFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return tasks.size();
+            int count = Math.min(tasks.size(), taskIds.size());
+            // Debug: Log item count
+            if (count > 0) {
+                android.util.Log.d("MyTasksAdapter", "getItemCount: " + count);
+            }
+            return count;
         }
 
         class MyTaskViewHolder extends RecyclerView.ViewHolder {

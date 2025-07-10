@@ -1,15 +1,23 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Local configuration files
 local.properties
+
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+
+# Local development
+.DS_Store
+.vscode/
+
+# Firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# API keys and sensitive data
+*.key
+*.pem 

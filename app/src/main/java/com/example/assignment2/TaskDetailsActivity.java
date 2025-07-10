@@ -225,6 +225,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     locationHelper.getLocationFromAddress(taskLocation, new LocationHelper.GeocodeCallback() {
                         @Override
                         public void onGeocodeResult(LatLng location) {
+                            android.util.Log.d("TaskDetailsActivity", "Geocoding successful for: " + taskLocation + 
+                                " -> " + location.latitude + ", " + location.longitude);
+                            
                             taskLocationCoords = location;
                             // Add marker for task location
                             googleMap.addMarker(new MarkerOptions()
@@ -239,20 +242,114 @@ public class TaskDetailsActivity extends AppCompatActivity {
                         
                         @Override
                         public void onGeocodeError(String error) {
-                            // If geocoding fails, try to show Taylor's University as fallback
-                            LatLng fallbackLocation = new LatLng(3.065, 101.6036);
+                            android.util.Log.e("TaskDetailsActivity", "Geocoding failed for: " + taskLocation + 
+                                ". Error: " + error);
+                            
+                            // Use more reasonable fallback based on common Malaysian locations
+                            LatLng fallbackLocation = getBestFallbackLocation(taskLocation);
                             taskLocationCoords = fallbackLocation;
+                            
                             googleMap.addMarker(new MarkerOptions()
                                     .position(fallbackLocation)
                                     .title("Task Location")
-                                    .snippet(taskLocation + " (Approximate)")
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fallbackLocation, 15));
-                            Toast.makeText(TaskDetailsActivity.this, "Unable to find exact location on map", Toast.LENGTH_SHORT).show();
+                                    .snippet(taskLocation + " (Approximate Location)")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                            
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fallbackLocation, 12));
+                            
+                            // Show user-friendly message
+                            Toast.makeText(TaskDetailsActivity.this, 
+                                "Using approximate location for: " + taskLocation, 
+                                Toast.LENGTH_LONG).show();
+                            
+                            // Still try to get current location for distance calculation
+                            getCurrentLocationAndShowRoute();
                         }
                     });
                 }
             });
+        } else {
+            // No task location provided, use a default location
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    googleMap = map;
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    
+                    try {
+                        googleMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
+                        // Permission not granted
+                    }
+                    
+                    // Use Kuala Lumpur city center as default
+                    LatLng defaultLocation = new LatLng(3.1390, 101.6869);
+                    taskLocationCoords = defaultLocation;
+                    
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(defaultLocation)
+                            .title("Task Location")
+                            .snippet("Location not specified")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10));
+                    
+                    Toast.makeText(TaskDetailsActivity.this, 
+                        "Task location not specified", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+    
+    private LatLng getBestFallbackLocation(String locationText) {
+        // Return appropriate fallback coordinates based on location text
+        if (locationText == null) {
+            return new LatLng(3.1390, 101.6869); // Kuala Lumpur city center
+        }
+        
+        String location = locationText.toLowerCase();
+        
+        // Major Malaysian cities/areas
+        if (location.contains("kuala lumpur") || location.contains("kl")) {
+            return new LatLng(3.1390, 101.6869); // KL City Center
+        } else if (location.contains("petaling jaya") || location.contains("pj")) {
+            return new LatLng(3.1073, 101.6067); // Petaling Jaya
+        } else if (location.contains("subang")) {
+            return new LatLng(3.1499, 101.5871); // Subang Jaya
+        } else if (location.contains("shah alam")) {
+            return new LatLng(3.0733, 101.5185); // Shah Alam
+        } else if (location.contains("cyberjaya")) {
+            return new LatLng(2.9213, 101.6559); // Cyberjaya
+        } else if (location.contains("putrajaya")) {
+            return new LatLng(2.9264, 101.6964); // Putrajaya
+        } else if (location.contains("klang")) {
+            return new LatLng(3.0319, 101.4450); // Klang
+        } else if (location.contains("damansara")) {
+            return new LatLng(3.1725, 101.6364); // Damansara
+        } else if (location.contains("cheras")) {
+            return new LatLng(3.1147, 101.7317); // Cheras
+        } else if (location.contains("ampang")) {
+            return new LatLng(3.1495, 101.7639); // Ampang
+        } else if (location.contains("penang")) {
+            return new LatLng(5.4164, 100.3327); // George Town, Penang
+        } else if (location.contains("johor bahru") || location.contains("jb")) {
+            return new LatLng(1.4927, 103.7414); // Johor Bahru
+        } else if (location.contains("melaka") || location.contains("malacca")) {
+            return new LatLng(2.2055, 102.2501); // Melaka
+        } else if (location.contains("ipoh")) {
+            return new LatLng(4.5975, 101.0901); // Ipoh
+        } else if (location.contains("kota kinabalu")) {
+            return new LatLng(5.9804, 116.0735); // Kota Kinabalu
+        } else if (location.contains("kuching")) {
+            return new LatLng(1.5533, 110.3592); // Kuching
+        } else if (location.contains("selangor")) {
+            return new LatLng(3.0738, 101.5183); // Shah Alam (Selangor capital)
+        } else if (location.contains("taylor") || location.contains("university")) {
+            return new LatLng(3.0653, 101.6036); // Taylor's University Lakeside
+        } else {
+            // Default to KL city center for unknown locations
+            return new LatLng(3.1390, 101.6869);
         }
     }
 
@@ -342,31 +439,95 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     android.util.Log.e("TaskDetailsActivity", "Route calculation failed: " + error);
                     
                     runOnUiThread(() -> {
-                        String errorMessage = "Route calculation failed";
-                        if (error.contains("API key")) {
-                            errorMessage += ": API key issue";
-                        } else if (error.contains("ZERO_RESULTS")) {
-                            errorMessage += ": No route found";
-                        } else if (error.contains("OVER_QUERY_LIMIT")) {
-                            errorMessage += ": API quota exceeded";
-                        } else if (error.contains("REQUEST_DENIED")) {
-                            errorMessage += ": API access denied";
-                        } else {
-                            errorMessage += ": " + error;
-                        }
-                        
-                        Toast.makeText(TaskDetailsActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                        if (routeInfoText != null) {
-                            routeInfoText.setVisibility(View.VISIBLE);
-                            routeInfoText.setText("❌ Route unavailable");
-                        }
+                        handleRouteError(error);
                     });
                 }
             });
         } else {
             android.util.Log.e("TaskDetailsActivity", "Cannot calculate route - missing locations. " +
                 "Current: " + currentLocation + ", Task: " + taskLocationCoords);
-            Toast.makeText(this, "Cannot calculate route - location data missing", Toast.LENGTH_SHORT).show();
+            
+            runOnUiThread(() -> {
+                showFallbackDistance();
+            });
+        }
+    }
+    
+    private void handleRouteError(String error) {
+        String userFriendlyMessage;
+        String routeInfoMessage;
+        
+        if (error.contains("No route found") || error.contains("ZERO_RESULTS")) {
+            userFriendlyMessage = "No driving route available. Showing straight-line distance instead.";
+            routeInfoMessage = "📏 " + calculateStraightLineDistance();
+            showFallbackDistance();
+        } else if (error.contains("too far apart")) {
+            userFriendlyMessage = "Locations are too far apart for route calculation.";
+            routeInfoMessage = "📏 " + calculateStraightLineDistance();
+            showFallbackDistance();
+        } else if (error.contains("too close")) {
+            userFriendlyMessage = "You're already at the task location!";
+            routeInfoMessage = "✅ Same location";
+        } else if (error.contains("API key")) {
+            userFriendlyMessage = "Route service temporarily unavailable.";
+            routeInfoMessage = "❌ Service unavailable";
+        } else if (error.contains("quota exceeded")) {
+            userFriendlyMessage = "Route service temporarily busy. Try again later.";
+            routeInfoMessage = "⏳ Try again later";
+        } else if (error.contains("invalid")) {
+            userFriendlyMessage = "Unable to calculate route due to invalid location data.";
+            routeInfoMessage = "❌ Invalid location";
+        } else {
+            userFriendlyMessage = "Route calculation failed. Showing approximate distance.";
+            routeInfoMessage = "📏 " + calculateStraightLineDistance();
+            showFallbackDistance();
+        }
+        
+        Toast.makeText(TaskDetailsActivity.this, userFriendlyMessage, Toast.LENGTH_LONG).show();
+        if (routeInfoText != null) {
+            routeInfoText.setVisibility(View.VISIBLE);
+            routeInfoText.setText(routeInfoMessage);
+        }
+    }
+    
+    private void showFallbackDistance() {
+        if (currentLocation != null && taskLocationCoords != null) {
+            // Draw a straight line between locations for visual reference
+            if (googleMap != null) {
+                // Clear any existing routes
+                routeHelper.clearRouteFromMap(googleMap);
+                
+                // Re-add markers
+                addMarkersToMap();
+                
+                // Adjust camera to show both locations
+                adjustCameraToShowBothLocations();
+            }
+        }
+    }
+    
+    private String calculateStraightLineDistance() {
+        if (currentLocation == null || taskLocationCoords == null) {
+            return "Distance unavailable";
+        }
+        
+        // Haversine formula for straight-line distance
+        double lat1Rad = Math.toRadians(currentLocation.latitude);
+        double lat2Rad = Math.toRadians(taskLocationCoords.latitude);
+        double deltaLatRad = Math.toRadians(taskLocationCoords.latitude - currentLocation.latitude);
+        double deltaLngRad = Math.toRadians(taskLocationCoords.longitude - currentLocation.longitude);
+        
+        double a = Math.sin(deltaLatRad / 2) * Math.sin(deltaLatRad / 2) +
+                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                Math.sin(deltaLngRad / 2) * Math.sin(deltaLngRad / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        
+        double distance = 6371.0 * c; // Earth's radius in kilometers
+        
+        if (distance < 1.0) {
+            return String.format("%.0f m away", distance * 1000);
+        } else {
+            return String.format("%.1f km away", distance);
         }
     }
 

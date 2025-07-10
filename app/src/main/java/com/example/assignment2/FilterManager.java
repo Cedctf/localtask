@@ -17,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class FilterManager {
         void onFilterCountChanged(int activeFilterCount);
     }
     
-    public static class FilterCriteria {
+    public static class FilterCriteria implements Serializable {
         public List<String> categories;
         public String sortBy;
         public int distance; // in km

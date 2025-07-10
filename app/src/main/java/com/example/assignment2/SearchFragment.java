@@ -2,19 +2,17 @@ package com.example.assignment2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.NumberFormat;
@@ -32,7 +30,7 @@ public class SearchFragment extends Fragment {
     private List<Task> allTasksList; // Store all tasks for searching
     private List<String> allTasksIdList;
     private LinearLayout emptyStateLayout;
-    private TextInputEditText searchInput;
+    private SearchView searchView;
 
     public static SearchFragment newInstance() {
         return new SearchFragment();
@@ -61,7 +59,7 @@ public class SearchFragment extends Fragment {
         // Initialize views
         recyclerView = view.findViewById(R.id.searchRecyclerView);
         emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
-        searchInput = view.findViewById(R.id.searchInput);
+        searchView = view.findViewById(R.id.searchView);
 
         // Setup RecyclerView
         setupRecyclerView();
@@ -80,17 +78,17 @@ public class SearchFragment extends Fragment {
     }
 
     private void setupSearch() {
-        searchInput.addTextChangedListener(new TextWatcher() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public boolean onQueryTextSubmit(String query) {
+                filterTasks(query.trim().toLowerCase());
+                return true;
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String query = s.toString().trim().toLowerCase();
-                filterTasks(query);
+            public boolean onQueryTextChange(String newText) {
+                filterTasks(newText.trim().toLowerCase());
+                return true;
             }
         });
     }

@@ -62,6 +62,16 @@
             android:name=".TaskDetailsActivity"
             android:exported="false" />
         
+        <!-- FilterTasksActivity -->
+        <activity
+            android:name=".FilterTasksActivity"
+            android:exported="false" />
+        
+        <!-- ChatbotActivity -->
+        <activity
+            android:name=".ChatbotActivity"
+            android:exported="false" />
+        
         <!-- Firebase Messaging Service -->
         <service
             android:name=".MyFirebaseMessagingService"

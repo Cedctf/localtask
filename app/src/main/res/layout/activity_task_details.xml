@@ -8,6 +8,35 @@
     android:background="#F5F5F5"
     android:fitsSystemWindows="true">
 
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/primary_purple">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task Details"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review task information and apply or complete"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:alpha="0.8"/>
+
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,15 +51,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card_white"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/taskDetailTitle"
@@ -38,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textColor="@color/design_default_color_primary"
+                        android:textColor="@color/primary_purple"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
@@ -55,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/design_default_color_secondary"
+                        android:textColor="@color/success_green"
                         android:layout_marginBottom="16dp"/>
 
                     <TextView
@@ -145,15 +175,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card_white"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -169,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:text="Calculating route..."
                         android:textSize="14sp"
-                        android:textColor="@color/design_default_color_secondary"
+                        android:textColor="@color/primary_purple"
                         android:layout_marginBottom="8dp"
                         android:visibility="gone"/>
 
@@ -230,7 +261,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/design_default_color_primary"
-        app:itemTextColor="@color/design_default_color_primary"/>
+        app:itemIconTint="@color/primary_purple"
+        app:itemTextColor="@color/primary_purple"
+        android:background="@color/card_white"
+        app:elevation="8dp"/>
 
 </LinearLayout> 

@@ -148,7 +148,10 @@ public class TasksFragment extends Fragment {
         });
         
         // Setup filter button click
-        btnFilter.setOnClickListener(v -> filterManager.showFilterDialog());
+        btnFilter.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), FilterTasksActivity.class);
+            startActivityForResult(intent, 100);
+        });
         
         // Setup enhanced search functionality
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -166,6 +169,36 @@ public class TasksFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == 100 && resultCode == android.app.Activity.RESULT_OK) {
+            if (data != null && data.getBooleanExtra("filters_applied", false)) {
+                // Get filter criteria from the activity result
+                FilterManager.FilterCriteria criteria = (FilterManager.FilterCriteria) data.getSerializableExtra("filter_criteria");
+                if (criteria != null) {
+                    currentFilterCriteria = criteria;
+                    applySearchAndFilters();
+                    
+                    // Update filter badge - count active filters
+                    int activeFilterCount = 0;
+                    if (criteria.categories != null && !criteria.categories.isEmpty()) activeFilterCount++;
+                    if (criteria.sortBy != null && !criteria.sortBy.isEmpty()) activeFilterCount++;
+                    if (criteria.distance > 0) activeFilterCount++;
+                    if (criteria.paymentRange != null && !criteria.paymentRange.isEmpty()) activeFilterCount++;
+                    if (criteria.areas != null && !criteria.areas.isEmpty()) activeFilterCount++;
+                    if (criteria.durations != null && !criteria.durations.isEmpty()) activeFilterCount++;
+                    if (criteria.complexities != null && !criteria.complexities.isEmpty()) activeFilterCount++;
+                    
+                    updateFilterBadge(activeFilterCount);
+                    
+                    Toast.makeText(requireContext(), "Filters applied successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void loadTasks() {

@@ -3,6 +3,7 @@ package com.example.assignment2;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -26,6 +27,7 @@ public class ChatbotManager {
     
     private Context context;
     private OpenAIService openAIService;
+    private SessionManager sessionManager;
     private Dialog chatDialog;
     private LinearLayout chatMessagesContainer;
     private ScrollView chatScrollView;
@@ -37,10 +39,27 @@ public class ChatbotManager {
     public ChatbotManager(Context context) {
         this.context = context;
         this.openAIService = new OpenAIService(context);
+        this.sessionManager = new SessionManager(context);
         this.uiHandler = new Handler(Looper.getMainLooper());
     }
     
+    /**
+     * Enhanced chatbot button setup with user type checking
+     * Following the same pattern as the create task function
+     */
     public void addChatbotButton(Activity activity) {
+        // Check user type first - similar to setupAddTaskButton() pattern
+        String userType = sessionManager.getUserType();
+        
+        // Setup chatbot button based on user type
+        setupChatbotButton(activity, userType);
+    }
+    
+    /**
+     * Setup chatbot button with conditional visibility and behavior
+     * Adapted from MyTasksFragment.setupAddTaskButton() pattern
+     */
+    private void setupChatbotButton(Activity activity, String userType) {
         // Find the bottom navigation view
         final View bottomNavigation = activity.findViewById(R.id.bottom_navigation);
         
@@ -55,18 +74,84 @@ public class ChatbotManager {
         
         final ViewGroup finalActivityLayout = activityLayout;
         
-        // Create floating action button
+        // Create floating action button with conditional styling
         final FloatingActionButton fabChatbot = new FloatingActionButton(context);
-        fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
-        fabChatbot.setContentDescription("AI Assistant");
         
-        // Add button using a simple overlay approach
-        if (finalActivityLayout != null) {
+        // Configure chatbot button based on user type (like create task function)
+        if ("Hirer".equals(userType)) {
+            // For Hirers - AI Assistant for task management
+            fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
+            fabChatbot.setContentDescription("Task Management Assistant");
+            
+            // Show chatbot button for hirers
             addChatbotWithOverlay(fabChatbot, bottomNavigation, finalActivityLayout);
+            
+            // Set click listener with hirer-specific context
+            fabChatbot.setOnClickListener(v -> {
+                Intent intent = new Intent(context, ChatbotActivity.class);
+                intent.putExtra("USER_TYPE", "Hirer");
+                intent.putExtra("CHATBOT_MODE", "TASK_MANAGEMENT");
+                activity.startActivity(intent);
+            });
+            
+        } else {
+            // For Workers - AI Assistant for finding and completing tasks
+            fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
+            fabChatbot.setContentDescription("Task Assistant");
+            
+            // Show chatbot button for workers
+            addChatbotWithOverlay(fabChatbot, bottomNavigation, finalActivityLayout);
+            
+            // Set click listener with worker-specific context
+            fabChatbot.setOnClickListener(v -> {
+                Intent intent = new Intent(context, ChatbotActivity.class);
+                intent.putExtra("USER_TYPE", "Worker");
+                intent.putExtra("CHATBOT_MODE", "TASK_FINDING");
+                activity.startActivity(intent);
+            });
         }
         
-        // Set click listener
-        fabChatbot.setOnClickListener(v -> showChatDialog());
+        // Optional: Add long click for additional functionality (like in create task)
+        fabChatbot.setOnLongClickListener(v -> {
+            showChatbotOptionsDialog(activity, userType);
+            return true;
+        });
+    }
+    
+    /**
+     * Show chatbot options dialog on long press
+     * Similar to task filtering in MyTasksFragment
+     */
+    private void showChatbotOptionsDialog(Activity activity, String userType) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
+        builder.setTitle("AI Assistant Options");
+        
+        String[] options;
+        if ("Hirer".equals(userType)) {
+            options = new String[]{
+                "Task Management Tips",
+                "Hirer Best Practices", 
+                "Platform Support",
+                "Analytics Insights"
+            };
+        } else {
+            options = new String[]{
+                "Find Suitable Tasks",
+                "Task Completion Tips",
+                "Worker Guidelines",
+                "General Support"
+            };
+        }
+        
+        builder.setItems(options, (dialog, which) -> {
+            Intent intent = new Intent(context, ChatbotActivity.class);
+            intent.putExtra("USER_TYPE", userType);
+            intent.putExtra("PRESET_MESSAGE", options[which]);
+            activity.startActivity(intent);
+        });
+        
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
     
     private void addChatbotWithOverlay(FloatingActionButton fabChatbot, View bottomNavigation, ViewGroup parentLayout) {
@@ -226,26 +311,25 @@ public class ChatbotManager {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(0, 0, 0, 16);
+        params.setMargins(16, 8, 16, 8);
         
         if (isUser) {
-            messageView.setBackgroundResource(R.drawable.chat_bubble_user);
             params.gravity = Gravity.END;
-            messageView.setMaxWidth((int) (context.getResources().getDisplayMetrics().widthPixels * 0.7));
+            messageView.setBackgroundResource(R.drawable.chat_bubble_user);
         } else {
-            messageView.setBackgroundResource(R.drawable.chat_bubble_ai);
             params.gravity = Gravity.START;
-            messageView.setMaxWidth((int) (context.getResources().getDisplayMetrics().widthPixels * 0.75));
+            messageView.setBackgroundResource(R.drawable.chat_bubble_ai);
         }
         
-        messageView.setLayoutParams(params);
-        chatMessagesContainer.addView(messageView);
+        chatMessagesContainer.addView(messageView, params);
         
         // Scroll to bottom
         chatScrollView.post(() -> chatScrollView.fullScroll(View.FOCUS_DOWN));
     }
     
     private void showLoading(boolean show) {
-        loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 } 

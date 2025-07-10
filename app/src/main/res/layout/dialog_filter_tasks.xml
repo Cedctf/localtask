@@ -52,14 +52,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="@color/purple_card_bg">
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/card_white">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Task Categories"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -87,7 +88,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cleaning"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:textSize="16sp"
                         android:layout_marginBottom="8dp" />
 
@@ -96,7 +97,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tutoring"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:textSize="16sp"
                         android:layout_marginBottom="8dp" />
 
@@ -105,7 +106,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delivery"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:textSize="16sp"
                         android:layout_marginBottom="8dp" />
 
@@ -114,7 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Small Tasks"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -124,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sort by"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -149,7 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Distance:"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_dark"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -178,7 +179,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Payment Range"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -195,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Any Amount"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:checked="true"
                         android:layout_marginBottom="8dp" />
 
@@ -204,7 +205,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RM 10 - RM 50"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <RadioButton
@@ -212,7 +213,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RM 50 - RM 100"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <RadioButton
@@ -220,7 +221,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RM 100 - RM 200"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <RadioButton
@@ -228,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RM 200+"
-                        android:textColor="@color/text_white" />
+                        android:textColor="@color/text_grey" />
 
                 </RadioGroup>
 
@@ -237,7 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Duration"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -253,7 +254,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Quick (&lt; 2 hours)"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -261,7 +262,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Half Day (2-4 hours)"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -269,7 +270,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Full Day (4+ hours)"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -277,7 +278,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Multi-day"
-                        android:textColor="@color/text_white" />
+                        android:textColor="@color/text_grey" />
 
                 </LinearLayout>
 
@@ -286,7 +287,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Complexity"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -302,7 +303,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Beginner friendly"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -310,7 +311,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Requires experience"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -318,7 +319,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Professional skills needed"
-                        android:textColor="@color/text_white" />
+                        android:textColor="@color/text_grey" />
 
                 </LinearLayout>
 
@@ -327,7 +328,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Areas"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/text_dark"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -343,7 +344,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Subang Jaya"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -351,7 +352,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Petaling Jaya"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -359,7 +360,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Shah Alam"
-                        android:textColor="@color/text_white"
+                        android:textColor="@color/text_grey"
                         android:layout_marginBottom="8dp" />
 
                     <CheckBox
@@ -367,7 +368,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Klang Valley"
-                        android:textColor="@color/text_white" />
+                        android:textColor="@color/text_grey" />
 
                 </LinearLayout>
 
@@ -376,16 +377,17 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Apply Button -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/applyFiltersButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Apply"
-        android:textColor="@color/text_white"
-        android:textSize="18sp"
+        android:layout_height="56dp"
+        android:text="Apply Filters"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:background="@drawable/button_primary_background"
-        android:layout_margin="16dp"
-        android:paddingVertical="16dp" />
+        app:backgroundTint="@color/primary_purple"
+        app:cornerRadius="28dp"
+        android:elevation="8dp"
+        android:layout_margin="16dp" />
 
 </LinearLayout> 

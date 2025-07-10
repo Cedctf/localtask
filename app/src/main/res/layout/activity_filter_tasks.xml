@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/light_grey_background">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/primary_purple">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_close"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter Tasks"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/clearAllButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear all"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="12dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customize your task search with filters"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:alpha="0.8"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+    <!-- Main Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Task Categories Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Task Categories"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <CheckBox
+                        android:id="@+id/categoryCleaningCheckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cleaning"
+                        android:textColor="@color/text_grey"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/categoryTutoringCheckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tutoring"
+                        android:textColor="@color/text_grey"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/categoryDeliveryCheckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delivery"
+                        android:textColor="@color/text_grey"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/categorySmallTasksCheckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Small Tasks"
+                        android:textColor="@color/text_grey"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Sort By Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sort by"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <Spinner
+                        android:id="@+id/sortBySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/edittext_background" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Distance Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Distance:"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/distanceValueText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 km"
+                            android:textColor="@color/primary_purple"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_marginStart="8dp" />
+
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/distanceSeekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="20"
+                        android:progress="10" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Payment Range Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Range"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <RadioGroup
+                        android:id="@+id/paymentRangeGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/paymentRangeAny"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Any Amount"
+                            android:textColor="@color/text_grey"
+                            android:checked="true"
+                            android:layout_marginBottom="8dp" />
+
+                        <RadioButton
+                            android:id="@+id/paymentRange1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="RM 10 - RM 50"
+                            android:textColor="@color/text_grey"
+                            android:layout_marginBottom="8dp" />
+
+                        <RadioButton
+                            android:id="@+id/paymentRange2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="RM 50 - RM 100"
+                            android:textColor="@color/text_grey"
+                            android:layout_marginBottom="8dp" />
+
+                        <RadioButton
+                            android:id="@+id/paymentRange3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="RM 100 - RM 200"
+                            android:textColor="@color/text_grey"
+                            android:layout_marginBottom="8dp" />
+
+                        <RadioButton
+                            android:id="@+id/paymentRange4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="RM 200+"
+                            android:textColor="@color/text_grey" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Duration Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Duration"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <CheckBox
+                        android:id="@+id/durationQuick"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quick (&lt; 2 hours)"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/durationHalfDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Half Day (2-4 hours)"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/durationFullDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Full Day (4+ hours)"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/durationMultiDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Multi-day"
+                        android:textColor="@color/text_grey" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Complexity Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Complexity"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <CheckBox
+                        android:id="@+id/complexityBeginner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Beginner friendly"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/complexityExperience"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Requires experience"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/complexityProfessional"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Professional skills needed"
+                        android:textColor="@color/text_grey" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Areas Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="@color/card_white"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Areas"
+                        android:textColor="@color/text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <CheckBox
+                        android:id="@+id/areaSubangJaya"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Subang Jaya"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/areaPetalingJaya"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Petaling Jaya"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/areaShahAlam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shah Alam"
+                        android:textColor="@color/text_grey"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/areaKlangValley"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Klang Valley"
+                        android:textColor="@color/text_grey" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Apply Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/card_white"
+        app:elevation="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resetFiltersButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="Reset"
+            android:textColor="@color/primary_purple"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:strokeColor="@color/primary_purple"
+            app:strokeWidth="2dp"
+            app:cornerRadius="28dp"
+            android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/applyFiltersButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="2"
+            android:text="Apply Filters"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primary_purple"
+            app:cornerRadius="28dp"
+            android:elevation="8dp"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout> 
