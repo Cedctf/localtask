@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- Rank Circle -->
+    <TextView
+        android:id="@+id/rankText"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="4"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:background="@drawable/circle_background_light_grey"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- User Avatar -->
+    <ImageView
+        android:id="@+id/userAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/circle_background_light_green"
+        android:src="@drawable/default_profile"
+        android:padding="12dp"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- User Information -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GO Rider"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"/>
+
+        <!-- Performance badges for hirers -->
+        <LinearLayout
+            android:id="@+id/performanceBadges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/efficiencyBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ Fast"
+                android:textSize="10sp"
+                android:textColor="@color/text_primary"
+                android:background="@drawable/filter_badge_background"
+                android:padding="2dp"
+                android:layout_marginEnd="4dp"/>
+
+            <TextView
+                android:id="@+id/ratingBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐ 4.8"
+                android:textSize="10sp"
+                android:textColor="@color/text_primary"
+                android:background="@drawable/filter_badge_background"
+                android:padding="2dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Score/Tasks Count -->
+    <TextView
+        android:id="@+id/userScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="67"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"/>
+
+    <!-- Contact Button (for hirers only) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/contactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:text="Contact"
+        android:textSize="10sp"
+        android:layout_marginStart="12dp"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:background="@drawable/button_outline"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="64dp"
+        android:visibility="gone"/>
+
+</LinearLayout> 

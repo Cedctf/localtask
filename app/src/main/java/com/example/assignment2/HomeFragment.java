@@ -1,6 +1,7 @@
 package com.example.assignment2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -29,15 +31,22 @@ import java.util.Locale;
 public class HomeFragment extends Fragment {
     private SessionManager sessionManager;
     private FirebaseFirestore db;
+    private SharedPreferences walletPrefs;
     
-    // Dashboard UI Components
-    private TextView welcomeText, dashboardSubtitle;
+    // Header components
+    private TextView welcomeText;
+    
+    // Cash Balance display (read-only, managed in BadgesFragment)
+    private TextView cashBalanceAmount;
+    private MaterialButton addCashButton, cashOutButton;
+    
+    // Feature cards
+    private MaterialCardView leaderboardCard, searchCard, myTasksCard, badgesCard;
+    
+    // Quick stats
     private TextView activeTasksCount, completedTasksCount;
     private TextView pointsCount, levelCount;
     private TextView leaderboardSubtext;
-    
-    // Navigation cards
-    private MaterialCardView searchCard, myTasksCard, leaderboardCard;
     
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -50,6 +59,7 @@ public class HomeFragment extends Fragment {
         
         sessionManager = new SessionManager(requireContext());
         db = FirebaseFirestore.getInstance();
+        walletPrefs = requireActivity().getSharedPreferences("badges_prefs", 0);
         
         return view;
     }
@@ -60,52 +70,89 @@ public class HomeFragment extends Fragment {
         
         initializeViews(view);
         setupUserContent();
+        setupWalletDisplay();
         setupClickHandlers();
         loadDashboardData();
-        loadTaskProgress();
     }
 
     private void initializeViews(View view) {
-        // Dashboard components
+        // Header
         welcomeText = view.findViewById(R.id.welcomeText);
-        dashboardSubtitle = view.findViewById(R.id.dashboardSubtitle);
         
-        // Stats cards
+        // Cash Balance section (display only)
+        cashBalanceAmount = view.findViewById(R.id.cashBalanceAmount);
+        addCashButton = view.findViewById(R.id.addCashButton);
+        cashOutButton = view.findViewById(R.id.cashOutButton);
+        
+        // Feature cards
+        leaderboardCard = view.findViewById(R.id.leaderboardCard);
+        searchCard = view.findViewById(R.id.searchCard);
+        myTasksCard = view.findViewById(R.id.myTasksCard);
+        badgesCard = view.findViewById(R.id.badgesCard);
+        
+        // Quick stats
         activeTasksCount = view.findViewById(R.id.activeTasksCount);
         completedTasksCount = view.findViewById(R.id.completedTasksCount);
         pointsCount = view.findViewById(R.id.pointsCount);
         levelCount = view.findViewById(R.id.levelCount);
-        
-        // Leaderboard banner
         leaderboardSubtext = view.findViewById(R.id.leaderboardSubtext);
-        
-        // Navigation cards
-        searchCard = view.findViewById(R.id.searchCard);
-        myTasksCard = view.findViewById(R.id.myTasksCard);
-        leaderboardCard = view.findViewById(R.id.leaderboardCard);
     }
 
     private void setupUserContent() {
         String userName = sessionManager.getUserName();
         String userType = sessionManager.getUserType();
         
-        // Dashboard content
-        welcomeText.setText("Today");
-        
+        // Update header based on user type
         if ("Hirer".equals(userType)) {
-            // Hirer-specific content
-            dashboardSubtitle.setText("Manage your posted tasks, " + userName);
+            welcomeText.setText("Business");
+            if (leaderboardSubtext != null) {
+                leaderboardSubtext.setText("Find top talent");
+            }
         } else {
-            // Worker-specific content
-            dashboardSubtitle.setText("Your task progress, " + userName);
+            welcomeText.setText("Money");
+            if (leaderboardSubtext != null) {
+                leaderboardSubtext.setText("View rankings");
+            }
+        }
+    }
+    
+    private void setupWalletDisplay() {
+        // Display wallet amount (read-only, managed in BadgesFragment)
+        loadWalletAmount();
+        
+        // Redirect buttons to BadgesFragment where wallet is managed
+        if (addCashButton != null) {
+            addCashButton.setOnClickListener(v -> {
+                Toast.makeText(requireContext(), "Go to Badges tab to manage wallet", Toast.LENGTH_SHORT).show();
+                navigateToBadges();
+            });
+        }
+        
+        if (cashOutButton != null) {
+            cashOutButton.setOnClickListener(v -> {
+                Toast.makeText(requireContext(), "Go to Badges tab to manage wallet", Toast.LENGTH_SHORT).show();
+                navigateToBadges();
+            });
+        }
+    }
+    
+    private void loadWalletAmount() {
+        int walletAmount = walletPrefs.getInt("wallet_amount", 0);
+        updateWalletDisplay(walletAmount);
+    }
+    
+    private void updateWalletDisplay(int amount) {
+        if (cashBalanceAmount != null) {
+            cashBalanceAmount.setText("RM" + String.format("%.2f", (double) amount));
         }
     }
 
     private void setupClickHandlers() {
-        // Navigation cards
+        // Feature cards navigation
+        leaderboardCard.setOnClickListener(v -> navigateToLeaderboard());
         searchCard.setOnClickListener(v -> navigateToSearch());
         myTasksCard.setOnClickListener(v -> navigateToMyTasks());
-        leaderboardCard.setOnClickListener(v -> navigateToLeaderboard());
+        badgesCard.setOnClickListener(v -> navigateToBadges());
     }
 
     private void loadDashboardData() {
@@ -124,55 +171,21 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void loadTaskProgress() {
-        String userName = sessionManager.getUserName();
-        if (userName != null) {
-            // Fetch tasks that user has applied to and are in-progress
-            db.collection("tasks")
-                .whereEqualTo("assignedTo", userName)
-                .whereEqualTo("status", "in_progress")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int inProgressCount = queryDocumentSnapshots.size();
-                    updateTaskProgressDisplay(inProgressCount);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error - show default
-                    updateTaskProgressDisplay(0);
-                });
-        } else {
-            updateTaskProgressDisplay(0);
-        }
-    }
-
-    private void updateTaskProgressDisplay(int inProgressTasks) {
-        // Update the task progress section with actual data
-        // For now, let's update the subtitle to include this information
-        String userName = sessionManager.getUserName();
-        String userType = sessionManager.getUserType();
-        
-        if ("Hirer".equals(userType)) {
-            dashboardSubtitle.setText("Manage your posted tasks, " + userName);
-        } else {
-            if (inProgressTasks > 0) {
-                dashboardSubtitle.setText("You have " + inProgressTasks + " tasks in progress, " + userName);
-            } else {
-                dashboardSubtitle.setText("No active tasks in progress, " + userName);
-            }
-        }
-    }
-
     private void loadHirerDashboardData(String hirerId) {
         // Load posted tasks count
         TaskManager.getTaskCountByHirer(hirerId, new TaskManager.TaskCountCallback() {
             @Override
             public void onSuccess(int count) {
+                if (activeTasksCount != null) {
                 activeTasksCount.setText(String.valueOf(count));
+                }
             }
 
             @Override
             public void onError(String error) {
+                if (activeTasksCount != null) {
                 activeTasksCount.setText("0");
+                }
             }
         });
 
@@ -182,9 +195,15 @@ public class HomeFragment extends Fragment {
             .whereEqualTo("status", "completed")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (completedTasksCount != null) {
                 completedTasksCount.setText(String.valueOf(queryDocumentSnapshots.size()));
+                }
             })
-            .addOnFailureListener(e -> completedTasksCount.setText("0"));
+            .addOnFailureListener(e -> {
+                if (completedTasksCount != null) {
+                    completedTasksCount.setText("0");
+                }
+            });
 
         // Load hirer points
         db.collection("hirers")
@@ -194,19 +213,23 @@ public class HomeFragment extends Fragment {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     int points = queryDocumentSnapshots.getDocuments().get(0).getLong("points") != null ?
                             queryDocumentSnapshots.getDocuments().get(0).getLong("points").intValue() : 0;
+                    if (pointsCount != null) {
                     pointsCount.setText(String.valueOf(points));
+                    }
                     
                     // Calculate level based on points
                     int level = calculateLevel(points);
+                    if (levelCount != null) {
                     levelCount.setText(String.valueOf(level));
+                    }
                 } else {
-                    pointsCount.setText("0");
-                    levelCount.setText("1");
+                    if (pointsCount != null) pointsCount.setText("0");
+                    if (levelCount != null) levelCount.setText("1");
                 }
             })
             .addOnFailureListener(e -> {
-                pointsCount.setText("0");
-                levelCount.setText("1");
+                if (pointsCount != null) pointsCount.setText("0");
+                if (levelCount != null) levelCount.setText("1");
             });
     }
 
@@ -217,9 +240,15 @@ public class HomeFragment extends Fragment {
             .whereIn("status", List.of("pending", "in_progress"))
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (activeTasksCount != null) {
                 activeTasksCount.setText(String.valueOf(queryDocumentSnapshots.size()));
+                }
             })
-            .addOnFailureListener(e -> activeTasksCount.setText("0"));
+            .addOnFailureListener(e -> {
+                if (activeTasksCount != null) {
+                    activeTasksCount.setText("0");
+                }
+            });
 
         // Load completed tasks
         db.collection("tasks")
@@ -227,9 +256,15 @@ public class HomeFragment extends Fragment {
             .whereEqualTo("status", "completed")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (completedTasksCount != null) {
                 completedTasksCount.setText(String.valueOf(queryDocumentSnapshots.size()));
+                }
             })
-            .addOnFailureListener(e -> completedTasksCount.setText("0"));
+            .addOnFailureListener(e -> {
+                if (completedTasksCount != null) {
+                    completedTasksCount.setText("0");
+                }
+            });
 
         // Load user points
         db.collection("users")
@@ -239,19 +274,23 @@ public class HomeFragment extends Fragment {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     int points = queryDocumentSnapshots.getDocuments().get(0).getLong("points") != null ?
                             queryDocumentSnapshots.getDocuments().get(0).getLong("points").intValue() : 0;
+                    if (pointsCount != null) {
                     pointsCount.setText(String.valueOf(points));
+                    }
                     
                     // Calculate level based on points
                     int level = calculateLevel(points);
+                    if (levelCount != null) {
                     levelCount.setText(String.valueOf(level));
+                    }
                 } else {
-                    pointsCount.setText("0");
-                    levelCount.setText("1");
+                    if (pointsCount != null) pointsCount.setText("0");
+                    if (levelCount != null) levelCount.setText("1");
                 }
             })
             .addOnFailureListener(e -> {
-                pointsCount.setText("0");
-                levelCount.setText("1");
+                if (pointsCount != null) pointsCount.setText("0");
+                if (levelCount != null) levelCount.setText("1");
             });
     }
 
@@ -261,10 +300,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void setDefaultValues() {
-        activeTasksCount.setText("0");
-        completedTasksCount.setText("0");
-        pointsCount.setText("0");
-        levelCount.setText("1");
+        if (activeTasksCount != null) activeTasksCount.setText("0");
+        if (completedTasksCount != null) completedTasksCount.setText("0");
+        if (pointsCount != null) pointsCount.setText("0");
+        if (levelCount != null) levelCount.setText("1");
     }
 
     private void navigateToSearch() {
@@ -296,5 +335,22 @@ public class HomeFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
         }
+    }
+    
+    private void navigateToBadges() {
+        // Navigate to badges tab using bottom navigation
+        if (getActivity() instanceof TasksActivity) {
+            BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setSelectedItemId(R.id.navigation_badges);
+            }
+        }
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh wallet amount display when returning to this fragment
+        loadWalletAmount();
     }
 } 

@@ -4,61 +4,139 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dashboard_gradient_background">
+    android:background="@color/background_primary">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
-            <!-- Header Section with Welcome and Day/Week Toggle -->
+            <!-- Header Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="32dp">
+
+                <TextView
+                    android:id="@+id/welcomeText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Money"
+                    style="@style/TextAppearance.Modern.Display.Large"/>
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/default_profile"
+                    android:background="@drawable/circle_background_light_grey"
+                    android:padding="8dp"/>
+
+            </LinearLayout>
+
+            <!-- Cash Balance Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Card.Modern"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
+                    <!-- Cash Balance Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cash Balance"
+                            style="@style/TextAppearance.Modern.Headline.Medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Account &amp; Routing"
+                            style="@style/TextAppearance.Modern.Body.Medium"
+                            android:textColor="@color/text_secondary_gray"
+                            android:clickable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:padding="8dp"/>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_crown"
+                            android:layout_marginStart="4dp"/>
+
+                    </LinearLayout>
+
+                    <!-- Cash Amount -->
                     <TextView
-                        android:id="@+id/welcomeText"
+                        android:id="@+id/cashBalanceAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Today"
-                        style="@style/Text.Heading.Large"/>
+                        android:text="RM0.00"
+                        android:textSize="48sp"
+                        android:fontFamily="sans-serif"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_black"
+                        android:layout_marginBottom="24dp"/>
 
-                    <TextView
-                        android:id="@+id/dashboardSubtitle"
-                        android:layout_width="wrap_content"
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Your task progress"
-                        style="@style/Text.Body.Medium"
-                        android:layout_marginTop="4dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/addCashButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Add Cash"
+                            style="@style/Button.Modern.Secondary"
+                            android:layout_marginEnd="8dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/cashOutButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Cash Out"
+                            style="@style/Button.Modern.Secondary"
+                            android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Dashboard Grid -->
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Feature Cards Grid -->
             <LinearLayout
-                android:id="@+id/dashboardGrid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
                 android:orientation="vertical">
 
                 <!-- First Row -->
@@ -66,91 +144,136 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="16dp">
 
-                    <!-- Active Tasks Card -->
-                    <androidx.cardview.widget.CardView
+                    <!-- Leaderboard Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/leaderboardCard"
                         android:layout_width="0dp"
-                        android:layout_height="180dp"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="8dp"
-                        app:cardBackgroundColor="@color/surface_primary"
-                        android:layout_margin="8dp">
+                        style="@style/Card.Modern"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Leaderboard"
+                                    style="@style/TextAppearance.Modern.Headline.Small"/>
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_crown"/>
+
+                            </LinearLayout>
 
                             <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:src="@drawable/ic_my_tasks"
-                                android:background="@drawable/circle_background_light_purple"
-                                android:padding="8dp"/>
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/ic_leaderboard"
+                                android:background="@drawable/circle_background_light_orange"
+                                android:padding="16dp"
+                                android:layout_gravity="start"/>
 
                             <TextView
-                                android:id="@+id/activeTasksCount"
+                                android:id="@+id/leaderboardSubtext"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="---"
-                                style="@style/Text.Heading.Medium"
+                                android:text="View rankings"
+                                style="@style/TextAppearance.Modern.Body.Small"
                                 android:layout_marginTop="8dp"/>
 
-                            <TextView
-                                android:id="@+id/activeTasksLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Active Tasks"
-                                style="@style/Text.Body.Medium"
-                                android:layout_marginTop="4dp"/>
-
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
 
-                    <!-- Completed Tasks Card -->
-                    <androidx.cardview.widget.CardView
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Search Tasks Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/searchCard"
                         android:layout_width="0dp"
-                        android:layout_height="180dp"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="8dp"
-                        app:cardBackgroundColor="@color/surface_primary"
-                        android:layout_margin="8dp">
+                        style="@style/Card.Modern"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Search Tasks"
+                                    style="@style/TextAppearance.Modern.Headline.Small"/>
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_crown"/>
+
+                            </LinearLayout>
+
+                            <FrameLayout
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:layout_gravity="start">
+
+                                <!-- Blue base circles -->
+                                <ImageView
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/circle_background_light_blue"/>
 
                             <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:src="@drawable/ic_star"
-                                android:background="@drawable/circle_background_light_green"
+                                     android:layout_width="40dp"
+                                     android:layout_height="40dp"
+                                     android:layout_gravity="center"
+                                     android:background="@color/primary_purple"
+                                     android:src="@drawable/ic_search"
                                 android:padding="8dp"/>
 
+                            </FrameLayout>
+
                             <TextView
-                                android:id="@+id/completedTasksCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="---"
-                                style="@style/Text.Heading.Medium"
+                                android:text="Find work"
+                                style="@style/TextAppearance.Modern.Body.Small"
                                 android:layout_marginTop="8dp"/>
 
-                            <TextView
-                                android:id="@+id/completedTasksLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Completed"
-                                style="@style/Text.Body.Medium"
-                                android:layout_marginTop="4dp"/>
-
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
 
@@ -160,233 +283,274 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- Points Card -->
-                    <androidx.cardview.widget.CardView
+                    <!-- My Tasks Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/myTasksCard"
                         android:layout_width="0dp"
-                        android:layout_height="180dp"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="8dp"
-                        app:cardBackgroundColor="@color/surface_primary"
-                        android:layout_margin="8dp">
+                        style="@style/Card.Modern"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
 
-                            <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:src="@drawable/ic_crown"
-                                android:background="@drawable/circle_background_light_orange"
-                                android:padding="8dp"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="My Tasks"
+                                    style="@style/TextAppearance.Modern.Headline.Small"/>
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_crown"/>
+
+                            </LinearLayout>
+
+                            <!-- Purple chart-like graphic -->
+                            <FrameLayout
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:layout_gravity="start">
+
+                                <!-- Purple gradient background -->
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/circle_background_light_purple"/>
+
+                                <ImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_my_tasks"
+                                    android:padding="4dp"/>
+
+                            </FrameLayout>
 
                             <TextView
-                                android:id="@+id/pointsCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="---"
-                                style="@style/Text.Heading.Medium"
+                                android:text="Track progress"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
                                 android:layout_marginTop="8dp"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Points"
-                                style="@style/Text.Body.Medium"
-                                android:layout_marginTop="4dp"/>
-
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
 
-                    <!-- Level Card -->
-                    <androidx.cardview.widget.CardView
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Badges Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/badgesCard"
                         android:layout_width="0dp"
-                        android:layout_height="180dp"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="8dp"
-                        app:cardBackgroundColor="@color/surface_primary"
-                        android:layout_margin="8dp">
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Badges"
+                                    style="@style/TextAppearance.Modern.Headline.Small"/>
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_crown"/>
+
+                            </LinearLayout>
+
+                            <!-- Yellow/Gold folders graphic -->
+                            <FrameLayout
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:layout_gravity="start">
+
+                                <!-- Stack of golden badges -->
+                                <ImageView
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="bottom|start"
+                                    android:background="@drawable/circle_background_light_orange"
+                                    android:src="@drawable/ic_badge"
+                                    android:padding="12dp"/>
 
                             <ImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_gravity="top|end"
+                                    android:background="@drawable/circle_background_light_orange"
                                 android:src="@drawable/ic_medal"
-                                android:background="@drawable/circle_background_light_blue"
                                 android:padding="8dp"/>
 
+                            </FrameLayout>
+
                             <TextView
-                                android:id="@+id/levelCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="---"
-                                style="@style/Text.Heading.Medium"
+                                android:text="Earn rewards"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
                                 android:layout_marginTop="8dp"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Level"
-                                style="@style/Text.Body.Medium"
-                                android:layout_marginTop="4dp"/>
-
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Leaderboard Banner -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/leaderboardCard"
+            <!-- Quick Stats Bar (Optional) -->
+            <LinearLayout
+                android:id="@+id/quickStatsBar"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/surface_primary"
-                android:layout_marginBottom="24dp"
-                android:clickable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rounded_background_light"
+                android:gravity="center">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="20dp">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/ic_leaderboard"
-                        android:background="@drawable/circle_background_light_orange"
-                        android:padding="12dp"/>
+                    <TextView
+                        android:id="@+id/activeTasksCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        style="@style/TextAppearance.Modern.Headline.Medium"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Active"
+                        style="@style/TextAppearance.Modern.Body.Small"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:background="@color/text_secondary"
+                    android:alpha="0.3"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="20dp">
+                    android:gravity="center">
+
+                        <TextView
+                        android:id="@+id/completedTasksCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                        android:text="0"
+                        style="@style/TextAppearance.Modern.Headline.Medium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Leaderboard"
-                            style="@style/Text.Heading.Small"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/leaderboardSubtext"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="See how you rank among all users"
-                            style="@style/Text.Body.Medium"/>
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_crown"
-                        android:alpha="0.6"/>
+                        android:text="Completed"
+                        style="@style/TextAppearance.Modern.Body.Small"/>
 
                 </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:background="@color/text_secondary"
+                    android:alpha="0.3"/>
 
-            <!-- Navigation Cards -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <!-- Search Tasks Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/searchCard"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="@color/surface_primary"
-                    android:layout_margin="8dp"
-                    android:clickable="true"
-                    android:foreground="?attr/selectableItemBackground">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
+                    android:gravity="center">
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_search"
-                            android:background="@drawable/circle_background_light_blue"
-                            android:padding="6dp"
-                            android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/pointsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        style="@style/TextAppearance.Modern.Headline.Medium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Search Tasks"
-                            style="@style/Text.Label.Primary"
-                            android:gravity="center"/>
+                        android:text="Points"
+                        style="@style/TextAppearance.Modern.Body.Small"/>
 
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <!-- My Tasks Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/myTasksCard"
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:background="@color/text_secondary"
+                    android:alpha="0.3"/>
+
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="@color/surface_primary"
-                    android:layout_margin="8dp"
-                    android:clickable="true"
-                    android:foreground="?attr/selectableItemBackground">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
+                    android:gravity="center">
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_my_tasks"
-                            android:background="@drawable/circle_background_light_purple"
-                            android:padding="6dp"
-                            android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/levelCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        style="@style/TextAppearance.Modern.Headline.Medium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="My Tasks"
-                            style="@style/Text.Label.Primary"
-                            android:gravity="center"/>
+                        android:text="Level"
+                        style="@style/TextAppearance.Modern.Body.Small"/>
 
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 

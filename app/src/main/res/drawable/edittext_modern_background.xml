@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused State -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_white" />
+            <stroke android:width="2dp" android:color="@color/accent_blue" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Error State -->
+    <item android:state_activated="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_white" />
+            <stroke android:width="2dp" android:color="@color/accent_error_red" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Disabled State -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_card_gray" />
+            <stroke android:width="1dp" android:color="@color/border_light_gray" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Default State -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/background_white" />
+            <stroke android:width="1dp" android:color="@color/border_light_gray" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</selector> 
