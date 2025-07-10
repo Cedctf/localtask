@@ -2,7 +2,7 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.android.application")
+    alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
 }
 
