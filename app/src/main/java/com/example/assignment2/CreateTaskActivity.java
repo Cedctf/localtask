@@ -262,7 +262,7 @@ public class CreateTaskActivity extends AppCompatActivity implements OnMapReadyC
         task.put("longitude", selectedLocation.longitude);
         task.put("hirerId", hirerId);
         task.put("hirerEmail", hirerEmail);
-        task.put("status", "Open");
+        task.put("status", "open");
         task.put("timestamp", System.currentTimeMillis());
         task.put("assignedTo", "");
         task.put("applicants", new HashMap<String, Object>());

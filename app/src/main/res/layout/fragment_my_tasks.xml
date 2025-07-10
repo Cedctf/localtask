@@ -22,9 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="My Tasks"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            style="@style/Text.Heading.Large"
+            android:textColor="@color/text_inverse"
             android:gravity="start"
             android:layout_marginBottom="8dp"/>
 
@@ -33,8 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Loading your tasks..."
-            android:textSize="14sp"
-            android:textColor="@color/white"
+            style="@style/Text.Inverse.Body"
             android:gravity="start"
             android:alpha="0.8"/>
 
@@ -48,7 +46,7 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card_white"
+        app:cardBackgroundColor="@color/surface_primary"
         app:layout_constraintTop_toBottomOf="@id/headerSection"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -97,9 +95,8 @@
                     android:layout_marginEnd="4dp"
                     android:background="@drawable/filter_badge_background"
                     android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    style="@style/Text.Label.Secondary"
+                    android:textColor="@color/text_inverse"
                     android:gravity="center"
                     android:visibility="gone" />
 
@@ -119,7 +116,7 @@
         android:layout_marginTop="8dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/card_white"
+        app:cardBackgroundColor="@color/surface_primary"
         app:layout_constraintTop_toBottomOf="@id/searchFilterCard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -135,9 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Your Tasks"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_dark"
+                style="@style/Text.Heading.Medium"
                 android:layout_marginBottom="16dp"/>
 
             <!-- Tasks RecyclerView with proper height -->
@@ -170,17 +165,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No Tasks Yet"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_dark"
+                    style="@style/Text.Heading.Medium"
                     android:layout_marginBottom="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Apply for tasks from the Tasks tab to see them here"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_grey"
+                    style="@style/Text.Body.Medium"
                     android:gravity="center"
                     android:lineSpacingExtra="4dp"/>
 
@@ -188,19 +180,5 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
-    <!-- Add Task FAB (only for hirers) -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddTask"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:src="@android:drawable/ic_input_add"
-        app:tint="@color/white"
-        app:backgroundTint="@color/primary_purple"
-        app:elevation="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

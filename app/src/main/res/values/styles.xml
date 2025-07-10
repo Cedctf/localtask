@@ -1,48 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme -->
+    <!-- === BASE APPLICATION THEME === -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here -->
-        <item name="colorPrimary">@color/design_default_color_primary</item>
-        <item name="colorPrimaryDark">@color/design_default_color_primary_dark</item>
-        <item name="colorAccent">@color/design_default_color_secondary</item>
+        <item name="colorPrimary">@color/primary_purple</item>
+        <item name="colorPrimaryDark">@color/primary_purple_dark</item>
+        <item name="colorAccent">@color/primary_purple</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:statusBarColor">@color/background_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
-    <!-- Style for circular profile image -->
+    <!-- === BASE TEXT STYLES (Parent Styles) === -->
+    <style name="Text">
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Text.Heading" parent="Text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Text.Body" parent="Text">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Text.Button" parent="Text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Text.Inverse" parent="Text">
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <style name="Text.Label" parent="Text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Text.Status" parent="Text">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Text.Tab" parent="Text">
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <!-- === HEADING STYLES === -->
+    <style name="Text.Heading.Large">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <style name="Text.Heading.Medium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="Text.Heading.Small">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <!-- === BODY TEXT STYLES === -->
+    <style name="Text.Body.Large">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="Text.Body.Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">1dp</item>
+    </style>
+
+    <style name="Text.Body.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:lineSpacingExtra">1dp</item>
+    </style>
+
+    <!-- === CAPTION & LABEL STYLES === -->
+    <style name="Text.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+    </style>
+
+    <style name="Text.Label.Primary">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Text.Label.Secondary">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!-- === INVERSE TEXT STYLES (for dark backgrounds) === -->
+    <style name="Text.Inverse.Heading">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <style name="Text.Inverse.Body">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <style name="Text.Inverse.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_inverse</item>
+        <item name="android:alpha">0.8</item>
+    </style>
+
+    <!-- === BUTTON TEXT STYLES === -->
+    <style name="Text.Button.Primary">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_inverse</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Text.Button.Secondary">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primary_purple</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- === TAB TEXT STYLES === -->
+    <style name="Text.Tab.Active">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <style name="Text.Tab.Inactive">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_inverse</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <!-- === STATUS TEXT STYLES === -->
+    <style name="Text.Status.Success">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/success</item>
+    </style>
+
+    <style name="Text.Status.Error">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/error</item>
+    </style>
+
+    <style name="Text.Status.Warning">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/warning</item>
+    </style>
+
+    <!-- === LEGACY STYLES (Updated) === -->
+    <style name="HeaderText" parent="Text.Heading.Small">
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
     <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
-    <!-- Style for outlined buttons -->
     <style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">@color/design_default_color_primary</item>
-        <item name="strokeColor">@color/design_default_color_primary</item>
-    </style>
-
-    <!-- Style for text headers -->
-    <style name="HeaderText">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/primary_purple</item>
+        <item name="strokeColor">@color/primary_purple</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
-    <!-- Style for card views -->
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">4dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">6dp</item>
         <item name="contentPadding">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
+        <item name="cardBackgroundColor">@color/surface_primary</item>
     </style>
 
-    <!-- Style for rounded buttons -->
     <style name="RoundedButton" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">8dp</item>
-        <item name="android:layout_height">48dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:layout_height">56dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@color/button_primary</item>
+        <item name="android:textColor">@color/text_inverse</item>
+    </style>
+
+    <!-- === INPUT STYLES === -->
+    <style name="AppEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/input_focus</item>
+        <item name="android:textColorHint">@color/placeholder_text</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 </resources> 

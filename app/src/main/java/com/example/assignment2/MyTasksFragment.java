@@ -50,7 +50,6 @@ public class MyTasksFragment extends Fragment {
     private List<String> taskIdList;
     private LinearLayout emptyStateLayout;
     private TextView subtitleText;
-    private FloatingActionButton fabAddTask;
     private LocationHelper locationHelper;
     private PlacesHelper placesHelper;
     private SearchView searchViewMyTasks;
@@ -102,7 +101,6 @@ public class MyTasksFragment extends Fragment {
         recyclerView = view.findViewById(R.id.myTasksRecyclerView);
         emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
         subtitleText = view.findViewById(R.id.myTasksSubtitle);
-        fabAddTask = view.findViewById(R.id.fabAddTask);
         searchViewMyTasks = view.findViewById(R.id.searchViewMyTasks);
         btnFilterMyTasks = view.findViewById(R.id.btnFilterMyTasks);
         filterBadgeMyTasks = view.findViewById(R.id.filterBadgeMyTasks);
@@ -755,12 +753,19 @@ public class MyTasksFragment extends Fragment {
     }
 
     private void setupAddTaskButton() {
+        // Find the activity-level FAB (truly floating, no layout interference)
+        FloatingActionButton activityFabAddTask = getActivity().findViewById(R.id.fab_create_task);
+        
+        if (activityFabAddTask == null) {
+            return; // FAB not found in activity layout
+        }
+        
         String userType = sessionManager.getUserType();
         if ("Hirer".equals(userType)) {
-            fabAddTask.setVisibility(View.VISIBLE);
-            fabAddTask.setOnClickListener(v -> openCreateTaskActivity());
+            activityFabAddTask.setVisibility(View.VISIBLE);
+            activityFabAddTask.setOnClickListener(v -> openCreateTaskActivity());
         } else {
-            fabAddTask.setVisibility(View.GONE);
+            activityFabAddTask.setVisibility(View.GONE);
         }
     }
     
@@ -941,6 +946,24 @@ public class MyTasksFragment extends Fragment {
         super.onResume();
         // Refresh tasks when returning to this fragment
         loadMyAssignedTasks();
+        // Show create task FAB when returning to this fragment
+        setupAddTaskButton();
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Hide create task FAB when leaving this fragment
+        hideCreateTaskButton();
+    }
+    
+    private void hideCreateTaskButton() {
+        if (getActivity() != null) {
+            FloatingActionButton activityFabAddTask = getActivity().findViewById(R.id.fab_create_task);
+            if (activityFabAddTask != null) {
+                activityFabAddTask.setVisibility(View.GONE);
+            }
+        }
     }
 
     // Custom RecyclerView Adapter for My Tasks

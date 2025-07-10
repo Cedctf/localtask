@@ -45,10 +45,10 @@ public class ChatbotManager {
     
     /**
      * Enhanced chatbot button setup with user type checking
-     * Following the same pattern as the create task function
+     * Using the FAB already defined in the layout - no more layout interference!
      */
     public void addChatbotButton(Activity activity) {
-        // Check user type first - similar to setupAddTaskButton() pattern
+        // Check user type first
         String userType = sessionManager.getUserType();
         
         // Setup chatbot button based on user type
@@ -57,34 +57,21 @@ public class ChatbotManager {
     
     /**
      * Setup chatbot button with conditional visibility and behavior
-     * Adapted from MyTasksFragment.setupAddTaskButton() pattern
+     * Now uses the existing FAB in layout - truly floating with no layout impact
      */
     private void setupChatbotButton(Activity activity, String userType) {
-        // Find the bottom navigation view
-        final View bottomNavigation = activity.findViewById(R.id.bottom_navigation);
+        // Find the existing FAB in the layout
+        final FloatingActionButton fabChatbot = activity.findViewById(R.id.fab_chatbot);
         
-        // Find the main activity layout
-        ViewGroup activityLayout = null;
-        ViewGroup fragmentContainer = activity.findViewById(R.id.fragment_container);
-        if (fragmentContainer != null && fragmentContainer.getParent() instanceof ViewGroup) {
-            activityLayout = (ViewGroup) fragmentContainer.getParent();
-        } else {
-            activityLayout = activity.findViewById(android.R.id.content);
+        if (fabChatbot == null) {
+            return; // FAB not found in layout
         }
         
-        final ViewGroup finalActivityLayout = activityLayout;
-        
-        // Create floating action button with conditional styling
-        final FloatingActionButton fabChatbot = new FloatingActionButton(context);
-        
-        // Configure chatbot button based on user type (like create task function)
+        // Configure chatbot button based on user type
         if ("Hirer".equals(userType)) {
             // For Hirers - AI Assistant for task management
             fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
             fabChatbot.setContentDescription("Task Management Assistant");
-            
-            // Show chatbot button for hirers
-            addChatbotWithOverlay(fabChatbot, bottomNavigation, finalActivityLayout);
             
             // Set click listener with hirer-specific context
             fabChatbot.setOnClickListener(v -> {
@@ -99,9 +86,6 @@ public class ChatbotManager {
             fabChatbot.setImageResource(android.R.drawable.ic_dialog_email);
             fabChatbot.setContentDescription("Task Assistant");
             
-            // Show chatbot button for workers
-            addChatbotWithOverlay(fabChatbot, bottomNavigation, finalActivityLayout);
-            
             // Set click listener with worker-specific context
             fabChatbot.setOnClickListener(v -> {
                 Intent intent = new Intent(context, ChatbotActivity.class);
@@ -111,11 +95,14 @@ public class ChatbotManager {
             });
         }
         
-        // Optional: Add long click for additional functionality (like in create task)
+        // Add long click for additional functionality
         fabChatbot.setOnLongClickListener(v -> {
             showChatbotOptionsDialog(activity, userType);
             return true;
         });
+        
+        // Make the FAB visible (it's initially hidden in layout)
+        fabChatbot.setVisibility(View.VISIBLE);
     }
     
     /**
@@ -154,76 +141,7 @@ public class ChatbotManager {
         builder.show();
     }
     
-    private void addChatbotWithOverlay(FloatingActionButton fabChatbot, View bottomNavigation, ViewGroup parentLayout) {
-        // Convert dp to pixels
-        float density = context.getResources().getDisplayMetrics().density;
-        int marginDp = 16;
-        int marginPx = (int) (marginDp * density);
-        
-        // Create a wrapper FrameLayout to hold the chatbot button
-        android.widget.FrameLayout wrapper = new android.widget.FrameLayout(context);
-        
-        // Add the FAB to the wrapper
-        android.widget.FrameLayout.LayoutParams fabParams = new android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-        );
-        fabParams.gravity = android.view.Gravity.END | android.view.Gravity.BOTTOM;
-        fabParams.setMargins(0, 0, marginPx, marginPx);
-        wrapper.addView(fabChatbot, fabParams);
-        
-        // Add wrapper to parent layout
-        ViewGroup.LayoutParams wrapperParams;
-        
-        if (parentLayout instanceof android.widget.LinearLayout) {
-            // For LinearLayout, add as last child but position above bottom nav
-            wrapperParams = new android.widget.LinearLayout.LayoutParams(
-                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                    0 // We'll adjust this
-            );
-            ((android.widget.LinearLayout.LayoutParams) wrapperParams).weight = 0;
-            
-            // Position the wrapper just before the bottom navigation
-            int bottomNavIndex = -1;
-            if (bottomNavigation != null) {
-                for (int i = 0; i < parentLayout.getChildCount(); i++) {
-                    if (parentLayout.getChildAt(i) == bottomNavigation) {
-                        bottomNavIndex = i;
-                        break;
-                    }
-                }
-            }
-            
-            // Set wrapper height to accommodate the FAB
-            int fabSize = (int) (56 * density); // Standard FAB size
-            ((android.widget.LinearLayout.LayoutParams) wrapperParams).height = fabSize + marginPx;
-            
-            if (bottomNavIndex != -1) {
-                parentLayout.addView(wrapper, bottomNavIndex, wrapperParams);
-            } else {
-                parentLayout.addView(wrapper, wrapperParams);
-            }
-            
-        } else {
-            // For other layouts, use standard approach
-            wrapperParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-            parentLayout.addView(wrapper, wrapperParams);
-            
-            // Adjust position if there's bottom navigation
-            if (bottomNavigation != null) {
-                bottomNavigation.post(() -> {
-                    int bottomNavHeight = bottomNavigation.getHeight();
-                    if (bottomNavHeight > 0) {
-                        fabParams.setMargins(0, 0, marginPx, marginPx + bottomNavHeight);
-                        fabChatbot.setLayoutParams(fabParams);
-                    }
-                });
-            }
-        }
-    }
+
     
     private void showChatDialog() {
         if (chatDialog != null && chatDialog.isShowing()) {

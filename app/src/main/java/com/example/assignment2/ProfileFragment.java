@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileFragment extends Fragment {
@@ -21,6 +23,12 @@ public class ProfileFragment extends Fragment {
     private String userEmail;
     private FirebaseFirestore db;
     private SessionManager sessionManager;
+
+    // Tab buttons - only Dashboard and Settings
+    private TextView tabDashboard, tabSettings;
+    
+    // Content views - only Dashboard and Settings
+    private ScrollView dashboardContent, settingsContent;
 
     public static ProfileFragment newInstance(String userName, String userType, String userEmail) {
         ProfileFragment fragment = new ProfileFragment();
@@ -49,6 +57,12 @@ public class ProfileFragment extends Fragment {
                            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Initialize tab buttons
+        setupTabButtons(view);
+        
+        // Initialize content views
+        setupContentViews(view);
+
         // Set user information
         TextView nameText = view.findViewById(R.id.profileName);
         TextView typeText = view.findViewById(R.id.profileType);
@@ -58,48 +72,129 @@ public class ProfileFragment extends Fragment {
         typeText.setText(userType);
         emailText.setText(userEmail);
 
-        // Load statistics
+        // Load statistics for dashboard tab
         loadUserStatistics(view);
 
-        // Setup buttons
+        // Setup buttons in different tabs
+        setupTabContent(view);
+
+        // Show dashboard by default
+        showDashboard();
+
+        return view;
+    }
+
+    private void setupTabButtons(View view) {
+        tabDashboard = view.findViewById(R.id.tabDashboard);
+        tabSettings = view.findViewById(R.id.tabSettings);
+
+        tabDashboard.setOnClickListener(v -> showDashboard());
+        tabSettings.setOnClickListener(v -> showSettings());
+    }
+
+    private void setupContentViews(View view) {
+        dashboardContent = view.findViewById(R.id.dashboardContent);
+        settingsContent = view.findViewById(R.id.settingsContent);
+    }
+
+    private void setupTabContent(View view) {
+        // Setup dashboard content buttons
+        Button shareProgressButton = view.findViewById(R.id.btnShareProgress);
+        shareProgressButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Share Progress coming soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        // Setup settings content buttons
         Button editProfileButton = view.findViewById(R.id.btnEditProfile);
+        Button notificationSettingsButton = view.findViewById(R.id.btnNotificationSettings);
+        Button privacySettingsButton = view.findViewById(R.id.btnPrivacySettings);
         Button logoutButton = view.findViewById(R.id.btnLogout);
 
         editProfileButton.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Edit Profile coming soon!", Toast.LENGTH_SHORT).show();
         });
 
-        logoutButton.setOnClickListener(v -> logout());
+        notificationSettingsButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Notification Settings coming soon!", Toast.LENGTH_SHORT).show();
+        });
 
-        return view;
+        privacySettingsButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Privacy Settings coming soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        logoutButton.setOnClickListener(v -> logout());
+    }
+
+    private void showDashboard() {
+        updateTabSelection(tabDashboard);
+        showContent(dashboardContent);
+    }
+
+    private void showSettings() {
+        updateTabSelection(tabSettings);
+        showContent(settingsContent);
+    }
+
+    private void updateTabSelection(TextView selectedTab) {
+        // Reset all tabs to unselected state
+        tabDashboard.setAlpha(0.7f);
+        tabDashboard.setTypeface(null, android.graphics.Typeface.NORMAL);
+        
+        tabSettings.setAlpha(0.7f);
+        tabSettings.setTypeface(null, android.graphics.Typeface.NORMAL);
+
+        // Highlight selected tab
+        selectedTab.setAlpha(1.0f);
+        selectedTab.setTypeface(null, android.graphics.Typeface.BOLD);
+    }
+
+    private void showContent(ScrollView selectedContent) {
+        // Hide all content views
+        dashboardContent.setVisibility(View.GONE);
+        settingsContent.setVisibility(View.GONE);
+
+        // Show selected content
+        selectedContent.setVisibility(View.VISIBLE);
     }
 
     private void loadUserStatistics(View view) {
+        // Load dashboard stats
+        TextView totalTasksText = view.findViewById(R.id.totalTasksCount);
+        TextView longestStreakText = view.findViewById(R.id.longestStreakCount);
+        TextView currentStreakText = view.findViewById(R.id.currentStreakCount);
+
+        // Load stats for dashboard tab stats section
         TextView tasksCompletedText = view.findViewById(R.id.tasksCompleted);
         TextView totalPointsText = view.findViewById(R.id.totalPoints);
         TextView badgesEarnedText = view.findViewById(R.id.badgesEarned);
 
         if ("Hirer".equals(userType)) {
             // For hirers, show tasks uploaded instead of tasks completed
-            loadHirerStatistics(view, tasksCompletedText, totalPointsText, badgesEarnedText);
+            loadHirerStatistics(view, totalTasksText, tasksCompletedText, totalPointsText, badgesEarnedText);
         } else {
             // For users, show original statistics
-            loadRegularUserStatistics(tasksCompletedText, totalPointsText, badgesEarnedText);
+            loadRegularUserStatistics(totalTasksText, tasksCompletedText, totalPointsText, badgesEarnedText);
         }
+
+        // Set default streak values (these would be calculated from actual data in a real app)
+        longestStreakText.setText("1 day");
+        currentStreakText.setText("1 day");
     }
 
-    private void loadHirerStatistics(View view, TextView tasksUploadedText, TextView totalPointsText, TextView badgesEarnedText) {
+    private void loadHirerStatistics(View view, TextView totalTasksText, TextView tasksUploadedText, TextView totalPointsText, TextView badgesEarnedText) {
         String userId = sessionManager.getUserId();
         if (userId != null) {
             // Load tasks uploaded by this hirer
             TaskManager.getTaskCountByHirer(userId, new TaskManager.TaskCountCallback() {
                 @Override
                 public void onSuccess(int count) {
+                    totalTasksText.setText(String.valueOf(count));
                     tasksUploadedText.setText(String.valueOf(count));
                 }
 
                 @Override
                 public void onError(String error) {
+                    totalTasksText.setText("0");
                     tasksUploadedText.setText("0");
                 }
             });
@@ -126,14 +221,16 @@ public class ProfileFragment extends Fragment {
             });
     }
 
-    private void loadRegularUserStatistics(TextView tasksCompletedText, TextView totalPointsText, TextView badgesEarnedText) {
+    private void loadRegularUserStatistics(TextView totalTasksText, TextView tasksCompletedText, TextView totalPointsText, TextView badgesEarnedText) {
         // Load tasks completed
         db.collection("tasks")
             .whereEqualTo("assignedTo", userName)
             .whereEqualTo("status", "completed")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
-                tasksCompletedText.setText(String.valueOf(queryDocumentSnapshots.size()));
+                int completedCount = queryDocumentSnapshots.size();
+                totalTasksText.setText(String.valueOf(completedCount));
+                tasksCompletedText.setText(String.valueOf(completedCount));
             });
 
         // Load total points

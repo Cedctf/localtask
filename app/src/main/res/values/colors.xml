@@ -1,77 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    
-    <!-- New purple theme colors -->
-    <color name="purple_dark_bg">#120A2E</color>
-    <color name="purple_card_bg">#1F1735</color>
-    <color name="purple_accent">#673AB7</color>
-    <color name="text_hint_gray">#9E9E9E</color>
-    <color name="text_white">#FFFFFF</color>
-    <color name="button_low_priority_selected">#673AB7</color>
-    <color name="button_priority_unselected">#2D234A</color>
-    <color name="button_create_task">#673AB7</color>
-    <color name="switch_track_on">#673AB7</color>
-    <color name="switch_track_off">#9E9E9E</color>
-    <color name="switch_thumb_on">#FFFFFF</color>
-    <color name="switch_thumb_off">#EEEEEE</color>
-    
-    <!-- Purple Theme Colors -->
+    <!-- === PRIMARY BRAND COLORS === -->
     <color name="primary_purple">#8B7CF6</color>
     <color name="primary_purple_dark">#7C3AED</color>
-    <color name="light_purple">#A78BFA</color>
-    <color name="purple_background">#8B7CF6</color>
-    
-    <!-- Background and Surface Colors -->
-    <color name="background_light">#FFFFFF</color>
-    <color name="background_gray">#F8FAFC</color>
-    
-    <!-- Text Colors -->
-    <color name="text_dark">#1F2937</color>
-    <color name="text_gray">#6B7280</color>
-    <color name="text_light">#9CA3AF</color>
-    
-    <!-- Border and Input Colors -->
+    <color name="primary_purple_light">#A78BFA</color>
+    <color name="purple_500">#673AB7</color>
+
+    <!-- === TEXT COLOR HIERARCHY === -->
+    <color name="text_primary">#9CA3AF</color>
+    <color name="text_secondary">#D1D5DB</color>
+    <color name="text_tertiary">#E5E7EB</color>
+    <color name="text_inverse">#FFFFFF</color>
+    <color name="text_disabled">#F3F4F6</color>
+
+    <!-- === SEMANTIC COLORS === -->
+    <color name="success">#10B981</color>
+    <color name="success_light">#D1FAE5</color>
+    <color name="error">#EF4444</color>
+    <color name="error_light">#FEE2E2</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+    <color name="info">#3B82F6</color>
+    <color name="info_light">#DBEAFE</color>
+
+    <!-- === SURFACE & BACKGROUND COLORS === -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F9FAFB</color>
+    <color name="surface_primary">#FFFFFF</color>
+    <color name="surface_secondary">#F3F4F6</color>
+    <color name="surface_overlay">#1F2937CC</color>
+
+    <!-- === INTERACTIVE COLORS === -->
+    <color name="button_primary">@color/primary_purple</color>
+    <color name="button_secondary">#FFFFFF</color>
+    <color name="input_border">#D1D5DB</color>
+    <color name="input_focus">@color/primary_purple</color>
+    <color name="placeholder_text">#D1D5DB</color>
+
+    <!-- === TOGGLE COLORS === -->
+    <color name="toggle_text_selected">@color/text_inverse</color>
+    <color name="toggle_text_unselected">#E5E7EB</color>
+
+    <!-- === MISSING COLORS (Added for drawable compatibility) === -->
+    <color name="button_create_task">@color/primary_purple</color>
+    <color name="light_grey_background">#F3F4F6</color>
+    <color name="light_blue_circle">#DBEAFE</color>
+    <color name="light_green_circle">#D1FAE5</color>
+    <color name="light_grey_circle">#F3F4F6</color>
+    <color name="light_purple_circle">#E9E5FF</color>
+    <color name="light_orange_circle">#FED7AA</color>
+    <color name="text_hint_gray">#D1D5DB</color>
+    <color name="button_low_priority_selected">@color/success</color>
+    <color name="button_priority_unselected">#E5E7EB</color>
+
+    <!-- === BACKWARDS COMPATIBILITY MAPPINGS === -->
+    <!-- These maintain compatibility with existing code references -->
+    <color name="colorPrimary">@color/primary_purple</color>
+    <color name="colorPrimaryDark">@color/primary_purple_dark</color>
+    <color name="colorAccent">@color/primary_purple</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="light_gray">#F9FAFB</color>
+    <color name="gray">#D1D5DB</color>
+    <color name="dark_gray">#9CA3AF</color>
+    <color name="blue">#2196F3</color>
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
+    <color name="orange">#FF9800</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="purple">#9C27B0</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="light_blue">#03A9F4</color>
+    <color name="indigo">#3F51B5</color>
+    <color name="pink">#E91E63</color>
+    <color name="cyan">#00BCD4</color>
+    <color name="lime">#CDDC39</color>
+    <color name="amber">#FFC107</color>
+    <color name="deep_orange">#FF5722</color>
+    <color name="brown">#795548</color>
+    <color name="blue_grey">#607D8B</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- === ADDITIONAL COMPATIBILITY COLORS === -->
+    <color name="light_purple">@color/primary_purple_light</color>
     <color name="border_gray">#E5E7EB</color>
     <color name="input_background">#F9FAFB</color>
-    <color name="light_gray">#F3F4F6</color>
-    
-    <!-- Social Login Colors -->
-    <color name="facebook_blue">#1877F2</color>
-    <color name="google_gray">#F5F5F5</color>
-    
-    <!-- Status Colors -->
-    <color name="success_green">#10B981</color>
-    <color name="error_red">#EF4444</color>
-    
-    <!-- Modern Dashboard Colors -->
-    <color name="light_grey_background">#F0F0F0</color>
-    <color name="card_white">#FFFFFF</color>
-    <color name="text_grey">#666666</color>
-    <color name="text_light_grey">#999999</color>
-    <color name="light_purple_circle">#E6E6FA</color>
-    <color name="light_grey_circle">#F5F5F5</color>
-    <color name="light_blue_circle">#E0F2F7</color>
-    <color name="light_green_circle">#E8F5E9</color>
-    <color name="primary_blue">#6200EE</color>
-    <color name="toggle_selected">#6200EE</color>
-    <color name="toggle_unselected">#CCCCCC</color>
-    <color name="toggle_text_selected">#FFFFFF</color>
-    <color name="toggle_text_unselected">#000000</color>
-    
-    <!-- Bottom Navigation Colors -->
-    <color name="bottom_nav_selected">#6200EE</color>
-    <color name="bottom_nav_unselected">#666666</color>
-    
-    <!-- Badge Fragment Colors -->
-    <color name="text_primary">#1F2937</color>
-    <color name="text_secondary">#6B7280</color>
-    <color name="primary_color">#8B7CF6</color>
-    <color name="success_color">#10B981</color>
+    <color name="error_red">@color/error</color>
+    <color name="text_white">@color/text_inverse</color>
+    <color name="primary_color">@color/primary_purple</color>
+    <color name="toggle_unselected">#F3F4F6</color>
+    <color name="text_gray">#D1D5DB</color>
+    <color name="switch_thumb_on">@color/primary_purple</color>
+    <color name="switch_thumb_off">#FFFFFF</color>
+    <color name="switch_track_on">@color/primary_purple_light</color>
+    <color name="switch_track_off">#E5E7EB</color>
+    <color name="toggle_selected">@color/primary_purple</color>
+    <color name="card_white">@color/surface_primary</color>
+    <color name="text_dark">@color/text_primary</color>
+    <color name="text_grey">@color/text_secondary</color>
+    <color name="text_light">@color/text_tertiary</color>
+    <color name="text_light_grey">@color/text_tertiary</color>
+    <color name="success_green">@color/success</color>
+    <color name="purple_dark_bg">@color/primary_purple_dark</color>
 </resources>
