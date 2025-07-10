@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import android.os.AsyncTask;
 
 public class FilterManager {
     private Context context;
@@ -580,73 +581,65 @@ public class FilterManager {
     }
     
     private void applyFilters() {
-        // Collect categories
-        selectedCategories.clear();
-        if (categoryCleaningCheckbox.isChecked()) selectedCategories.add("Cleaning");
-        if (categoryTutoringCheckbox.isChecked()) selectedCategories.add("Tutoring");
-        if (categoryDeliveryCheckbox.isChecked()) selectedCategories.add("Delivery");
-        if (categorySmallTasksCheckbox.isChecked()) selectedCategories.add("Small Tasks");
-        
-        // Collect payment range
-        int selectedPaymentId = paymentRangeGroup.getCheckedRadioButtonId();
-        selectedPaymentRange = "";
-        if (selectedPaymentId == R.id.paymentRange1) selectedPaymentRange = "10-50";
-        else if (selectedPaymentId == R.id.paymentRange2) selectedPaymentRange = "50-100";
-        else if (selectedPaymentId == R.id.paymentRange3) selectedPaymentRange = "100-200";
-        else if (selectedPaymentId == R.id.paymentRange4) selectedPaymentRange = "200+";
-        
-        // Collect durations
-        selectedDurations.clear();
-        if (durationQuick.isChecked()) selectedDurations.add("Quick");
-        if (durationHalfDay.isChecked()) selectedDurations.add("Half Day");
-        if (durationFullDay.isChecked()) selectedDurations.add("Full Day");
-        if (durationMultiDay.isChecked()) selectedDurations.add("Multi-day");
-        
-        // Collect complexities
-        selectedComplexities.clear();
-        if (complexityBeginner.isChecked()) selectedComplexities.add("Beginner");
-        if (complexityExperience.isChecked()) selectedComplexities.add("Experience");
-        if (complexityProfessional.isChecked()) selectedComplexities.add("Professional");
-        
-        // Collect areas
-        selectedAreas.clear();
-        if (areaSubangJaya.isChecked()) selectedAreas.add("Subang Jaya");
-        if (areaPetalingJaya.isChecked()) selectedAreas.add("Petaling Jaya");
-        if (areaShahAlam.isChecked()) selectedAreas.add("Shah Alam");
-        if (areaKlangValley.isChecked()) selectedAreas.add("Klang Valley");
-        
-        // Save current preferences
-        saveFilters();
-        
-        // Create filter criteria
-        FilterCriteria criteria = new FilterCriteria(
-            selectedCategories,
-            selectedSort,
-            selectedDistance,
-            selectedPaymentRange,
-            selectedAreas,
-            selectedDurations,
-            selectedComplexities
-        );
-        
-        // Notify callback about filters and count
-        if (callback != null) {
-            callback.onFiltersApplied(criteria);
-            callback.onFilterCountChanged(getActiveFilterCount());
-        }
-        
-        // Show feedback
-        String message = "Filters applied";
-        int activeCount = getActiveFilterCount();
-        if (activeCount > 0) {
-            message += " (" + activeCount + " active)";
-        }
-        if (!selectedCategories.isEmpty()) {
-            message += " - " + String.join(", ", selectedCategories);
-        }
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        
-        // Close dialog
-        filterDialog.dismiss();
+        new AsyncTask<Void, Void, FilterCriteria>() {
+            @Override
+            protected FilterCriteria doInBackground(Void... voids) {
+                // Collect categories
+                selectedCategories.clear();
+                if (categoryCleaningCheckbox.isChecked()) selectedCategories.add("Cleaning");
+                if (categoryTutoringCheckbox.isChecked()) selectedCategories.add("Tutoring");
+                if (categoryDeliveryCheckbox.isChecked()) selectedCategories.add("Delivery");
+                if (categorySmallTasksCheckbox.isChecked()) selectedCategories.add("Small Tasks");
+                
+                // Get sort option from spinner
+                selectedSort = sortBySpinner.getSelectedItem().toString();
+                
+                // Collect payment range
+                int selectedPaymentId = paymentRangeGroup.getCheckedRadioButtonId();
+                selectedPaymentRange = "";
+                if (selectedPaymentId == R.id.paymentRange1) selectedPaymentRange = "10-50";
+                else if (selectedPaymentId == R.id.paymentRange2) selectedPaymentRange = "50-100";
+                else if (selectedPaymentId == R.id.paymentRange3) selectedPaymentRange = "100-200";
+                else if (selectedPaymentId == R.id.paymentRange4) selectedPaymentRange = "200+";
+                
+                // Collect durations
+                selectedDurations.clear();
+                if (durationQuick.isChecked()) selectedDurations.add("Quick");
+                if (durationHalfDay.isChecked()) selectedDurations.add("Half Day");
+                if (durationFullDay.isChecked()) selectedDurations.add("Full Day");
+                if (durationMultiDay.isChecked()) selectedDurations.add("Multi-day");
+                
+                // Collect complexities
+                selectedComplexities.clear();
+                if (complexityBeginner.isChecked()) selectedComplexities.add("Beginner");
+                if (complexityExperience.isChecked()) selectedComplexities.add("Experience");
+                if (complexityProfessional.isChecked()) selectedComplexities.add("Professional");
+                
+                // Collect areas
+                selectedAreas.clear();
+                if (areaSubangJaya.isChecked()) selectedAreas.add("Subang Jaya");
+                if (areaPetalingJaya.isChecked()) selectedAreas.add("Petaling Jaya");
+                if (areaShahAlam.isChecked()) selectedAreas.add("Shah Alam");
+                if (areaKlangValley.isChecked()) selectedAreas.add("Klang Valley");
+                
+                return new FilterCriteria(
+                    selectedCategories,
+                    selectedSort,
+                    selectedDistance,
+                    selectedPaymentRange,
+                    selectedAreas,
+                    selectedDurations,
+                    selectedComplexities
+                );
+            }
+            
+            @Override
+            protected void onPostExecute(FilterCriteria criteria) {
+                if (callback != null) {
+                    callback.onFiltersApplied(criteria);
+                    callback.onFilterCountChanged(getActiveFilterCount());
+                }
+            }
+        }.execute();
     }
 } 

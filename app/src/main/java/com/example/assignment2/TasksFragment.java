@@ -39,6 +39,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import android.util.Pair;
+import android.os.AsyncTask;
 
 public class TasksFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -206,50 +208,60 @@ public class TasksFragment extends Fragment {
                 .whereEqualTo("status", "open")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    taskList.clear();
-                    taskIdList.clear(); // Clear IDs as well
-                    
-                    // Create temporary lists to sort by timestamp
-                    List<Task> tempTasks = new ArrayList<>();
-                    List<String> tempIds = new ArrayList<>();
-                    
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Task task = document.toObject(Task.class);
-                        tempTasks.add(task);
-                        tempIds.add(document.getId());
-                    }
-                    
-                    // Sort by timestamp (oldest first)
-                    for (int i = 0; i < tempTasks.size() - 1; i++) {
-                        for (int j = i + 1; j < tempTasks.size(); j++) {
-                            if (tempTasks.get(i).getTimestamp() > tempTasks.get(j).getTimestamp()) {
-                                // Swap tasks
-                                Task tempTask = tempTasks.get(i);
-                                String tempId = tempIds.get(i);
-                                tempTasks.set(i, tempTasks.get(j));
-                                tempIds.set(i, tempIds.get(j));
-                                tempTasks.set(j, tempTask);
-                                tempIds.set(j, tempId);
+                    new AsyncTask<Void, Void, Pair<List<Task>, List<String>>>() {
+                        @Override
+                        protected Pair<List<Task>, List<String>> doInBackground(Void... voids) {
+                            List<Task> tempTasks = new ArrayList<>();
+                            List<String> tempIds = new ArrayList<>();
+                            
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                Task task = document.toObject(Task.class);
+                                tempTasks.add(task);
+                                tempIds.add(document.getId());
                             }
+                            
+                            // Sort by timestamp (oldest first)
+                            for (int i = 0; i < tempTasks.size() - 1; i++) {
+                                for (int j = i + 1; j < tempTasks.size(); j++) {
+                                    if (tempTasks.get(i).getTimestamp() > tempTasks.get(j).getTimestamp()) {
+                                        // Swap tasks
+                                        Task tempTask = tempTasks.get(i);
+                                        String tempId = tempIds.get(i);
+                                        tempTasks.set(i, tempTasks.get(j));
+                                        tempIds.set(i, tempIds.get(j));
+                                        tempTasks.set(j, tempTask);
+                                        tempIds.set(j, tempId);
+                                    }
+                                }
+                            }
+                            
+                            return new Pair<>(tempTasks, tempIds);
                         }
-                    }
-                    
-                    // Add sorted results to main lists
-                    taskList.addAll(tempTasks);
-                    taskIdList.addAll(tempIds);
-                    
-                    // Store original data for filtering
-                    originalTaskList.clear();
-                    originalTaskIdList.clear();
-                    originalTaskList.addAll(tempTasks);
-                    originalTaskIdList.addAll(tempIds);
-                    
-                    // Apply current search and filters to new data
-                    applySearchAndFilters();
+                        
+                        @Override
+                        protected void onPostExecute(Pair<List<Task>, List<String>> result) {
+                            taskList.clear();
+                            taskIdList.clear();
+                            
+                            // Add sorted results to main lists
+                            taskList.addAll(result.first);
+                            taskIdList.addAll(result.second);
+                            
+                            // Store original data for filtering
+                            originalTaskList.clear();
+                            originalTaskIdList.clear();
+                            originalTaskList.addAll(result.first);
+                            originalTaskIdList.addAll(result.second);
+                            
+                            // Apply current search and filters to new data
+                            applySearchAndFilters();
+                        }
+                    }.execute();
                 })
-                .addOnFailureListener(e -> 
+                .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Error loading tasks: " + e.getMessage(), 
-                            Toast.LENGTH_SHORT).show());
+                            Toast.LENGTH_SHORT).show();
+                });
     }
 
     // Method to load only tasks uploaded by the current hirer

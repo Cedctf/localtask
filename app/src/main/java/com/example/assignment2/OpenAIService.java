@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.net.SocketTimeoutException;
 
 public class OpenAIService {
     private static final String TAG = "OpenAIService";
@@ -23,9 +24,10 @@ public class OpenAIService {
     
     public OpenAIService(Context context) {
         this.client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)  // Reduced from 30 to 10 seconds
+                .readTimeout(15, TimeUnit.SECONDS)     // Reduced from 30 to 15 seconds
+                .writeTimeout(10, TimeUnit.SECONDS)    // Reduced from 30 to 10 seconds
+                .retryOnConnectionFailure(true)        // Enable retries
                 .build();
                 
         // Get API key from resources
@@ -52,31 +54,42 @@ public class OpenAIService {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.e(TAG, "API call failed", e);
-                    callback.onError("Network error: " + e.getMessage());
+                    String errorMessage = e instanceof SocketTimeoutException ? 
+                        "Request timed out. Please try again." : 
+                        "Network error: " + e.getMessage();
+                    callback.onError(errorMessage);
                 }
                 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     try {
-                        String responseBody = response.body().string();
-                        
-                        if (response.isSuccessful()) {
-                            String aiResponse = parseResponse(responseBody);
-                            callback.onSuccess(aiResponse);
-                        } else {
-                            Log.e(TAG, "API error: " + responseBody);
+                        if (!response.isSuccessful()) {
+                            String errorBody = response.body() != null ? response.body().string() : "";
+                            Log.e(TAG, "API error: " + errorBody);
                             callback.onError("API error: " + response.code());
+                            return;
                         }
+
+                        String responseBody = response.body().string();
+                        String aiResponse = parseResponse(responseBody);
+                        
+                        if (aiResponse == null || aiResponse.trim().isEmpty()) {
+                            callback.onError("Empty response from API");
+                            return;
+                        }
+                        
+                        callback.onSuccess(aiResponse);
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing response", e);
-                        callback.onError("Error parsing response: " + e.getMessage());
+                        callback.onError("Error processing response: " + e.getMessage());
+                    } finally {
+                        response.close();
                     }
                 }
             });
-            
         } catch (Exception e) {
-            Log.e(TAG, "Error creating request", e);
-            callback.onError("Error creating request: " + e.getMessage());
+            Log.e(TAG, "Error preparing request", e);
+            callback.onError("Error preparing request: " + e.getMessage());
         }
     }
     
