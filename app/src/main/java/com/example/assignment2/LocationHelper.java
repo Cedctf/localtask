@@ -84,8 +84,19 @@ public class LocationHelper {
                     .addOnSuccessListener(location -> {
                         if (location != null) {
                             android.util.Log.d("LocationHelper", "Last known location found: " + location.getLatitude() + ", " + location.getLongitude());
-                            // We have a recent location, use it
+                            
                             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            
+                            // Check if location seems reasonable for Malaysia app usage
+                            if (isLocationOutsideMalaysiaRegion(latLng)) {
+                                android.util.Log.w("LocationHelper", "Current location appears to be outside Malaysia region. Using fallback location.");
+                                // Use a reasonable Malaysian location (Kuala Lumpur city center)
+                                LatLng fallbackLocation = new LatLng(3.1390, 101.6869);
+                                callback.onLocationReceived(fallbackLocation, "Kuala Lumpur (Default Location)");
+                                return;
+                            }
+                            
+                            // We have a reasonable location, use it
                             getAddressFromLocation(latLng, new AddressCallback() {
                                 @Override
                                 public void onAddressResult(String address) {
@@ -136,6 +147,15 @@ public class LocationHelper {
                             
                             // Debug: Log the location received
                             android.util.Log.d("LocationHelper", "Fresh location received: " + latLng.latitude + ", " + latLng.longitude);
+                            
+                            // Check if location seems reasonable for Malaysia app usage
+                            if (isLocationOutsideMalaysiaRegion(latLng)) {
+                                android.util.Log.w("LocationHelper", "Fresh location appears to be outside Malaysia region. Using fallback location.");
+                                // Use a reasonable Malaysian location (Kuala Lumpur city center)
+                                LatLng fallbackLocation = new LatLng(3.1390, 101.6869);
+                                callback.onLocationReceived(fallbackLocation, "Kuala Lumpur (Default Location)");
+                                return;
+                            }
                             
                             getAddressFromLocation(latLng, new AddressCallback() {
                                 @Override
@@ -304,5 +324,29 @@ public class LocationHelper {
 
     public static int getLocationPermissionRequestCode() {
         return LOCATION_PERMISSION_REQUEST_CODE;
+    }
+    
+    /**
+     * Check if the location appears to be outside a reasonable region for Malaysia-focused app
+     * This helps detect when GPS/emulator is providing unrealistic locations (like California)
+     */
+    private boolean isLocationOutsideMalaysiaRegion(LatLng location) {
+        // Define expanded bounds for Malaysia + neighboring regions (Southeast Asia)
+        // This includes Malaysia, Singapore, parts of Thailand, Indonesia, Brunei
+        double minLat = -1.0;   // Southern Indonesia
+        double maxLat = 8.0;    // Northern Thailand
+        double minLng = 95.0;   // Western Thailand
+        double maxLng = 120.0;  // Eastern Indonesia/Philippines
+        
+        boolean outsideRegion = location.latitude < minLat || location.latitude > maxLat ||
+                               location.longitude < minLng || location.longitude > maxLng;
+                               
+        if (outsideRegion) {
+            android.util.Log.w("LocationHelper", String.format(
+                "Location (%.6f, %.6f) is outside Southeast Asia region (lat: %.1f-%.1f, lng: %.1f-%.1f)",
+                location.latitude, location.longitude, minLat, maxLat, minLng, maxLng));
+        }
+        
+        return outsideRegion;
     }
 } 

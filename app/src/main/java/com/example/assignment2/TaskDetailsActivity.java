@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,6 +32,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView titleText, descriptionText, paymentText, statusText, hirerText, dateText, locationText, routeInfoText;
     private Button btnShowRoute, btnApplyForTask, btnCompleteTask, btnMarkAsPaid;
+    private ImageView btnClose;
     private SessionManager sessionManager;
     private LocationHelper locationHelper;
     private RouteHelper routeHelper;
@@ -70,7 +72,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
         btnApplyForTask = findViewById(R.id.btnApplyForTask);
         btnCompleteTask = findViewById(R.id.btnCompleteTask);
         btnMarkAsPaid = findViewById(R.id.btnMarkAsPaid);
+        btnClose = findViewById(R.id.btnClose);
         mapView = findViewById(R.id.taskLocationMapView);
+
+        // Setup Close button
+        btnClose.setOnClickListener(v -> {
+            finish(); // Close this activity and return to previous screen
+        });
 
         // Setup Show Route button
         btnShowRoute.setOnClickListener(v -> {
@@ -462,7 +470,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
             routeInfoMessage = "📏 " + calculateStraightLineDistance();
             showFallbackDistance();
         } else if (error.contains("too far apart")) {
-            userFriendlyMessage = "Locations are too far apart for route calculation.";
+            userFriendlyMessage = "Route calculation not available for long distances. Showing approximate distance.";
             routeInfoMessage = "📏 " + calculateStraightLineDistance();
             showFallbackDistance();
         } else if (error.contains("too close")) {
@@ -812,6 +820,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
                         }).addOnSuccessListener(aVoid -> {
                             android.util.Log.d("TaskDetailsActivity", "Financial transaction completed successfully");
                             
+                            // Add payment to worker's wallet (cash balance)
+                            addPaymentToWorkerWallet(assignedTo, price);
+                            
                             // Fetch and show updated financial totals
                             showUpdatedFinancialTotals(assignedUserRef, hirerRef, price);
                             
@@ -824,7 +835,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                                     .update(updates)
                                     .addOnSuccessListener(taskUpdateVoid -> {
                                         // Show payment successful confirmation message
-                                        Toast.makeText(TaskDetailsActivity.this, "Payment Successful", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(TaskDetailsActivity.this, "Payment Successful! RM" + price + " added to worker's wallet.", Toast.LENGTH_LONG).show();
                                         
                                         // Update the task status in UI to 'completed'
                                         statusText.setText("Status: completed");
@@ -901,6 +912,54 @@ public class TaskDetailsActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             android.util.Log.w("TaskDetailsActivity", "Failed to fetch worker's updated totals: " + e.getMessage());
         });
+    }
+
+    /**
+     * Add payment to worker's wallet (cash balance) using SharedPreferences
+     * This is only called for the worker who completed the task
+     */
+    private void addPaymentToWorkerWallet(String workerUserId, double paymentAmount) {
+        // Only update wallet if the worker is the current logged-in user
+        String currentUserId = sessionManager.getUserId();
+        String currentUserName = sessionManager.getUserName();
+        
+        if (currentUserId != null && currentUserId.equals(workerUserId)) {
+            // Current user is the worker - update their wallet directly
+            updateCurrentUserWallet(paymentAmount);
+        } else if (currentUserName != null && currentUserName.equals(workerUserId)) {
+            // Fallback: check by username if userId doesn't match
+            updateCurrentUserWallet(paymentAmount);
+        } else {
+            // Different user - log this but don't update wallet
+            android.util.Log.d("TaskDetailsActivity", "Payment is for different user (" + workerUserId + 
+                "), current user (" + currentUserId + ") wallet not updated");
+        }
+    }
+    
+    /**
+     * Update the current user's wallet balance in SharedPreferences
+     */
+    private void updateCurrentUserWallet(double paymentAmount) {
+        try {
+            // Get SharedPreferences (same as used in BadgesFragment)
+            android.content.SharedPreferences badgePrefs = getSharedPreferences("badges_prefs", 0);
+            
+            // Get current wallet amount
+            int currentAmount = badgePrefs.getInt("wallet_amount", 0);
+            
+            // Add payment (convert double to int for RM)
+            int paymentInt = (int) Math.round(paymentAmount);
+            int newAmount = currentAmount + paymentInt;
+            
+            // Save updated amount
+            badgePrefs.edit().putInt("wallet_amount", newAmount).apply();
+            
+            android.util.Log.d("TaskDetailsActivity", "Wallet updated - Previous: RM" + currentAmount + 
+                ", Payment: RM" + paymentInt + ", New total: RM" + newAmount);
+                
+        } catch (Exception e) {
+            android.util.Log.e("TaskDetailsActivity", "Failed to update wallet: " + e.getMessage());
+        }
     }
 
     @Override

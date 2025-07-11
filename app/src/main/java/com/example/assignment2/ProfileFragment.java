@@ -98,26 +98,38 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupTabContent(View view) {
+        // Setup settings content options (now LinearLayouts)
+        View notificationsOption = view.findViewById(R.id.settings_notifications);
+        View manageAccountOption = view.findViewById(R.id.settings_manage_account);
+        View manageSubscriptionOption = view.findViewById(R.id.settings_manage_subscription);
+        View redeemCodeOption = view.findViewById(R.id.settings_redeem_code);
+        View privacyPolicyOption = view.findViewById(R.id.settings_privacy_policy);
+        View contactUsOption = view.findViewById(R.id.settings_contact_us);
+        View writeReviewOption = view.findViewById(R.id.settings_write_review);
+        View logoutOption = view.findViewById(R.id.settings_logout);
 
-        // Setup settings content buttons
-        Button editProfileButton = view.findViewById(R.id.btnEditProfile);
-        Button notificationSettingsButton = view.findViewById(R.id.btnNotificationSettings);
-        Button privacySettingsButton = view.findViewById(R.id.btnPrivacySettings);
-        Button logoutButton = view.findViewById(R.id.btnLogout);
-
-        editProfileButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Edit Profile coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        notificationSettingsButton.setOnClickListener(v -> {
+        notificationsOption.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Notification Settings coming soon!", Toast.LENGTH_SHORT).show();
         });
-
-        privacySettingsButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Privacy Settings coming soon!", Toast.LENGTH_SHORT).show();
+        manageAccountOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Manage Account coming soon!", Toast.LENGTH_SHORT).show();
         });
-
-        logoutButton.setOnClickListener(v -> logout());
+        manageSubscriptionOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Manage Subscription coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        redeemCodeOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Redeem a Code coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        privacyPolicyOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Privacy Policy coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        contactUsOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Contact Us coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        writeReviewOption.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Write a Review coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        logoutOption.setOnClickListener(v -> logout());
     }
 
     private void showDashboard() {

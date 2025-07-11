@@ -26,18 +26,19 @@ import java.util.List;
 public class LeaderboardFragment extends Fragment implements LeaderboardAdapter.OnContactUserListener {
 
     private static final String TAG = "LeaderboardFragment";
-    private MaterialButton backButton;
+    private ImageView backButton;
     private RecyclerView leaderboardRecyclerView;
     private LeaderboardAdapter adapter;
     private ProgressBar loadingIndicator;
     private LinearLayout emptyStateLayout;
-    private MaterialButton refreshButton;
+    private ImageView notificationButton;
+    private View fabContact;
     private SessionManager sessionManager;
     private List<LeaderboardUser> leaderboardUsers;
     private TextView leaderboardTitle;
     
     // Podium views
-    private LinearLayout podiumLayout;
+    private View podiumLayout;
     private ImageView firstPlaceAvatar, secondPlaceAvatar, thirdPlaceAvatar;
     private TextView firstPlaceName, secondPlaceName, thirdPlaceName;
     private TextView firstPlaceScore, secondPlaceScore, thirdPlaceScore;
@@ -73,9 +74,17 @@ public class LeaderboardFragment extends Fragment implements LeaderboardAdapter.
     private void initializeViews(View view) {
         backButton = view.findViewById(R.id.backButton);
         leaderboardRecyclerView = view.findViewById(R.id.leaderboardRecyclerView);
-        loadingIndicator = view.findViewById(R.id.loadingIndicator);
-        emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
-        refreshButton = view.findViewById(R.id.refreshButton);
+        notificationButton = view.findViewById(R.id.notificationButton);
+        fabContact = view.findViewById(R.id.fab_contact);
+        
+        // The following views might not exist in the new layout, handle NullPointerExceptions or remove if not needed.
+        try {
+            loadingIndicator = view.findViewById(R.id.loadingIndicator);
+            emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
+        } catch (Exception e) {
+            Log.e(TAG, "Old views (loadingIndicator/emptyStateLayout) not found, continuing without them.");
+        }
+
         leaderboardTitle = view.findViewById(R.id.leaderboardTitle);
         
         // Podium views
@@ -120,9 +129,11 @@ public class LeaderboardFragment extends Fragment implements LeaderboardAdapter.
 
     private void setupClickHandlers() {
         backButton.setOnClickListener(v -> navigateBackToHome());
-        refreshButton.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Refreshing leaderboard...", Toast.LENGTH_SHORT).show();
-            loadLeaderboardData();
+        notificationButton.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Notifications coming soon!", Toast.LENGTH_SHORT).show();
+        });
+        fabContact.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Contact coming soon!", Toast.LENGTH_SHORT).show();
         });
         
         // Time period tab handlers
@@ -272,23 +283,17 @@ public class LeaderboardFragment extends Fragment implements LeaderboardAdapter.
     }
     
     private void showLoading(boolean show) {
-        Log.d(TAG, "showLoading: " + show);
-        loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (show) {
-            podiumLayout.setVisibility(View.GONE);
-            leaderboardRecyclerView.setVisibility(View.GONE);
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (leaderboardRecyclerView != null) {
+            leaderboardRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
     
     private void showEmptyState(boolean show) {
-        Log.d(TAG, "showEmptyState: " + show);
-        emptyStateLayout.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (show) {
-            podiumLayout.setVisibility(View.GONE);
-            leaderboardRecyclerView.setVisibility(View.GONE);
-        } else {
-            podiumLayout.setVisibility(View.VISIBLE);
-            leaderboardRecyclerView.setVisibility(View.VISIBLE);
+        if (emptyStateLayout != null) {
+            emptyStateLayout.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 

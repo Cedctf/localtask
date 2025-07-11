@@ -44,7 +44,7 @@
                     android:textSize="20sp"
                     android:fontFamily="sans-serif-medium"
                     android:textStyle="bold"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/blue"
                     android:gravity="center"
                     android:layout_marginBottom="8dp" />
 
@@ -56,18 +56,22 @@
                     android:textSize="28sp"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/blue"
                     android:gravity="center"
                     android:layout_marginBottom="16dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="Withdraw to Bank"
-                    style="@style/Button.Modern.Secondary"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/white"/>
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:backgroundTint="#000000"
+                    app:cornerRadius="8dp"
+                    android:layout_marginTop="8dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -143,9 +147,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_beginner_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="Redeem"
-                    style="@style/Button.Modern.Primary" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:backgroundTint="#000000"
+                    app:cornerRadius="8dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -221,9 +230,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_employer_praise_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="Redeem"
-                    style="@style/Button.Modern.Primary" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:backgroundTint="#000000"
+                    app:cornerRadius="8dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -299,9 +313,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_consistent_performer_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:text="Redeem"
-                    style="@style/Button.Modern.Primary" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:backgroundTint="#000000"
+                    app:cornerRadius="8dp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

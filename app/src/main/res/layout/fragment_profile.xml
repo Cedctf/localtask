@@ -579,64 +579,305 @@
                     android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Settings Title -->
-                    <TextView
-                        android:layout_width="wrap_content"
+            <!-- Top Banner/Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/primary_purple">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Settings"
-                style="@style/Text.Heading.Medium"
-                        android:layout_marginBottom="16dp"/>
+                        android:layout_weight="2"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sharing is caring"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:fontFamily="sans-serif-medium"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Help your friends lead a calmer life!"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
-            <!-- Edit Profile Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnEditProfile"
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/ic_launcher_foreground"
+                        android:contentDescription="Banner Illustration"
+                        android:layout_marginStart="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Settings List -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/transparent">
+
+                <!-- Each item: icon, label, right arrow -->
+                <!-- <include layout="@layout/item_setting_option"/> -->
+                <!-- Repeat for each option, or define inline if include not available -->
+
+                <!-- Notifications -->
+                <LinearLayout
+                    android:id="@+id/settings_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_notification"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Notifications"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
+
+                <!-- Manage Account -->
+                <LinearLayout
+                    android:id="@+id/settings_manage_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_profile"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Manage account"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
+
+                <!-- Manage Subscription -->
+                <LinearLayout
+                    android:id="@+id/settings_manage_subscription"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_star"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Manage subscription"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
+
+                <!-- Redeem a Code -->
+                <LinearLayout
+                    android:id="@+id/settings_redeem_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_badge"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Redeem a code"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
+
+                <!-- Privacy Policy -->
+                <LinearLayout
+                    android:id="@+id/settings_privacy_policy"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:text="Edit Profile"
-                android:textColor="@color/primary_purple"
-                android:backgroundTint="@color/white"
-                app:strokeColor="@color/primary_purple"
-                app:strokeWidth="2dp"
-                app:cornerRadius="28dp"
-                android:layout_marginBottom="12dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_email"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Privacy Policy"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
 
-            <!-- Notification Settings Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNotificationSettings"
+                <!-- Contact Us -->
+                <LinearLayout
+                    android:id="@+id/settings_contact_us"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Notification Settings"
-                android:textColor="@color/primary_purple"
-                android:backgroundTint="@color/white"
-                app:strokeColor="@color/primary_purple"
-                app:strokeWidth="2dp"
-                app:cornerRadius="28dp"
-                android:layout_marginBottom="12dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_email"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Contact us"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
 
-            <!-- Privacy Settings Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPrivacySettings"
+                <!-- Write a Review -->
+                <LinearLayout
+                    android:id="@+id/settings_write_review"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Privacy Settings"
-                android:textColor="@color/primary_purple"
-                android:backgroundTint="@color/white"
-                        app:strokeColor="@color/primary_purple"
-                app:strokeWidth="2dp"
-                app:cornerRadius="28dp"
-                android:layout_marginBottom="24dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_star"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Write a review"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/black"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
 
-            <!-- Logout Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnLogout"
+                <!-- Log out -->
+                <LinearLayout
+                    android:id="@+id/settings_logout"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:text="Logout"
-                        android:textColor="@color/white"
-                android:backgroundTint="@color/error"
-                app:cornerRadius="28dp"
-                android:layout_marginBottom="16dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_close"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Log out"
+                        android:textSize="16sp"
+                        android:paddingStart="16dp"
+                        android:textColor="@color/error"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu"
+                        android:rotation="-90"/>
+                </LinearLayout>
 
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

@@ -8,42 +8,60 @@
     android:background="@drawable/gradient_background"
     android:fitsSystemWindows="true">
 
-    <!-- Header Section -->
-
+    <!-- Simple Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@color/blue"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:text="Task Details"
-            android:textColor="@color/blue"
-            android:textSize="24sp"
-            android:fontFamily="sans-serif-medium"
-            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_close"
+            android:layout_marginEnd="16dp"
+            app:tint="@color/white"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:alpha="0.8"
-            android:gravity="center"
-            android:text="Review task information and apply or complete"
-            android:textColor="@color/blue"
-            android:fontFamily="sans-serif"
-            android:textSize="14sp" />
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task Details"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Complete task information and actions"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif"
+                android:textSize="12sp"
+                android:alpha="0.9"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
+    <!-- Main Content Scroll -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,12 +69,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Task Info Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/card_white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
@@ -65,122 +84,227 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <!-- Task Title -->
                     <TextView
                         android:id="@+id/taskDetailTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="Cook"
                         android:textSize="24sp"
+                        android:fontFamily="sans-serif-medium"
                         android:textStyle="bold"
-                        android:textColor="@color/primary_purple"
+                        android:textColor="@color/blue"
                         android:layout_marginBottom="8dp"/>
 
-                    <TextView
-                        android:id="@+id/taskDetailStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:layout_marginBottom="16dp"/>
-
-                    <TextView
-                        android:id="@+id/taskDetailPayment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/success_green"
-                        android:layout_marginBottom="16dp"/>
-
-                    <TextView
-                        android:id="@+id/taskDetailHirer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textStyle="italic"
-                        android:layout_marginBottom="16dp"/>
-
+                    <!-- Posted By and Status -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:gravity="center_vertical"
                         android:layout_marginBottom="16dp">
 
+                        <TextView
+                            android:id="@+id/taskDetailHirer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Posted by: null"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:textColor="@color/text_secondary_gray"
+                            android:drawableStart="@drawable/ic_profile"
+                            android:drawablePadding="6dp"
+                            android:gravity="center_vertical"/>
+
+                        <TextView
+                            android:id="@+id/taskDetailStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Status: Open"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textStyle="bold"
+                            android:textColor="@color/blue"
+                            android:background="@drawable/filter_badge_background"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"/>
+
+                    </LinearLayout>
+
+                    <!-- Payment Section -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/rounded_background_light"
+                        android:padding="16dp"
+                        android:layout_marginBottom="20dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_star"
+                            android:background="@drawable/circle_background_light_green"
+                            android:padding="8dp"
+                            android:layout_marginEnd="12dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Payment"
+                                android:textSize="12sp"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/text_secondary_gray"/>
+
+                            <TextView
+                                android:id="@+id/taskDetailPayment"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$15.00"
+                                android:textSize="28sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textColor="@color/accent_success_green"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Due Date and Location Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="20dp">
+
+                        <!-- Due Date -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/rounded_background_light"
+                            android:padding="16dp"
+                            android:layout_marginEnd="8dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_calendar"
+                                android:tint="@color/blue"
+                                android:layout_marginBottom="8dp"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Due Date"
-                                android:textStyle="bold"
-                                android:textSize="14sp"/>
+                                android:textSize="12sp"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/text_secondary_gray"
+                                android:layout_marginBottom="4dp"/>
 
                             <TextView
                                 android:id="@+id/taskDetailDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
-                                android:drawableStart="@android:drawable/ic_menu_my_calendar"
-                                android:drawablePadding="4dp"
-                                android:gravity="center_vertical"/>
+                                android:text="Jul 10, 2025"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textColor="@color/blue"
+                                android:gravity="center"/>
+
                         </LinearLayout>
 
+                        <!-- Location -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/rounded_background_light"
+                            android:padding="16dp"
+                            android:layout_marginStart="8dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_location_pin"
+                                android:tint="@color/blue"
+                                android:layout_marginBottom="8dp"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Location"
-                                android:textStyle="bold"
-                                android:textSize="14sp"/>
+                                android:textSize="12sp"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/text_secondary_gray"
+                                android:layout_marginBottom="4dp"/>
 
                             <TextView
                                 android:id="@+id/taskDetailLocation"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
-                                android:drawableStart="@android:drawable/ic_dialog_map"
-                                android:drawablePadding="4dp"
-                                android:gravity="center_vertical"/>
+                                android:text="Bandar Sunway, 475..."
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textColor="@color/blue"
+                                android:gravity="center"
+                                android:maxLines="2"
+                                android:ellipsize="end"/>
+
                         </LinearLayout>
+
                     </LinearLayout>
 
+                    <!-- Description -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#DDDDDD"
+                        android:background="@color/border_light_gray"
                         android:layout_marginBottom="16dp"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Description"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium"
                         android:textStyle="bold"
+                        android:textColor="@color/blue"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:id="@+id/taskDetailDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"/>
+                        android:text="Dinner"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/text_primary_black"/>
+
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Map Section -->
+            <!-- Map Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/card_white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
@@ -189,73 +313,125 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
+                    <!-- Map Header -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Task Location"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="12dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:id="@+id/routeInfo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Calculating route..."
-                        android:textSize="14sp"
-                        android:textColor="@color/primary_purple"
-                        android:layout_marginBottom="8dp"
-                        android:visibility="gone"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnShowRoute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Show Route"
-                        android:textSize="12sp"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_marginBottom="8dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Location &amp; Route"
+                                android:textSize="18sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textColor="@color/blue"
+                                android:layout_marginBottom="4dp"/>
 
+                            <TextView
+                                android:id="@+id/routeInfo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🚗 Distance: 16.2 km • ⏱️ Duration: 22 mins"
+                                android:textSize="12sp"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/text_secondary_gray"/>
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnShowRoute"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Show Route"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textStyle="bold"
+                            android:textColor="@color/blue"
+                            app:backgroundTint="@color/background_light_gray"
+                            app:cornerRadius="18dp"
+                            android:paddingHorizontal="16dp"
+                            app:icon="@drawable/ic_location_pin"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/blue"/>
+
+                    </LinearLayout>
+
+                    <!-- Map -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:background="#f0f0f0">
+                        android:background="@color/background_light_gray">
 
                         <com.google.android.gms.maps.MapView
                             android:id="@+id/taskLocationMapView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"/>
 
                     </FrameLayout>
+
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Only show for regular users, not hirers -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnApplyForTask"
+            <!-- Action Buttons -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Apply for Task"
-                android:layout_marginTop="16dp"/>
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
 
-            <!-- Only show for users working on this task -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCompleteTask"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Complete Task"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/design_default_color_secondary"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnApplyForTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Apply for Task"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/blue"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="12dp"/>
 
-            <!-- Only show for hirers on pending payment tasks -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMarkAsPaid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mark as Paid"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@android:color/holo_green_dark"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompleteTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Complete Task"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/accent_success_green"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMarkAsPaid"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="Mark as Paid"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/accent_warning_orange"
+                    app:cornerRadius="12dp"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+
     </ScrollView>
 
     <!-- Bottom Navigation -->
@@ -264,9 +440,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/primary_purple"
-        app:itemTextColor="@color/primary_purple"
-        android:background="@color/card_white"
+        app:itemIconTint="@color/blue"
+        app:itemTextColor="@color/blue"
+        android:background="@color/white"
         app:elevation="8dp"/>
 
 </LinearLayout> 

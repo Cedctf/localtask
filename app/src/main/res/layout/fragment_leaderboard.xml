@@ -2,62 +2,51 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
 
     <!-- Header Section -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_close"
+        app:tint="@color/blue"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"/>
+
+    <TextView
+        android:id="@+id/leaderboardTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:text="Top Contributors"
+        android:textSize="22sp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        app:layout_constraintTop_toTopOf="@id/backButton"
+        app:layout_constraintBottom_toBottomOf="@id/backButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/backButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            app:icon="@drawable/ic_close"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@android:color/white"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:background="@android:color/transparent"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"/>
-
-        <TextView
-            android:id="@+id/leaderboardTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Top Contributors"
-            android:textSize="24sp"
-            android:fontFamily="sans-serif-medium"
-            android:textStyle="bold"
-            android:textColor="@color/blue"
-            android:gravity="center"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/refreshButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:icon="@drawable/ic_notification"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@android:color/white"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:background="@android:color/transparent"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"/>
-
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/notificationButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_notification"
+        app:tint="@color/blue"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/backButton"
+        app:layout_constraintBottom_toBottomOf="@id/backButton"
+        android:layout_marginEnd="8dp"/>
 
     <!-- Time Period Tabs -->
     <LinearLayout
@@ -66,344 +55,284 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        android:background="@drawable/rounded_toggle_background"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/leaderboardTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/tabThisMonth"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="THIS MONTH"
             android:textColor="@color/blue"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
-            android:alpha="0.6"
-            android:padding="12dp"
-            android:background="@drawable/tab_selected_background"
+            android:textStyle="bold"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/tab_modern_selected_background"
             android:gravity="center"/>
 
         <TextView
             android:id="@+id/tabAllTime"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ALL TIME"
             android:textColor="@color/blue"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
-            android:textStyle="bold"
-            android:padding="12dp"/>
-
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"/>
     </LinearLayout>
 
-    <!-- Scrollable Content -->
-    <androidx.core.widget.NestedScrollView
+    <!-- Podium Section using ConstraintLayout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/podiumLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/timePeriodTabs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 1st Place (Center) -->
+        <LinearLayout
+            android:id="@+id/firstPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <FrameLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/firstPlaceAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_profile"
+                    android:padding="4dp"
+                    app:strokeColor="@color/primary_yellow"
+                    app:strokeWidth="3dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1st"
+                    android:background="@drawable/progress_yellow"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:layout_gravity="bottom|center_horizontal"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/firstPlaceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="zehui"
+                android:textColor="@color/blue"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/firstPlaceScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="0"
+                android:textColor="@color/text_secondary_gray"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <!-- 2nd Place -->
+        <LinearLayout
+            android:id="@+id/secondPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toStartOf="@id/firstPlace"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/firstPlace"
+            android:layout_marginTop="24dp">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/secondPlaceAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_profile"
+                    android:padding="4dp"
+                    app:strokeColor="@color/light_gray"
+                    app:strokeWidth="2dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2nd"
+                    android:background="@drawable/rounded_background_light"
+                    android:textColor="@color/text_secondary_gray"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:layout_gravity="bottom|center_horizontal"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/secondPlaceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="kangyan"
+                android:textColor="@color/blue"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/secondPlaceScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="0"
+                android:textColor="@color/text_secondary_gray"
+                android:textSize="12sp"/>
+        </LinearLayout>
+        
+        <!-- 3rd Place -->
+        <LinearLayout
+            android:id="@+id/thirdPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/firstPlace"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/firstPlace"
+            android:layout_marginTop="24dp">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/thirdPlaceAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/default_profile"
+                    android:padding="4dp"
+                    app:strokeColor="@color/primary_bronze"
+                    app:strokeWidth="2dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CircleImageView"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3rd"
+                    android:background="@drawable/rounded_background_light"
+                    android:textColor="@color/text_secondary_gray"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:layout_gravity="bottom|center_horizontal"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/thirdPlaceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="zz"
+                android:textColor="@color/blue"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/thirdPlaceScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="0"
+                android:textColor="@color/text_secondary_gray"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Rest of Leaderboard Card -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/timePeriodTabs"
+        app:layout_constraintTop_toBottomOf="@id/podiumLayout"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:fillViewport="true">
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.Corner.Large.Top"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/surface_primary">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Top 3 Podium Section -->
-            <LinearLayout
-                android:id="@+id/podiumLayout"
+            <!-- Leaderboard RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/leaderboardRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:padding="24dp">
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_leaderboard_user"
+                tools:itemCount="2"/>
 
-                <!-- 2nd Place -->
-                <LinearLayout
-                    android:id="@+id/secondPlace"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginTop="40dp">
-
-                    <FrameLayout
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:id="@+id/secondPlaceAvatar"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/circle_background_light_grey"
-                            android:src="@drawable/default_profile"
-                            android:padding="16dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                            android:text="2nd"
-                            android:background="@drawable/circle_background_light_grey"
-                            android:textColor="@android:color/white"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:padding="4dp"
-                            android:layout_gravity="bottom|center_horizontal"
-                            android:layout_marginBottom="-8dp"/>
-
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/secondPlaceName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Worker"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/secondPlaceScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="101"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:fontFamily="sans-serif"
-                        android:textStyle="bold"/>
-
-                </LinearLayout>
-
-                <!-- 1st Place (Center, Larger) -->
-                    <LinearLayout
-                    android:id="@+id/firstPlace"
-                    android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                        android:gravity="center">
-
-                    <FrameLayout
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:id="@+id/firstPlaceAvatar"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/circle_background_light_grey"
-                            android:src="@drawable/default_profile"
-                            android:padding="16dp"/>
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_crown"
-                            android:background="@drawable/circle_background_light_orange"
-                            android:padding="6dp"
-                            android:layout_gravity="top|center_horizontal"
-                            android:layout_marginTop="-16dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                            android:text="1st"
-                            android:background="@drawable/circle_background_light_orange"
-                            android:textColor="@android:color/white"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:padding="4dp"
-                            android:layout_gravity="bottom|center_horizontal"
-                            android:layout_marginBottom="-8dp"/>
-
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/firstPlaceName"
-                        android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                        android:text="Worker"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textStyle="bold"/>
-
-                <TextView
-                        android:id="@+id/firstPlaceScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="165"
-                        android:textColor="@android:color/white"
-                        android:textSize="22sp"
-                        android:fontFamily="sans-serif"
-                        android:textStyle="bold"/>
-
-                </LinearLayout>
-
-                <!-- 3rd Place -->
-                <LinearLayout
-                    android:id="@+id/thirdPlace"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginTop="40dp">
-
-                    <FrameLayout
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:id="@+id/thirdPlaceAvatar"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/circle_background_light_purple"
-                            android:src="@drawable/default_profile"
-                            android:padding="16dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3rd"
-                            android:background="@drawable/circle_background_light_purple"
-                            android:textColor="@android:color/white"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:padding="4dp"
-                            android:layout_gravity="bottom|center_horizontal"
-                            android:layout_marginBottom="-8dp"/>
-
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/thirdPlaceName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Worker"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/thirdPlaceScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="87"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:fontFamily="sans-serif"
-                        android:textStyle="bold"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Rest of Leaderboard (4th onwards) in White Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/background_white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <!-- Loading Indicator -->
-                    <ProgressBar
-                        android:id="@+id/loadingIndicator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="32dp"
-                        android:visibility="gone"/>
-
-                    <!-- Leaderboard RecyclerView -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/leaderboardRecyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"/>
-
-                    <!-- Empty State -->
-                    <LinearLayout
-                        android:id="@+id/emptyStateLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="32dp"
-                        android:visibility="gone">
-
-                <ImageView
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:src="@drawable/ic_leaderboard"
-                            android:background="@drawable/circle_background_light_blue"
-                            android:padding="12dp"
-                            android:layout_marginBottom="16dp"
-                            android:alpha="0.7"/>
-
-                <TextView
-                            android:id="@+id/emptyStateText"
-                            android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                            android:text="No data available"
-                            style="@style/TextAppearance.Modern.Headline.Small"
-                            android:textColor="@color/text_secondary_gray"
-                            android:gravity="center"/>
-
-            </LinearLayout>
-
-                    <!-- Call to Action -->
+            <!-- Call to Action -->
             <LinearLayout
-                        android:id="@+id/callToActionLayout"
+                android:id="@+id/callToActionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                        android:padding="16dp"
-                        android:background="@drawable/rounded_background_light"
-                        android:layout_marginTop="16dp">
+                android:padding="16dp"
+                android:background="@drawable/rounded_background_light"
+                android:layout_marginTop="16dp">
 
                 <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/ic_star"
-                            android:background="@drawable/circle_background_light_purple"
-                            android:padding="12dp"
-                            android:layout_marginEnd="16dp"/>
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_star"
+                    android:background="@drawable/circle_background_light_purple"
+                    android:padding="8dp"
+                    android:layout_marginEnd="16dp"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                            android:text="Complete more tasks and start climbing the ranks."
-                            style="@style/TextAppearance.Modern.Body.Medium"
-                            android:textColor="@color/text_secondary_gray"/>
-
+                    android:text="Complete more tasks and start climbing the ranks."
+                    style="@style/Text.Body.Medium"
+                    android:textColor="@color/text_secondary_gray"/>
             </LinearLayout>
-
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_email"
+        app:backgroundTint="@color/blue"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 
