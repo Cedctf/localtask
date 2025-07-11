@@ -46,7 +46,7 @@
         android:contentDescription="Create Task"
         android:visibility="gone"
         app:tint="@color/text_white"
-        app:backgroundTint="@color/button_primary_black"
+        app:backgroundTint="@color/primary_purple"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
@@ -60,9 +60,8 @@
         android:layout_marginBottom="88dp"
         android:src="@android:drawable/ic_dialog_email"
         android:contentDescription="AI Assistant"
-        android:visibility="gone"
         app:tint="@color/text_white"
-        app:backgroundTint="@color/accent_blue"
+        app:backgroundTint="@color/primary_purple"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 

@@ -2,11 +2,11 @@
     <!-- Base application theme with modern design system -->
     <style name="Base.Theme.Assignment2" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Modern color scheme -->
-        <item name="colorPrimary">@color/primary_black</item>
-        <item name="colorPrimaryDark">@color/primary_dark_gray</item>
-        <item name="colorAccent">@color/accent_blue</item>
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryDark">@color/primary_purple_dark_new</item>
+        <item name="colorAccent">@color/primary_purple</item>
         <item name="colorOnPrimary">@color/text_white</item>
-        <item name="colorSecondary">@color/accent_blue</item>
+        <item name="colorSecondary">@color/primary_purple</item>
         <item name="colorOnSecondary">@color/text_white</item>
         <item name="colorSurface">@color/background_white</item>
         <item name="colorOnSurface">@color/text_primary_black</item>

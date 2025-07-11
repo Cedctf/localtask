@@ -1,329 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
-    android:padding="16dp">
+    android:background="@color/app_background"
+    tools:context=".BadgesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <!-- Header -->
-        <TextView
+        <LinearLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Badges &amp; Rewards"
-            android:textColor="@color/blue"
-            android:fontFamily="sans-serif-medium"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:background="@color/primary_blue"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:orientation="vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Badges &amp; Rewards"
+                android:textColor="@color/text_on_purple"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Complete goals to earn cash rewards!"
+                android:textColor="@color/text_on_purple"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+        
         <!-- Wallet Section -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            style="@style/Card.Modern.Elevated">
-
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="24dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:background="@drawable/gradient_background">
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="My Wallet"
-                    android:textSize="20sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textStyle="bold"
-                    android:textColor="@color/blue"
-                    android:gravity="center"
-                    android:layout_marginBottom="8dp" />
+                    android:text="Your Wallet:"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"/>
 
                 <TextView
                     android:id="@+id/text_wallet_amount"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="RM0"
-                    android:textSize="28sp"
-                    android:fontFamily="sans-serif"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/blue"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/primary_blue"
+                    android:gravity="end"
+                    android:layout_marginEnd="16dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <Button
                     android:id="@+id/button_redeem"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Withdraw to Bank"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    app:backgroundTint="#000000"
-                    app:cornerRadius="8dp"
-                    android:layout_marginTop="8dp"/>
-
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cash Out"
+                    android:background="@drawable/button_modern_primary"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
-        <!-- Beginner Badge -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Beginner Tasks Badge -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Card.Modern">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_star"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/circle_background_light_green"
-                        android:padding="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Beginner Badge"
-                            style="@style/TextAppearance.Modern.Headline.Small" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Complete your first task"
-                            style="@style/TextAppearance.Modern.Body.Medium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Reward: RM20"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textStyle="bold"
-                            android:textColor="@color/accent_success_green" />
-
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="Reflective Detective"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Complete 3 reflections to earn a reward."
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="8dp"/>
 
                 <ProgressBar
                     android:id="@+id/progress_beginner_tasks"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:progress="100"
+                    android:layout_height="wrap_content"
                     android:max="100"
-                    android:progressDrawable="@drawable/progress_yellow" />
+                    android:progress="0"
+                    android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <Button
                     android:id="@+id/button_beginner_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:text="Redeem"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    app:backgroundTint="#000000"
-                    app:cornerRadius="8dp" />
-
+                    android:enabled="false"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        </androidx.cardview.widget.CardView>
+        
         <!-- Employer Praise Badge -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Card.Modern">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_crown"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/circle_background_light_orange"
-                        android:padding="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Employer Praise"
-                            style="@style/TextAppearance.Modern.Headline.Small" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Receive excellent feedback"
-                            style="@style/TextAppearance.Modern.Body.Medium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Reward: RM20"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textStyle="bold"
-                            android:textColor="@color/accent_success_green" />
-
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="Check-in Champ"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Receive excellent feedback from an employer."
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="8dp"/>
 
                 <ProgressBar
                     android:id="@+id/progress_employer_praise"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:progress="100"
+                    android:layout_height="wrap_content"
                     android:max="100"
-                    android:progressDrawable="@drawable/progress_yellow" />
+                    android:progress="0"
+                    android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <Button
                     android:id="@+id/button_employer_praise_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:text="Redeem"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    app:backgroundTint="#000000"
-                    app:cornerRadius="8dp" />
-
+                    android:enabled="false"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        </androidx.cardview.widget.CardView>
+        
         <!-- Consistent Performer Badge -->
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Card.Modern">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_medal"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/circle_background_light_purple"
-                        android:padding="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Consistent Performer"
-                            style="@style/TextAppearance.Modern.Headline.Small" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Complete 5 tasks consistently"
-                            style="@style/TextAppearance.Modern.Body.Medium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Reward: RM20"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textStyle="bold"
-                            android:textColor="@color/accent_success_green" />
-
-                    </LinearLayout>
-                </LinearLayout>
+                    android:text="Ambassador"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Complete 5 tasks with high ratings."
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="8dp"/>
 
                 <ProgressBar
                     android:id="@+id/progress_consistent_performer"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:progress="100"
+                    android:layout_height="wrap_content"
                     android:max="100"
-                    android:progressDrawable="@drawable/progress_yellow" />
+                    android:progress="0"
+                    android:layout_marginBottom="8dp"/>
 
-                <com.google.android.material.button.MaterialButton
+                <Button
                     android:id="@+id/button_consistent_performer_redeem"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:text="Redeem"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
-                    app:backgroundTint="#000000"
-                    app:cornerRadius="8dp" />
-
+                    android:enabled="false"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Fallback for RecyclerView and No Badges Text for older versions if needed -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/badgesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/item_task" />
+
+        <TextView
+            android:id="@+id/noBadgesText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="No badges earned yet. Complete tasks to earn them!"
+            android:textColor="@color/text_secondary_gray"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView> 

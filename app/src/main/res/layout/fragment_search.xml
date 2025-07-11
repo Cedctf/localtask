@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:background="@color/primary_purple"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -84,10 +84,13 @@
                     android:id="@+id/btnFilter"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
+                    android:background="@drawable/button_modern_primary"
+                    app:backgroundTint="@color/primary_purple"
+                    app:tint="@color/white"
                     android:src="@drawable/ic_filter_list"
-                    android:background="@drawable/button_primary_background"
+                    android:scaleType="center"
                     android:contentDescription="Filter tasks"
-                    android:elevation="4dp" />
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/filterBadge"
