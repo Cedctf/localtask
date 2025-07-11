@@ -324,4 +324,50 @@
         <item name="elevation">6dp</item>
         <item name="pressedTranslationZ">12dp</item>
     </style>
+
+    <!-- === ENHANCED FONT STYLES FOR BLUE THEME === -->
+    
+    <!-- Base TextAppearance style -->
+    <style name="TextAppearance">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    
+    <!-- Base style for LocalTask -->
+    <style name="TextAppearance.LocalTask">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <!-- Primary font family for headers -->
+    <style name="TextAppearance.LocalTask.Header">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <!-- Secondary font family for body text -->
+    <style name="TextAppearance.LocalTask.Body">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <!-- Tertiary font family for captions -->
+    <style name="TextAppearance.LocalTask.Caption">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Button text style -->
+    <style name="TextAppearance.LocalTask.Button">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
 </resources> 

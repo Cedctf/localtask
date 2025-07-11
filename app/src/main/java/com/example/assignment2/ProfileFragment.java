@@ -98,11 +98,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupTabContent(View view) {
-        // Setup dashboard content buttons
-        Button shareProgressButton = view.findViewById(R.id.btnShareProgress);
-        shareProgressButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Share Progress coming soon!", Toast.LENGTH_SHORT).show();
-        });
 
         // Setup settings content buttons
         Button editProfileButton = view.findViewById(R.id.btnEditProfile);

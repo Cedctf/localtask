@@ -29,7 +29,8 @@
                 android:text="Welcome Back"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -37,7 +38,8 @@
                 android:layout_height="wrap_content"
                 android:text="Sign in to continue"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif"
                 android:alpha="0.9"/>
 
         </LinearLayout>
@@ -88,7 +90,7 @@
             android:layout_height="wrap_content"
             android:text="or"
             android:textSize="16sp"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
             android:alpha="0.7"
             android:layout_marginBottom="24dp" />
 
@@ -153,7 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Don't have an account? Sign up here"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:textStyle="bold"
             android:clickable="true"

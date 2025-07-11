@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_primary"
+    android:background="@drawable/gradient_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -16,7 +16,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Badges &amp; Rewards"
-            style="@style/TextAppearance.Modern.Display.Small"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textSize="24sp"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
@@ -63,7 +66,8 @@
                     android:layout_height="wrap_content"
                     android:text="Withdraw to Bank"
                     style="@style/Button.Modern.Secondary"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

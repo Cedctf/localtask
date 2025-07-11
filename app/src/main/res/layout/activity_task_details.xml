@@ -5,35 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@drawable/gradient_background"
     android:fitsSystemWindows="true">
 
     <!-- Header Section -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/primary_purple">
+        android:padding="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
             android:text="Task Details"
+            android:textColor="@color/blue"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"/>
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Review task information and apply or complete"
-            android:textSize="14sp"
-            android:textColor="@android:color/white"
+            android:alpha="0.8"
             android:gravity="center"
-            android:alpha="0.8"/>
+            android:text="Review task information and apply or complete"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

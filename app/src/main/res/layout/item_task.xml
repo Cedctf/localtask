@@ -20,36 +20,54 @@
             android:id="@+id/taskTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Text.Heading.Small"
-            android:textColor="@color/primary_purple"/>
+            android:text="Task Title"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/taskDescription"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:text="Task description goes here..."
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
             android:maxLines="2"
             android:ellipsize="end"
-            style="@style/Text.Body.Medium"/>
+            android:layout_marginBottom="8dp"/>
 
+        <!-- Status and Payment Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:id="@+id/taskPayment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Text.Status.Success"/>
+            android:layout_marginBottom="4dp">
 
             <TextView
                 android:id="@+id/taskStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                style="@style/Text.Body.Small"/>
+                android:text="Available"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-light"
+                android:textSize="12sp"
+                android:background="@drawable/filter_badge_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/taskPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RM 50.00"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
 
             <Space
                 android:layout_width="0dp"
@@ -60,8 +78,12 @@
                 android:id="@+id/taskHirer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
-                style="@style/Text.Body.Small"/>
+                android:text="John Doe"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif"
+                android:textSize="12sp"
+                android:textStyle="italic"/>
+
         </LinearLayout>
 
         <!-- Date and Location Row -->
@@ -69,13 +91,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginBottom="4dp">
 
             <TextView
                 android:id="@+id/taskDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Text.Caption"
+                android:text="Today"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-light"
+                android:textSize="11sp"
                 android:drawableStart="@drawable/ic_calendar"
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"/>
@@ -89,12 +114,46 @@
                 android:id="@+id/taskLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Text.Caption"
-                android:drawableStart="@android:drawable/ic_dialog_map"
+                android:text="Kuala Lumpur"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif"
+                android:textSize="12sp"
+                android:drawableStart="@drawable/ic_location_pin"
                 android:drawablePadding="4dp"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <!-- Distance and Posted Time Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/taskDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2.5 km away"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-light"
+                android:textSize="11sp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/taskPostedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Posted 2 hours ago"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-light"
+                android:textSize="11sp"
+                android:alpha="0.8"/>
+
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView> 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/purple_dark_bg">
+    android:background="@drawable/gradient_background">
 
     <!-- Top Bar -->
     <RelativeLayout

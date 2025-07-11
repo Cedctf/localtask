@@ -31,31 +31,34 @@
         This FrameLayout acts as a container for future animated elements
         (starburst, orbiting icons, etc.) that can be added later
     -->
+
+    <!-- Guideline to position the content section in the lower half -->
     <FrameLayout
         android:id="@+id/animated_elements_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.55"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="?attr/actionBarSize"
         app:layout_constraintBottom_toTopOf="@+id/content_section_guideline"
-        android:layout_marginTop="?attr/actionBarSize">
-        
-        <!-- Task Checklist Icon in the center -->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.55"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.546">
+
+        <!-- LocalTask Icon in the center -->
         <ImageView
             android:id="@+id/center_task_icon"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="225dp"
+            android:layout_height="274dp"
             android:layout_gravity="center"
-            android:src="@drawable/task_checklist_icon"
             android:contentDescription="LocalTask app icon"
-            android:scaleType="fitCenter" />
-            
+            android:scaleType="fitCenter"
+            android:src="@drawable/localtask_icon" />
+
         <!-- Custom animated views will go here in future iterations -->
     </FrameLayout>
 
-    <!-- Guideline to position the content section in the lower half -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/content_section_guideline"
         android:layout_width="wrap_content"
@@ -85,9 +88,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LocalTask"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
             android:textSize="22sp"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-medium"
             android:alpha="0.9"
             android:layout_marginBottom="8dp" />
 
@@ -97,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delightful Tasks"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
             android:textSize="36sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
@@ -110,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start Here"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
             android:textSize="24sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
@@ -123,7 +126,8 @@
             android:layout_height="wrap_content"
             android:text="Where hirers post tasks and\nusers complete them to earn money"
             android:textSize="16sp"
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif"
             android:alpha="0.8"
             android:gravity="center"
             android:lineSpacingExtra="4dp" />
@@ -151,7 +155,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Log In"
-            android:textColor="@color/primary_purple"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
@@ -166,14 +170,13 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Sign Up"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
             android:fontFamily="sans-serif-medium"
-            app:backgroundTint="@android:color/transparent"
-            app:strokeColor="@color/white"
-            app:strokeWidth="2dp"
+            app:backgroundTint="@color/white"
             app:cornerRadius="28dp"
+            android:elevation="8dp"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>

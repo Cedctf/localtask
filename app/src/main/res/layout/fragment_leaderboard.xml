@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dashboard_gradient_background">
+    android:background="@drawable/gradient_background">
 
     <!-- Header Section -->
     <LinearLayout
@@ -38,9 +38,9 @@
             android:layout_weight="1"
             android:text="Top Contributors"
             android:textSize="24sp"
-            android:fontFamily="sans-serif"
+            android:fontFamily="sans-serif-medium"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:textColor="@color/blue"
             android:gravity="center"/>
 
         <com.google.android.material.button.MaterialButton
@@ -72,22 +72,25 @@
 
         <TextView
             android:id="@+id/tabThisMonth"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="THIS MONTH"
-            android:textColor="@android:color/white"
+            android:textColor="@color/blue"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
             android:alpha="0.6"
             android:padding="12dp"
-            android:layout_marginEnd="24dp"/>
+            android:background="@drawable/tab_selected_background"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/tabAllTime"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="ALL TIME"
-            android:textColor="@android:color/white"
+            android:textColor="@color/blue"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
             android:textStyle="bold"

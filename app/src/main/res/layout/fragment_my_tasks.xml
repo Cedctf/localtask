@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dashboard_gradient_background">
+    android:background="@drawable/gradient_background">
 
     <!-- Header Section -->
     <LinearLayout
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:background="@color/primary_purple"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -22,8 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="My Tasks"
-            style="@style/Text.Heading.Large"
-            android:textColor="@color/text_inverse"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textSize="24sp"
             android:gravity="start"
             android:layout_marginBottom="8dp"/>
 
@@ -32,7 +34,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Loading your tasks..."
-            style="@style/Text.Inverse.Body"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
             android:gravity="start"
             android:alpha="0.8"/>
 

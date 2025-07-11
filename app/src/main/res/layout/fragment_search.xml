@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dashboard_gradient_background">
+    android:background="@drawable/gradient_background">
 
     <!-- Header Section -->
     <LinearLayout
@@ -22,8 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Search Tasks"
-            style="@style/Text.Heading.Large"
-            android:textColor="@color/text_inverse"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textSize="24sp"
             android:gravity="start"
             android:layout_marginBottom="8dp"/>
 
@@ -32,7 +34,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Find tasks by title, description, location, or hirer"
-            style="@style/Text.Inverse.Body"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
             android:gravity="start"
             android:alpha="0.8"/>
 

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dashboard_gradient_background">
+    android:background="@drawable/gradient_background">
 
     <!-- Profile Header with Settings Icons -->
     <LinearLayout
@@ -24,14 +24,17 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_menu"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/white"/>
+            app:tint="@color/blue"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Profile"
-            style="@style/Text.Inverse.Heading"
+            android:textColor="@color/blue"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:textSize="20sp"
             android:gravity="center"/>
 
         <ImageButton
@@ -40,7 +43,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_notification"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/white"/>
+            app:tint="@color/blue"/>
 
     </LinearLayout>
 
@@ -65,32 +68,6 @@
             android:layout_height="wrap_content"
             android:text="Dashboard"
             style="@style/Text.Tab.Active"
-            android:layout_marginEnd="24dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/tabStats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stats"
-            style="@style/Text.Tab.Inactive"
-            android:layout_marginEnd="24dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/tabHistory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="History"
-            style="@style/Text.Tab.Inactive"
             android:layout_marginEnd="24dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
@@ -164,8 +141,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="User Name"
-                        style="@style/Text.Heading.Medium"
-                        android:layout_marginBottom="4dp"/>
+                    style="@style/Text.Heading.Medium"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/blue"/>
 
                 <!-- Profile Type -->
                 <TextView
@@ -173,8 +151,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="User Type"
-                        style="@style/Text.Body.Medium"
-                        android:layout_marginBottom="4dp"/>
+                    style="@style/Text.Body.Medium"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/blue"/>
 
                     <!-- Profile Email -->
                     <TextView
@@ -182,7 +161,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="user@email.com"
-                        style="@style/Text.Caption"/>
+                        style="@style/Text.Caption"
+                        android:textColor="@color/blue"/>
 
                 </LinearLayout>
 
@@ -194,7 +174,8 @@
                 android:layout_height="wrap_content"
                 android:text="My Progress"
                 style="@style/Text.Heading.Small"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/blue"/>
 
             <!-- Stats Cards -->
             <LinearLayout
@@ -233,13 +214,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1"
-                            style="@style/Text.Heading.Small"/>
+                            style="@style/Text.Heading.Small"
+                            android:textColor="@color/blue"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Total"
-                            style="@style/Text.Caption"/>
+                            style="@style/Text.Caption"
+                            android:textColor="@color/blue"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -273,13 +256,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1 day"
-                            style="@style/Text.Heading.Small"/>
+                            style="@style/Text.Heading.Small"
+                            android:textColor="@color/blue"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Longest"
-                            style="@style/Text.Caption"/>
+                            style="@style/Text.Caption"
+                            android:textColor="@color/blue"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -313,13 +298,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1 day"
-                            style="@style/Text.Heading.Small"/>
+                            style="@style/Text.Heading.Small"
+                            android:textColor="@color/blue"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Current"
-                            style="@style/Text.Caption"/>
+                            style="@style/Text.Caption"
+                            android:textColor="@color/blue"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -363,7 +350,8 @@
                             android:layout_weight="1"
                             android:text="April"
                             style="@style/Text.Heading.Small"
-                            android:gravity="center"/>
+                            android:gravity="center"
+                            android:textColor="@color/blue"/>
 
                         <ImageButton
                             android:id="@+id/btnNextMonth"
@@ -382,27 +370,12 @@
                         android:text="Calendar View\n(Task completion calendar would be implemented here)"
                         android:gravity="center"
                         style="@style/Text.Body.Medium"
-                        android:background="@color/background_secondary"/>
+                        android:background="@color/background_secondary"
+                        android:textColor="@color/blue"/>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
-            <!-- Share Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnShareProgress"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Share My Progress"
-                android:textColor="@color/primary_purple"
-                android:backgroundTint="@color/white"
-                app:strokeColor="@color/primary_purple"
-                app:strokeWidth="2dp"
-                app:cornerRadius="28dp"
-                app:icon="@drawable/ic_add"
-                app:iconTint="@color/primary_purple"
-                android:layout_marginBottom="16dp"/>
-
         </LinearLayout>
 
     </ScrollView>

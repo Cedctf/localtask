@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_primary">
+    android:background="@drawable/gradient_background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,8 +31,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Money"
-                    style="@style/TextAppearance.Modern.Display.Large"/>
+                    android:text="Account"
+                    android:textColor="@color/blue"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
+                    android:textSize="28sp"/>
 
                 <ImageView
                     android:layout_width="48dp"
@@ -96,9 +99,9 @@
                         android:layout_height="wrap_content"
                         android:text="RM0.00"
                         android:textSize="48sp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="sans-serif-medium"
                         android:textStyle="bold"
-                        android:textColor="@color/text_primary_black"
+                        android:textColor="@color/blue"
                         android:layout_marginBottom="24dp"/>
 
                     <!-- Action Buttons -->
@@ -115,8 +118,10 @@
                             android:layout_height="48dp"
                             android:layout_weight="1"
                             android:text="Add Cash"
+                            android:textSize="0sp"
                             style="@style/Button.Modern.Secondary"
-                            android:layout_marginEnd="8dp"/>
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/white"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/cashOutButton"
@@ -124,8 +129,10 @@
                             android:layout_height="48dp"
                             android:layout_weight="1"
                             android:text="Cash Out"
+                            android:textSize="0sp"
                             style="@style/Button.Modern.Secondary"
-                            android:layout_marginStart="8dp"/>
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/white"/>
 
                 </LinearLayout>
 
@@ -133,305 +140,263 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Feature Cards Grid -->
+            <!-- Feature Cards - Vertical Rectangle Banners -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- First Row -->
-                <LinearLayout
+                <!-- Leaderboard Banner -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/leaderboardCard"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_height="80dp"
+                    style="@style/Card.Modern"
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <!-- Leaderboard Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/leaderboardCard"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        style="@style/Card.Modern"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_leaderboard"
+                            android:background="@drawable/circle_background_light_orange"
+                            android:padding="12dp"/>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:layout_marginStart="16dp">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
+                            <TextView
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="12dp">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Leaderboard"
-                                    style="@style/TextAppearance.Modern.Headline.Small"/>
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_crown"/>
-
-                            </LinearLayout>
-
-                            <ImageView
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:src="@drawable/ic_leaderboard"
-                                android:background="@drawable/circle_background_light_orange"
-                                android:padding="16dp"
-                                android:layout_gravity="start"/>
+                                android:text="Leaderboard"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/leaderboardSubtext"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="View rankings"
-                                style="@style/TextAppearance.Modern.Body.Small"
-                                android:layout_marginTop="8dp"/>
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif"
+                                android:textSize="12sp"
+                                android:alpha="0.8"
+                                android:layout_marginTop="2dp"/>
 
                         </LinearLayout>
 
-                    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_crown"/>
 
-                    <!-- Search Tasks Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/searchCard"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        style="@style/Card.Modern"
-                        android:layout_marginStart="8dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Search Tasks Banner -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/searchCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    style="@style/Card.Modern"
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_search"
+                            android:background="@drawable/circle_background_light_blue"
+                            android:padding="12dp"/>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="20dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="12dp">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Search Tasks"
-                                    style="@style/TextAppearance.Modern.Headline.Small"/>
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_crown"/>
-
-                            </LinearLayout>
-
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:layout_gravity="start">
-
-                                <!-- Blue base circles -->
-                                <ImageView
-                                    android:layout_width="56dp"
-                                    android:layout_height="56dp"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/circle_background_light_blue"/>
-
-                            <ImageView
-                                     android:layout_width="40dp"
-                                     android:layout_height="40dp"
-                                     android:layout_gravity="center"
-                                     android:background="@color/primary_purple"
-                                     android:src="@drawable/ic_search"
-                                android:padding="8dp"/>
-
-                            </FrameLayout>
+                            android:layout_marginStart="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Find work"
-                                style="@style/TextAppearance.Modern.Body.Small"
-                                android:layout_marginTop="8dp"/>
+                                android:text="Search Tasks"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Find available tasks"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif"
+                                android:textSize="12sp"
+                                android:alpha="0.8"
+                                android:layout_marginTop="2dp"/>
 
                         </LinearLayout>
 
-                    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_crown"/>
 
-                </LinearLayout>
+                    </LinearLayout>
 
-                <!-- Second Row -->
-                <LinearLayout
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- My Tasks Banner -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/myTasksCard"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="80dp"
+                    style="@style/Card.Modern"
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
-                    <!-- My Tasks Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/myTasksCard"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        style="@style/Card.Modern"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_my_tasks"
+                            android:background="@drawable/circle_background_light_purple"
+                            android:padding="12dp"/>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:layout_marginStart="16dp">
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
+                            <TextView
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="12dp">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="My Tasks"
-                                    style="@style/TextAppearance.Modern.Headline.Small"/>
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_crown"/>
-
-                            </LinearLayout>
-
-                            <!-- Purple chart-like graphic -->
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:layout_gravity="start">
-
-                                <!-- Purple gradient background -->
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/circle_background_light_purple"/>
-
-                                <ImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_my_tasks"
-                                    android:padding="4dp"/>
-
-                            </FrameLayout>
+                                android:text="My Tasks"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Track progress"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif"
                                 android:textSize="12sp"
-                                android:textColor="@color/text_secondary"
-                                android:layout_marginTop="8dp"/>
+                                android:alpha="0.8"
+                                android:layout_marginTop="2dp"/>
 
                         </LinearLayout>
 
-                    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_crown"/>
 
-                    <!-- Badges Card -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/badgesCard"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        app:cardBackgroundColor="@android:color/white"
-                        android:layout_marginStart="8dp"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                    </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:padding="20dp">
+                </com.google.android.material.card.MaterialCardView>
 
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginBottom="12dp">
+                <!-- Badges Banner -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/badgesCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    style="@style/Card.Modern"
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Badges"
-                                    style="@style/TextAppearance.Modern.Headline.Small"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
 
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_crown"/>
-
-                            </LinearLayout>
-
-                            <!-- Yellow/Gold folders graphic -->
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:layout_gravity="start">
-
-                                <!-- Stack of golden badges -->
-                                <ImageView
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="bottom|start"
-                                    android:background="@drawable/circle_background_light_orange"
-                                    android:src="@drawable/ic_badge"
-                                    android:padding="12dp"/>
+                        <FrameLayout
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <ImageView
-                                    android:layout_width="40dp"
-                                    android:layout_height="40dp"
-                                    android:layout_gravity="top|end"
-                                    android:background="@drawable/circle_background_light_orange"
-                                android:src="@drawable/ic_medal"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/circle_background_light_orange"
+                                android:src="@drawable/ic_badge"
                                 android:padding="8dp"/>
 
-                            </FrameLayout>
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Badges"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Earn rewards"
+                                android:textColor="@color/blue"
+                                android:fontFamily="sans-serif"
                                 android:textSize="12sp"
-                                android:textColor="@color/text_secondary"
-                                android:layout_marginTop="8dp"/>
+                                android:alpha="0.8"
+                                android:layout_marginTop="2dp"/>
 
                         </LinearLayout>
 
-                    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_crown"/>
 
-                </LinearLayout>
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
